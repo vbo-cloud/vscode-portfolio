@@ -1173,25 +1173,16 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                     </div>
                 )}
                 <div className="flex-1 flex flex-col min-h-0 pt-[71px] md:pt-0">
-                    <div className="flex items-center justify-between px-4 py-1.5 border-b border-[var(--border)] bg-[var(--bg-panel)]">
-                        <div className="flex items-center gap-2 text-[var(--accent)] font-mono font-bold text-[11px]">
-                            <FileText size={14} />
-                            <span>RESUME.PDF</span>
-                        </div>
-                        <a
-                            href="./resume.pdf"
-                            download
-                            className="flex items-center gap-2 px-3 py-1 bg-[var(--accent)] hover:bg-[var(--accent)]/80 text-[var(--accent-fg)] text-[10px] rounded-[2px] transition-all"
-                        >
-                            <Zap size={12} /> Download PDF
-                        </a>
+                    <div className="flex items-center gap-2 px-4 py-1.5 border-b border-[var(--border)] bg-[var(--bg-panel)] text-[var(--accent)] font-mono font-bold text-[11px]">
+                        <FileText size={14} />
+                        <span>RESUME</span>
                     </div>
                     <div className="flex-1 bg-[#1e1e1e] overflow-hidden">
                         <iframe
-                            src="./resume.pdf#view=Fit"
+                            src="https://cv.vincentboutin.dev/"
                             className="w-full h-full border-none"
                             style={{ minHeight: 'calc(100vh - 120px)' }}
-                            title="Vincent Boutin Resume"
+                            title="Vincent Boutin — Interactive Resume"
                         />
                     </div>
                 </div>
