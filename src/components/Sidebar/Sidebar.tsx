@@ -207,35 +207,35 @@ export const Sidebar = ({
 
     const certifications = [
         {
-            name: "AWS Solutions Architect",
-            issuer: "Amazon Web Services",
-            id: "aws-sa",
-            description: "Validation of expertise in designing distributed systems on AWS.",
+            name: "AZ-104: Microsoft Azure Administrator",
+            issuer: "Microsoft",
+            id: "az-104",
+            description: "Validation of expertise in Azure VMs, networking, storage, identity (Azure AD), RBAC, monitoring, and governance.",
             status: "Certified",
             icon: Cloud
         },
         {
-            name: "Meta Front-End Designer",
-            issuer: "Meta / Coursera",
-            id: "meta-fed",
-            description: "Advanced proficiency in React, JS, and responsive UI/UX systems.",
-            status: "Verified",
+            name: "Master's Degree in Game Programming",
+            issuer: "IIM, Courbevoie",
+            id: "iim-master",
+            description: "Unity, Unreal, C#, C++, OOP, algorithms, AI and networking. Graduated with Jury Honors.",
+            status: "Jury Honors",
             icon: LayoutGrid
         },
         {
-            name: "Google Cloud Engineer",
-            issuer: "Google Cloud",
-            id: "google-ace",
-            description: "Associate level certification for cloud infrastructure management.",
-            status: "Certified",
+            name: "Bachelor's Degree in Sports Science (STAPS)",
+            issuer: "UPEC, Créteil",
+            id: "upec-staps",
+            description: "Pedagogy, group coaching, adaptability, active listening, and program design (APA).",
+            status: "Graduated",
             icon: Globe
         },
         {
-            name: "System Architect Award",
-            issuer: "Tech Expo 2024",
-            id: "award-24",
-            description: "1st Place Winner for innovative distributed terminal architecture.",
-            status: "Awarded",
+            name: "Pégases Selection",
+            issuer: "IIM",
+            id: "pegases-24",
+            description: "\"Dwarfs Delight\" selected by IIM for submission to the Pégases awards.",
+            status: "Selected",
             icon: Trophy
         }
     ];
@@ -1080,15 +1080,15 @@ export const Sidebar = ({
                                         <div className="text-[10px] font-bold text-[var(--text-secondary)] uppercase opacity-50 mb-1">Production Domains</div>
                                         <div className="space-y-1.5 text-[11px]">
                                             <div className="flex items-center justify-between text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors group cursor-pointer">
-                                                <span>portfolio.arnav.dev</span>
+                                                <span>vincentboutin.dev</span>
                                                 <ExternalLink size={10} className="opacity-0 group-hover:opacity-100" />
                                             </div>
                                             <div className="flex items-center justify-between text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors group cursor-pointer">
-                                                <span>mouseshifter.io</span>
+                                                <span>cv.vincentboutin.dev</span>
                                                 <ExternalLink size={10} className="opacity-0 group-hover:opacity-100" />
                                             </div>
                                             <div className="flex items-center justify-between text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors group cursor-pointer">
-                                                <span>api.netbridge.tech</span>
+                                                <span>github.com/vbo-cloud</span>
                                                 <ExternalLink size={10} className="opacity-0 group-hover:opacity-100" />
                                             </div>
                                         </div>
@@ -1348,11 +1348,11 @@ export const Sidebar = ({
                                 {/* Main Account Row */}
                                 <div className="flex items-center gap-3 p-2 rounded bg-[var(--bg-activity)]/50 border border-[var(--border)] mb-4">
                                     <div className="w-10 h-10 rounded bg-gradient-to-br from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)] flex items-center justify-center text-sm font-bold text-white shrink-0">
-                                        A
+                                        V
                                     </div>
                                     <div className="min-w-0">
-                                        <div className="text-sm font-bold text-[var(--text-primary)] truncate">Arnav</div>
-                                        <div className="text-[10px] text-[var(--text-secondary)] truncate">arnav@development.env</div>
+                                        <div className="text-sm font-bold text-[var(--text-primary)] truncate">Vincent Boutin</div>
+                                        <div className="text-[10px] text-[var(--text-secondary)] truncate">contact@vincentboutin.dev</div>
                                     </div>
                                 </div>
 

@@ -22,7 +22,7 @@ COFFEE_LEVEL=critical
 SANITY_CHECK=skipped
 `,
   readme: `
-# Arnav's Portfolio IDE 🚀
+# Vincent Boutin — Portfolio IDE 🚀
 
 <p align="center">
   <img src="https://img.shields.io/badge/Version-2.0.0--stable-blue?style=for-the-badge&logo=visual-studio-code" alt="Version" />
@@ -32,9 +32,9 @@ SANITY_CHECK=skipped
 
 ## 🖥 Overview
 
-**Arnav's Portfolio** is not just a website; it's a high-performance, browser-based **Visual Studio Code environment** designed to showcase technical expertise through an immersive developer experience. 
+**Vincent Boutin's Portfolio** is not just a website; it's a high-performance, browser-based **Visual Studio Code environment** designed to showcase a transition from VR/game development into cloud engineering.
 
-Built with **React 18**, **TypeScript**, and motivated by authentic IDE principles, it features a fully functional file explorer, terminal, settings engine, and even an integrated AI architect.
+DevOps / Cloud Engineer (Azure), AZ-104 certified, with a background in Unity/Unreal game development. Built with **React 18**, **TypeScript**, and motivated by authentic IDE principles, it features a fully functional file explorer, terminal, settings engine, and even an integrated AI architect.
 
 ---
 
@@ -70,10 +70,10 @@ Built with **React 18**, **TypeScript**, and motivated by authentic IDE principl
 ### Installation
 \`\`\`bash
 # Clone the repository
-git clone https://github.com/arnofrxdd/ide-portfolio.git
+git clone https://github.com/vbo-cloud/vscode-portfolio.git
 
 # Navigate to directory
-cd ide-portfolio
+cd vscode-portfolio
 
 # Install dependencies
 npm install
@@ -169,7 +169,7 @@ ${Array.from({ length: 200 }, (_, i) => `
 `,
   package_json: `
 {
-  "name": "arnav-portfolio",
+  "name": "vincent-boutin-portfolio",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -230,38 +230,41 @@ yarn-error.log*
 `,
   hire_me: `
 {
-  "name": "Arnav",
-  "role": "Software Engineer",
+  "name": "Vincent Boutin",
+  "role": "Cloud Engineer (Azure)",
   "looking_for": [
     "Full-time roles",
-    "Internships",
+    "Cloud / DevOps engineering",
     "Contract / Freelance"
   ],
   "interests": [
-    "Frontend architecture",
-    "System-level tooling",
-    "Networking & automation"
+    "Cloud architecture & IaC (Terraform, Bicep)",
+    "AI-assisted automation & orchestration",
+    "DevOps / CI/CD pipelines"
   ],
   "availability": "immediate",
-  "work_style": "ship-first, iterate-fast",
+  "work_style": "documented PR-by-PR, ship-first, iterate-fast",
   "status": "open_to_opportunities"
 }
 `,
   skills_json: `
 {
-  "frontend": ["React", "Vite", "Tailwind CSS", "Framer Motion"],
-  "backend": ["Node.js", "Express", "REST APIs"],
-  "systems": ["C++", "Win32 API", "Raw Input", "Multithreading"],
-  "tooling": ["Git", "Linux", "Shell scripting"],
-  "infra": ["Docker", "Networking", "Proxies & Tunnels"],
-  "focus": "performance, clarity, reliability"
+  "cloud": ["Azure", "Terraform", "Bicep", "ARM Templates"],
+  "code": ["C#", "C++", "Python"],
+  "backend": ["FastAPI", "PostgreSQL", "Service Bus"],
+  "ai": ["OpenAI", "Claude"],
+  "workflow": ["Git", "Agile Methods", "CI/CD", "GitHub Actions", "Docker"],
+  "engines": ["Unity", "Unreal"],
+  "focus": "cloud architecture, automation, and AI orchestration"
 }
 `,
   career_path: `
-student
-developer
-senior developer
-why am I doing frontend animations at 3am
+sports science student
+VR/game QA tester
+VR game developer
+C# enterprise developer
+why am I deploying Terraform at 3am
+AZ-104 certified cloud engineer
 `,
   terminal_component: `
 import React, { useState } from 'react';

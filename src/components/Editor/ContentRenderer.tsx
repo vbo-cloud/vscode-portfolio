@@ -140,10 +140,10 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
     if (type === 'home') {
         const featuredProjects = PROJECTS_DATA.filter(p => p.featured);
         const recentActivity = [
-            { action: "Optimizing", target: "frontend performance", time: "ongoing" },
-            { action: "Designing", target: "scalable systems", time: "active" },
-            { action: "Refining", target: "developer experience", time: "constant" },
-            { action: "Building", target: "production-ready tools", time: "always" },
+            { action: "Automating", target: "Azure infrastructure with Terraform", time: "ongoing" },
+            { action: "Orchestrating", target: "AI agent pipelines", time: "active" },
+            { action: "Hardening", target: "secretless CI/CD with OIDC", time: "constant" },
+            { action: "Documenting", target: "every decision, PR by PR", time: "always" },
         ];
 
         if (easyMode) {
@@ -157,20 +157,20 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold text-[var(--text-primary)] tracking-tight mb-6 leading-[1.1] md:leading-[1.05]">
                                         Hello, I'm <br />
                                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)]">
-                                            <TypingEffect text="Arnav" speed={150} />
+                                            <TypingEffect text="Vincent" speed={150} />
                                         </span>
                                         <span className="text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
                                     </h1>
                                     <p className="text-base md:text-xl text-[var(--text-secondary)] leading-relaxed mb-10 opacity-90 font-sans max-w-lg">
-                                        A Full-Stack Engineer crafting high-performance digital experiences and developer-centric engineering solutions.
+                                        A Cloud Engineer (Azure) automating infrastructure and orchestrating AI pipelines — from a background in VR/game development to cloud architecture.
                                     </p>
 
                                     {/* STATUS GRID - INTEGRATED */}
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-8 border-t border-[var(--border)]">
                                         {[
-                                            { label: "Current Role", value: "Full Stack Engineer", color: "text-[var(--warning)]" },
-                                            { label: "Location", value: "Remote", color: "text-[var(--success)]" },
-                                            { label: "Status", value: "Building cool things", color: "text-[var(--info)]" }
+                                            { label: "Current Role", value: "Cloud Engineer (Azure)", color: "text-[var(--warning)]" },
+                                            { label: "Location", value: "Annemasse, France", color: "text-[var(--success)]" },
+                                            { label: "Status", value: "AZ-104 certified, building Job Finder", color: "text-[var(--info)]" }
                                         ].map((item, idx) => (
                                             <div key={idx} className="flex flex-col gap-1">
                                                 <span className={`font-sans text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${item.color}`}>
@@ -291,14 +291,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="p-8 md:p-12 max-w-5xl mx-auto animate-in fade-in duration-500">
                             <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                                 <div>
-                                    <h1 className="text-4xl text-[var(--text-primary)] font-light mb-2">Arnav's Portfolio</h1>
-                                    <p className="text-lg text-[var(--text-secondary)] opacity-70">Full Stack Engineer & System Architect</p>
+                                    <h1 className="text-4xl text-[var(--text-primary)] font-light mb-2">Vincent Boutin's Portfolio</h1>
+                                    <p className="text-lg text-[var(--text-secondary)] opacity-70">Cloud Engineer (Azure) — from game dev to cloud engineering</p>
                                 </div>
                                 <div className="flex gap-4">
-                                    <a href="https://github.com/arnofrxdd" target="_blank" rel="noopener noreferrer" className="p-2 bg-[var(--bg-activity)] hover:bg-[var(--accent)]/20 border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all">
+                                    <a href="https://github.com/vbo-cloud" target="_blank" rel="noopener noreferrer" className="p-2 bg-[var(--bg-activity)] hover:bg-[var(--accent)]/20 border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all">
                                         <Github size={20} />
                                     </a>
-                                    <a href="https://www.linkedin.com/in/arnav-dalai-557214252/" target="_blank" rel="noopener noreferrer" className="p-2 bg-[var(--bg-activity)] hover:bg-[var(--accent)]/20 border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all" title="LinkedIn">
+                                    <a href="https://www.linkedin.com/in/vincent-boutin/" target="_blank" rel="noopener noreferrer" className="p-2 bg-[var(--bg-activity)] hover:bg-[var(--accent)]/20 border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all" title="LinkedIn">
                                         <Linkedin size={20} />
                                     </a>
                                 </div>
@@ -427,7 +427,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <span className="mr-3">Hello, I'm</span>
                                     {/* DYNAMIC THEME GRADIENT */}
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)]">
-                                        <TypingEffect text="Arnav" speed={150} />
+                                        <TypingEffect text="Vincent" speed={150} />
                                     </span>
                                     <span className="ml-1 text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
                                 </h1>
@@ -440,19 +440,19 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             {/* 1. Current Role */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
                                 <span className="text-[var(--warning)] min-w-[80px] md:min-w-[100px]">current_role:</span>
-                                <span className="text-[var(--text-primary)]">"Full Stack Engineer"</span>
+                                <span className="text-[var(--text-primary)]">"Cloud Engineer (Azure)"</span>
                             </div>
 
                             {/* 2. Location */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
                                 <span className="text-[var(--success)] min-w-[80px] md:min-w-[100px]">location:</span>
-                                <span className="text-[var(--text-primary)]">"Remote"</span>
+                                <span className="text-[var(--text-primary)]">"Annemasse, France"</span>
                             </div>
 
                             {/* 3. Status */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
                                 <span className="text-[var(--info)] min-w-[80px] md:min-w-[100px]">status:</span>
-                                <span className="text-[var(--text-primary)]">"Building cool things"</span>
+                                <span className="text-[var(--text-primary)]">"AZ-104 certified, building Job Finder"</span>
                             </div>
 
                         </div>
@@ -1134,26 +1134,26 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="flex-1 overflow-y-auto custom-scrollbar">
                             {isPreview ? (
                                 <div className="prose prose-invert prose-slate max-w-none font-sans text-[var(--text-primary)]">
-                                    <h1 className="flex items-center gap-3 text-3xl font-bold mb-4"><span className="text-4xl">⚙️</span><span>Hi, I’m Arnav</span></h1>
-                                    <p className="lead text-lg text-[var(--text-secondary)] mb-6">Developer focused on building performant interfaces, low-level tooling, and systems that actually ship.</p>
+                                    <h1 className="flex items-center gap-3 text-3xl font-bold mb-4"><span className="text-4xl">☁️</span><span>Hi, I’m Vincent</span></h1>
+                                    <p className="lead text-lg text-[var(--text-secondary)] mb-6">Cloud Engineer (Azure), AZ-104 certified, transitioning from VR/game development into cloud architecture and AI-assisted automation.</p>
                                     <hr className="border-[var(--border)] my-8" />
                                     <h3 className="text-[var(--success)] text-xl font-bold mb-4">🧠 What I Work On</h3>
-                                    <p className="mb-6 text-[var(--text-primary)] leading-relaxed">I build full-stack applications with React and Node.js, desktop tools in C++ and Python, and infrastructure-level solutions involving networking, automation, and system internals.</p>
+                                    <p className="mb-6 text-[var(--text-primary)] leading-relaxed">I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.</p>
                                     <h3 className="text-[var(--accent)] text-xl font-bold mb-4">🛠 Core Stack</h3>
                                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 list-none pl-0 mb-8">
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-cyan-400">⚛️</span> React / Vite / Tailwind</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-green-500">🟢</span> Node.js / Express</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-blue-400">🔷</span> TypeScript / JavaScript</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-orange-400">🧠</span> C++ / Win32 / System APIs</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-yellow-400">🐍</span> Python / Automation</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-sky-400">🌐</span> Networking / Proxies / Tunnels</li>
+                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-sky-400">☁️</span> Azure / Terraform / Bicep</li>
+                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-green-500">🟢</span> FastAPI / PostgreSQL / Service Bus</li>
+                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-orange-400">🤖</span> OpenAI / Claude / AI orchestration</li>
+                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-violet-400">🔷</span> C# / C++ / Python</li>
+                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-slate-300">⚙️</span> Git / Agile / CI/CD / Docker</li>
+                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-cyan-300">🎮</span> Unity / Unreal (VR & game dev background)</li>
                                     </ul>
                                 </div>
                             ) : (
                                 <div className="flex">
                                     <div className="w-8 border-r border-[var(--border)] text-right pr-2 text-[var(--line-number)] select-none">1<br />2<br />3</div>
                                     <div className="pl-2 font-mono text-sm text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
-                                        {`# ⚙️ Hi, I’m Arnav\n\nDeveloper focused on building performant interfaces...`}
+                                        {`# ☁️ Hi, I’m Vincent\n\nCloud Engineer (Azure), AZ-104 certified. From VR/game development to cloud architecture and AI-assisted automation...`}
                                     </div>
                                 </div>
                             )}
@@ -1191,7 +1191,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             src="./resume.pdf#view=Fit"
                             className="w-full h-full border-none"
                             style={{ minHeight: 'calc(100vh - 120px)' }}
-                            title="Arnav Resume"
+                            title="Vincent Boutin Resume"
                         />
                     </div>
                 </div>
