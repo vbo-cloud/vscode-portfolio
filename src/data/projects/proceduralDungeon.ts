@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const proceduralDungeon = {
     id: "procedural-dungeon-generation",
+    category: "technical",
     title: "Procedural Dungeon Generation",
     subtitle: "Procedurally generated dungeon with blocking progression and a secret room",
     description:

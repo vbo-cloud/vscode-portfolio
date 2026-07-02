@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const realityAcademy = {
     id: "reality-academy",
+    category: "companies",
     title: "Reality Academy — VR Training Tools",
     subtitle: "QA tooling and visual authoring system for VR e-learning content",
     description:

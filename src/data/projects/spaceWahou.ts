@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const spaceWahou = {
     id: "space-wahou",
+    category: "games",
     title: "Space Wahou",
     subtitle: "C++/SFML mothership shooter — survive and grow your firepower",
     description:

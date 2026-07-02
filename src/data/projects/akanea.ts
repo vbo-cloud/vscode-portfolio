@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const akanea = {
     id: "akanea",
+    category: "companies",
     title: "Akanea — Transport Management Platform",
     subtitle: "C# feature development on an enterprise transport management application",
     description:

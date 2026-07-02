@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const bombers = {
     id: "bombers",
+    category: "games",
     title: "Bombers",
     subtitle: "Solo first-year project — stop a machine city's uncontrolled expansion",
     description:

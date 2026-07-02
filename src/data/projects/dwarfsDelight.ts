@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const dwarfsDelight = {
     id: "dwarfs-delight",
+    category: "games",
     title: "Dwarfs Delight",
     subtitle: "Local multiplayer couch brawler for 2-4 players, selected for the Pégases",
     description:

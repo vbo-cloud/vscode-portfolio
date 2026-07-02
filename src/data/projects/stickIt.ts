@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const stickIt = {
     id: "stick-it",
+    category: "games",
     title: "Stick It",
     subtitle: "2-4 player slime brawler with sticky-wall physics",
     description:

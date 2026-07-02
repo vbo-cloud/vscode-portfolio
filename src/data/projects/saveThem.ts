@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const saveThem = {
     id: "save-them",
+    category: "games",
     title: "Save Them",
     subtitle: "Solo puzzle project — free your fellow captives with the help of the dead",
     description:

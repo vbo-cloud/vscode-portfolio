@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const xenosHeresy = {
     id: "xenos-heresy",
+    category: "games",
     title: "Xenos Heresy",
     subtitle: "Turn-based tactics mobile game, published on the Play Store",
     description:

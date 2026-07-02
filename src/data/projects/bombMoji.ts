@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const bombMoji = {
     id: "bomb-moji",
+    category: "games",
     title: "Bomb'Moji",
     subtitle: "Emoji-themed rogue-like arcade shooter — game jam entry",
     description:

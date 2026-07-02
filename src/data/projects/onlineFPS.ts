@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const onlineFPS = {
     id: "online-fps",
+    category: "technical",
     title: "Online FPS",
     subtitle: "Custom networked multiplayer FPS built with Enet, C++ and Unity",
     description:

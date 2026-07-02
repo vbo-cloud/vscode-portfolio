@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const whiz = {
     id: "whiz",
+    category: "games",
     title: "Whiz",
     subtitle: "Grappling-hook speedrun game — beat your own ghost",
     description:

@@ -349,6 +349,35 @@ export const Sidebar = ({
         />
     );
 
+    const renderProjectFileItem = (p: any, depth: number) => {
+        const fileName = `${p.title}.tsx`;
+        const fileMeta = getFileIcon(fileName);
+        return renderFileTreeItem({
+            id: p.id,
+            name: fileName,
+            icon: fileMeta.icon,
+            color: fileMeta.color,
+            type: 'file',
+            depth,
+            onDragStart: (_e, id) => {
+                window.dispatchEvent(
+                    new CustomEvent("explorer-drag-start", {
+                        detail: {
+                            id,
+                            file: { id: p.id, title: fileName, type: 'detail', data: p }
+                        }
+                    })
+                );
+            },
+            onClick: () => onOpenFile({
+                id: p.id,
+                title: fileName,
+                type: 'detail',
+                data: p
+            })
+        });
+    };
+
     const filteredProjects = PROJECTS_DATA.filter(p =>
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -609,34 +638,46 @@ export const Sidebar = ({
                                                 id: 'projects', name: 'projects', icon: expandedFolders['projects'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
                                                 type: 'folder', depth: 1, hasChildren: true, isOpen: expandedFolders['projects'], onToggle: () => toggleFolder('projects')
                                             })}
-                                            {expandedFolders['projects'] && PROJECTS_DATA.map(p => {
-                                                const fileName = `${p.title}.tsx`;
-                                                const fileMeta = getFileIcon(fileName);
-                                                return renderFileTreeItem({
-                                                    id: p.id,
-                                                    name: fileName,
-                                                    icon: fileMeta.icon,
-                                                    color: fileMeta.color,
-                                                    type: 'file',
-                                                    depth: 2,
-                                                    onDragStart: (_e, id) => {
-                                                        window.dispatchEvent(
-                                                            new CustomEvent("explorer-drag-start", {
-                                                                detail: {
-                                                                    id,
-                                                                    file: { id: p.id, title: fileName, type: 'detail', data: p }
-                                                                }
-                                                            })
-                                                        );
-                                                    },
-                                                    onClick: () => onOpenFile({
-                                                        id: p.id,
-                                                        title: fileName,
-                                                        type: 'detail',
-                                                        data: p
-                                                    })
-                                                });
-                                            })}
+                                            {expandedFolders['projects'] && (
+                                                <>
+                                                    {/* Cloud subfolder */}
+                                                    {renderFileTreeItem({
+                                                        id: 'projects_cloud', name: 'cloud', icon: expandedFolders['projects_cloud'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                        type: 'folder', depth: 2, hasChildren: true, isOpen: expandedFolders['projects_cloud'], onToggle: () => toggleFolder('projects_cloud')
+                                                    })}
+                                                    {expandedFolders['projects_cloud'] && PROJECTS_DATA.filter(p => p.category === 'cloud').map(p => renderProjectFileItem(p, 3))}
+
+                                                    {/* Companies subfolder */}
+                                                    {renderFileTreeItem({
+                                                        id: 'projects_companies', name: 'companies', icon: expandedFolders['projects_companies'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                        type: 'folder', depth: 2, hasChildren: true, isOpen: expandedFolders['projects_companies'], onToggle: () => toggleFolder('projects_companies')
+                                                    })}
+                                                    {expandedFolders['projects_companies'] && PROJECTS_DATA.filter(p => p.category === 'companies').map(p => renderProjectFileItem(p, 3))}
+
+                                                    {/* Video games subfolder */}
+                                                    {renderFileTreeItem({
+                                                        id: 'projects_videogames', name: 'video games', icon: expandedFolders['projects_videogames'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                        type: 'folder', depth: 2, hasChildren: true, isOpen: expandedFolders['projects_videogames'], onToggle: () => toggleFolder('projects_videogames')
+                                                    })}
+                                                    {expandedFolders['projects_videogames'] && (
+                                                        <>
+                                                            {/* Games subfolder */}
+                                                            {renderFileTreeItem({
+                                                                id: 'projects_games', name: 'games', icon: expandedFolders['projects_games'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                                type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_games'], onToggle: () => toggleFolder('projects_games')
+                                                            })}
+                                                            {expandedFolders['projects_games'] && PROJECTS_DATA.filter(p => p.category === 'games').map(p => renderProjectFileItem(p, 4))}
+
+                                                            {/* Technical projects subfolder */}
+                                                            {renderFileTreeItem({
+                                                                id: 'projects_technical', name: 'technical projects', icon: expandedFolders['projects_technical'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                                type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_technical'], onToggle: () => toggleFolder('projects_technical')
+                                                            })}
+                                                            {expandedFolders['projects_technical'] && PROJECTS_DATA.filter(p => p.category === 'technical').map(p => renderProjectFileItem(p, 4))}
+                                                        </>
+                                                    )}
+                                                </>
+                                            )}
 
                                         </>
                                     )}

@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const raidBezos = {
     id: "raid-bezos",
+    category: "games",
     title: "Raid Bezos",
     subtitle: "Christmas-themed game jam: protect Santa's elves from Big Corp",
     description:

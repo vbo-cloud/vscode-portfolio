@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const jobFinder = {
     id: "job-finder",
+    category: "cloud",
     title: "Job Finder",
     subtitle: "Multi-agent AI pipeline on Azure that automates job hunting",
     description:

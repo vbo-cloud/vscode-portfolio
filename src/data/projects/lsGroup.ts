@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const lsGroup = {
     id: "ls-group",
+    category: "companies",
     title: "LS Group — XRTwin",
     subtitle: "VR industrial application developed in partnership with the CEA",
     description:

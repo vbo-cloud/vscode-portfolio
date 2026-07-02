@@ -2,6 +2,7 @@ import { placeholderImage } from "../../utils/helpers";
 
 export const pescalera = {
     id: "pescalera",
+    category: "games",
     title: "Pescalera",
     subtitle: "Wacky FPS where a fisherman defends his town from invading seagulls",
     description:
