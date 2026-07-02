@@ -1,33 +1,35 @@
-import { mouseShifter } from "./projects/mouseShifter";
-import { reGhosted } from "./projects/reGhosted";
-import { netBridge } from "./projects/netBridge";
-import { shoeStore } from "./projects/shoeStore";
-import { sailPowerBot } from "./projects/sailPowerBot";
-import { bazzarlyAI } from "./projects/bazzarlyAI";
-import { shoppingScraper } from "./projects/shoppingScraper";
-import { cdcSolver } from "./projects/cdcSolver";
-import { sailPowerMonitoring } from "./projects/sailPower";
-import { momentClock } from "./projects/momentClock";
-import { multiThreadedDownloader } from "./projects/multiThreadedDownloader";
-import { ps3VoiceAssistant } from "./projects/ps3VoiceAssistant";
-import { xrayRealityTunnel } from "./projects/xrayRealityTunnel";
-import { arnavVNCOracle } from "./projects/arnavVNCOracle";
-import { serverMonitorDashboard } from "./projects/serverMonitorDashboard";
+import { jobFinder } from "./projects/jobFinder";
+import { dwarfsDelight } from "./projects/dwarfsDelight";
+import { xenosHeresy } from "./projects/xenosHeresy";
+import { pescalera } from "./projects/pescalera";
+import { akanea } from "./projects/akanea";
+import { lsGroup } from "./projects/lsGroup";
+import { realityAcademy } from "./projects/realityAcademy";
+import { onlineFPS } from "./projects/onlineFPS";
+import { proceduralDungeon } from "./projects/proceduralDungeon";
+import { whiz } from "./projects/whiz";
+import { stickIt } from "./projects/stickIt";
+import { raidBezos } from "./projects/raidBezos";
+import { bombMoji } from "./projects/bombMoji";
+import { saveThem } from "./projects/saveThem";
+import { bombers } from "./projects/bombers";
+import { spaceWahou } from "./projects/spaceWahou";
 
 export const PROJECTS_DATA = [
-    mouseShifter,
-    reGhosted,
-    netBridge,
-    shoeStore,
-    sailPowerBot,
-    bazzarlyAI,
-    shoppingScraper,
-    sailPowerMonitoring,
-    cdcSolver,
-    momentClock,
-    ps3VoiceAssistant,
-    xrayRealityTunnel,
-    arnavVNCOracle,
-    serverMonitorDashboard,
-    multiThreadedDownloader
+    jobFinder,
+    dwarfsDelight,
+    xenosHeresy,
+    pescalera,
+    akanea,
+    lsGroup,
+    realityAcademy,
+    onlineFPS,
+    proceduralDungeon,
+    whiz,
+    stickIt,
+    raidBezos,
+    bombMoji,
+    saveThem,
+    bombers,
+    spaceWahou
 ];
