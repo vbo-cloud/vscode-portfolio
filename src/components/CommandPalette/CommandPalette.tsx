@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
     Terminal, FileCode, Lock, GitBranch, Box, FileText,
-    FileJson, Palette, ToggleLeft
+    FileJson, Palette, ToggleLeft, Info
 } from 'lucide-react';
 import { PROJECTS_DATA } from '../../data/projects';
 import { THEMES } from '../../data/themes';
@@ -42,7 +42,7 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         });
 
         // Pages
-        items.push({ id: 'home', title: 'home.tsx', type: 'home', icon: FileCode, path: 'Portfolio/pages/home.tsx' });
+        items.push({ id: 'home', title: 'README.md', type: 'home', icon: Info, path: 'Portfolio/pages/README.md' });
         items.push({ id: 'projects_tsx', title: 'projects.tsx', type: 'projects', icon: FileCode, path: 'Portfolio/pages/projects.tsx' });
 
         // Projects
@@ -93,7 +93,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         items.push({ id: 'env', title: '.env', type: 'code', content: FILE_CONTENTS.env, lang: 'bash', icon: Lock, path: '.env' });
         items.push({ id: 'gitignore', title: '.gitignore', type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash', icon: GitBranch, path: '.gitignore' });
         items.push({ id: 'package', title: 'package.json', type: 'package', icon: Box, path: 'package.json' });
-        items.push({ id: 'readme', title: 'README.md', type: 'readme', icon: FileText, path: 'README.md' });
 
         // Recruiter
         items.push({ id: 'hire_me', title: 'hire_me.json', type: 'code', content: FILE_CONTENTS.hire_me, lang: 'json', icon: FileJson, path: 'recruiter/hire_me.json' });

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import {
     Zap, ExternalLink, Terminal, GitBranch, Filter, LayoutGrid, List,
-    FileText, Github, Globe, Eye, Edit3, FileCode, Linkedin, Code2, ArrowLeft
+    FileText, Github, Globe, FileCode, Linkedin, Code2, ArrowLeft
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
@@ -43,7 +43,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
     const editorScrollRef = useRef<HTMLDivElement>(null);
 
     const [activeTab, setActiveTab] = useState('details');
-    const [isPreview, setIsPreview] = useState(true);
     const [vincentTypingDone, setVincentTypingDone] = useState(false);
 
     // Logic to get breadcrumb path
@@ -52,12 +51,11 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             if (type === 'home') return 'Home';
             if (type === 'projects') return 'Projects';
             if (type === 'detail' && data) return data.title;
-            if (type === 'readme') return 'Readme';
             if (type === 'pdf') return 'Resume';
             return title || '';
         }
 
-        if (type === 'home') return 'Portfolio/pages/home.tsx';
+        if (type === 'home') return 'Portfolio/pages/README.md';
         if (type === 'projects') return 'Portfolio/pages/projects.tsx';
 
         if (type === 'detail' && data)
@@ -79,7 +77,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             return title || 'Unknown';
         }
 
-        if (type === 'readme') return 'README.md';
         if (type === 'pdf') return 'RESUME.PDF';
 
         return '';
@@ -365,7 +362,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             <span>Explore All Projects</span>
                                         </button>
                                         <button
-                                            onClick={() => onOpenFile({ id: 'README.md', title: 'README.md', type: 'readme', content: '' })}
+                                            onClick={() => onOpenFile({ id: 'home.tsx', title: 'README.md', type: 'home' })}
                                             className="w-full flex items-center gap-3 text-[var(--accent)] hover:underline text-sm group"
                                         >
                                             <FileText size={18} className="group-hover:scale-110 transition-transform" />
@@ -1176,60 +1173,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    if (type === 'readme') {
-        return (
-            <div className="h-full flex flex-col relative">
-                {!easyMode && (
-                    <div className={`absolute md:relative top-9 md:top-0 left-0 w-full z-30 transition-all duration-300 ease-in-out md:translate-y-0 ${!isNavBarVisible ? '-translate-y-[71px] opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`}>
-                        <Breadcrumbs path={path} />
-                    </div>
-                )}
-                <div className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0">
-                    <div className="p-4 md:p-12 max-w-4xl mx-auto w-full flex flex-col">
-                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-[var(--border)]">
-                            <div className="flex items-center gap-2 text-[var(--text-primary)] font-mono font-bold text-xl">
-                                <FileText size={20} className="text-[var(--info)]" />
-                                <span>README.md</span>
-                            </div>
-                            <div className="flex bg-[var(--bg-activity)] rounded-lg p-1 border border-[var(--border)]">
-                                <button onClick={() => setIsPreview(true)} className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-all ${isPreview ? 'bg-[var(--bg-main)] text-[var(--accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
-                                    <Eye size={14} /> Preview
-                                </button>
-                                <button onClick={() => setIsPreview(false)} className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-all ${!isPreview ? 'bg-[var(--bg-main)] text-[var(--accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
-                                    <Edit3 size={14} /> Source
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex-1 overflow-y-auto custom-scrollbar">
-                            {isPreview ? (
-                                <div className="prose prose-invert prose-slate max-w-none font-sans text-[var(--text-primary)]">
-                                    <h1 className="flex items-center gap-3 text-3xl font-bold mb-4"><span className="text-4xl">☁️</span><span>Hi, I’m Vincent</span></h1>
-                                    <p className="lead text-lg text-[var(--text-secondary)] mb-6">Cloud Engineer (Azure), AZ-104 certified, transitioning from VR/game development into cloud architecture and AI-assisted automation.</p>
-                                    <hr className="border-[var(--border)] my-8" />
-                                    <h3 className="text-[var(--success)] text-xl font-bold mb-4">🧠 What I Work On</h3>
-                                    <p className="mb-6 text-[var(--text-primary)] leading-relaxed">{WORK_ON_TEXT}</p>
-                                    <h3 className="text-[var(--accent)] text-xl font-bold mb-4">🛠 Core Stack</h3>
-                                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 list-none pl-0 mb-8">
-                                        {CORE_STACK_ITEMS.map(item => (
-                                            <li key={item.label} className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className={item.color}>{item.emoji}</span> {item.label}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ) : (
-                                <div className="flex">
-                                    <div className="w-8 border-r border-[var(--border)] text-right pr-2 text-[var(--line-number)] select-none">1<br />2<br />3</div>
-                                    <div className="pl-2 font-mono text-sm text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
-                                        {`# ☁️ Hi, I’m Vincent\n\nCloud Engineer (Azure), AZ-104 certified. From VR/game development to cloud architecture and AI-assisted automation...`}
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>

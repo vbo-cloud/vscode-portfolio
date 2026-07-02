@@ -474,7 +474,7 @@ export const Sidebar = ({
                                     <h3 className="px-2 text-[10px] font-bold text-[var(--accent)] uppercase opacity-60 mb-1 tracking-widest">Bookmarks</h3>
 
                                     <button
-                                        onClick={() => onOpenFile({ id: 'home.tsx', title: 'home.tsx', type: 'home' })}
+                                        onClick={() => onOpenFile({ id: 'home.tsx', title: 'README.md', type: 'home' })}
                                         className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-all text-xs font-medium border
                                             ${activeTabId === 'home.tsx'
                                                 ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30 shadow-sm'
@@ -628,12 +628,12 @@ export const Sidebar = ({
                                             {expandedFolders['pages'] && (
                                                 <>
                                                     {[
-                                                        { name: "home.tsx", type: "home" },
-                                                        { name: "projects.tsx", type: "projects" },
+                                                        { id: "home.tsx", name: "README.md", type: "home" },
+                                                        { id: "projects.tsx", name: "projects.tsx", type: "projects" },
                                                     ].map(f => {
                                                         const meta = getFileIcon(f.name);
                                                         return renderFileTreeItem({
-                                                            id: f.name,
+                                                            id: f.id,
                                                             name: f.name,
                                                             icon: meta.icon,
                                                             color: meta.color,
@@ -642,11 +642,11 @@ export const Sidebar = ({
                                                             onDragStart: (_e, id) => {
                                                                 window.dispatchEvent(
                                                                     new CustomEvent("explorer-drag-start", {
-                                                                        detail: { id, file: { id: f.name, title: f.name, type: f.type } }
+                                                                        detail: { id, file: { id: f.id, title: f.name, type: f.type } }
                                                                     })
                                                                 );
                                                             },
-                                                            onClick: () => onOpenFile({ id: f.name, title: f.name, type: f.type })
+                                                            onClick: () => onOpenFile({ id: f.id, title: f.name, type: f.type })
                                                         });
                                                     })}
                                                 </>
@@ -700,7 +700,6 @@ export const Sidebar = ({
                                         { name: ".env", type: 'code', content: FILE_CONTENTS.env, lang: 'bash' },
                                         { name: ".gitignore", type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash' },
                                         { name: "package.json", type: "code", content: FILE_CONTENTS.package_json, lang: "json" },
-                                        { name: "README.md", type: 'readme', content: FILE_CONTENTS.readme },
                                         { name: "resume.pdf", type: 'pdf' }
                                     ].map(f => {
                                         const fileMeta = getFileIcon(f.name);
