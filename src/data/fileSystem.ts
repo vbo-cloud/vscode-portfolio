@@ -1,7 +1,6 @@
 import {
   Lock, GitBranch, FileText, Server, FileJson, Atom, FileCode2, Info
 } from 'lucide-react';
-import { PROJECTS_DATA } from './projects';
 
 /* --- FILE CONTENT CONSTANTS --- */
 export const FILE_CONTENTS = {
@@ -122,16 +121,6 @@ This project is licensed under the MIT License.
 <p align="center">
   Built with ❤️ for the Developer Community
 </p>
-`,
-  projects_json: `
-[
-  ${PROJECTS_DATA.map(p => JSON.stringify({
-    id: p.id,
-    title: p.title,
-    tech: p.tech,
-    description: p.description
-  }, null, 2)).join(',\n')}
-]
 `,
   word_wrap_from_hell: JSON.stringify(
     {

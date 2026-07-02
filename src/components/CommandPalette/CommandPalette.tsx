@@ -94,7 +94,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         items.push({ id: 'gitignore', title: '.gitignore', type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash', icon: GitBranch, path: '.gitignore' });
         items.push({ id: 'package', title: 'package.json', type: 'package', icon: Box, path: 'package.json' });
         items.push({ id: 'readme', title: 'README.md', type: 'readme', icon: FileText, path: 'README.md' });
-        items.push({ id: 'projects_json', title: 'projects.json', type: 'code', content: FILE_CONTENTS.projects_json, lang: 'json', icon: FileJson, path: 'src/projects.json' });
         items.push({
             id: 'word_wrap_from_hell',
             title: 'word_wrap_from_hell.json',

@@ -650,30 +650,6 @@ export const Sidebar = ({
                                                             onClick: () => onOpenFile({ id: f.name, title: f.name, type: f.type })
                                                         });
                                                     })}
-                                                    {/* Projects JSON */}
-                                                    {renderFileTreeItem({
-                                                        id: 'projects_json',
-                                                        name: 'projects.json',
-                                                        icon: getFileIcon("projects.json").icon,
-                                                        color: getFileIcon("projects.json").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id: "projects_json", title: "projects.json", type: "code", content: FILE_CONTENTS.projects_json, lang: "json" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "projects_json",
-                                                                title: "projects.json",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.projects_json,
-                                                                lang: "json"
-                                                            })
-                                                    })}
                                                 </>
                                             )}
 

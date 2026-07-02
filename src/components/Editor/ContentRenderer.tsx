@@ -53,10 +53,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             if (title?.startsWith('recruiter/'))
                 return title;
 
-            // pages-level json
-            if (title === 'projects.json')
-                return 'src/pages/projects.json';
-
             // root config files
             if (title?.startsWith('.'))
                 return title;
