@@ -56,7 +56,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
         }
 
         if (type === 'home') return 'Portfolio/pages/README.md';
-        if (type === 'projects') return 'Portfolio/pages/projects.tsx';
+        if (type === 'projects') return 'Portfolio/pages/all_projects.tsx';
 
         if (type === 'detail' && data)
             return `Portfolio/projects/${data.title}.tsx`;
@@ -235,7 +235,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         Pinned Deployments
                                     </h2>
                                     <button
-                                        onClick={() => onOpenFile({ id: 'projects_tsx', title: 'projects.tsx', type: 'projects' })}
+                                        onClick={() => onOpenFile({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects' })}
                                         className="text-[var(--accent)] hover:text-[var(--accent)]/80 text-sm font-bold flex items-center gap-2 group transition-all self-start md:self-auto"
                                     >
                                         Explore Projects
@@ -351,7 +351,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <h2 className="text-sm font-bold text-[var(--text-primary)] mb-4 tracking-wider uppercase opacity-80">Start</h2>
                                     <div className="space-y-4">
                                         <button
-                                            onClick={() => onOpenFile({ id: 'projects_tsx', title: 'projects.tsx', type: 'projects' })}
+                                            onClick={() => onOpenFile({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects' })}
                                             className="w-full flex items-center gap-3 text-[var(--accent)] hover:underline text-sm group"
                                         >
                                             <LayoutGrid size={18} className="group-hover:scale-110 transition-transform" />
@@ -568,7 +568,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 onClick={() =>
                                     onOpenFile({
                                         id: 'projects_tsx',
-                                        title: 'projects.tsx',
+                                        title: 'all_projects.tsx',
                                         type: 'projects'
                                     })
                                 }
@@ -996,7 +996,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </div>
 
                                     <button
-                                        onClick={() => onOpenFile({ id: 'projects.tsx', title: 'projects.tsx', type: 'projects' })}
+                                        onClick={() => onOpenFile({ id: 'projects.tsx', title: 'all_projects.tsx', type: 'projects' })}
                                         className="w-full mt-12 py-4 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm text-[var(--text-primary)] text-sm font-bold hover:bg-[var(--bg-panel)] transition-all flex items-center justify-center gap-2"
                                     >
                                         Back to Assignments

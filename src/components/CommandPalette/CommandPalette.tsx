@@ -43,7 +43,7 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
 
         // Pages
         items.push({ id: 'home', title: 'README.md', type: 'home', icon: Info, path: 'Portfolio/pages/README.md' });
-        items.push({ id: 'projects_tsx', title: 'projects.tsx', type: 'projects', icon: FileCode, path: 'Portfolio/pages/projects.tsx' });
+        items.push({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects', icon: FileCode, path: 'Portfolio/pages/all_projects.tsx' });
 
         // Projects
         PROJECTS_DATA.forEach(p => {

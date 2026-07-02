@@ -485,7 +485,7 @@ export const Sidebar = ({
                                     </button>
 
                                     <button
-                                        onClick={() => onOpenFile({ id: 'projects.tsx', title: 'projects.tsx', type: 'projects' })}
+                                        onClick={() => onOpenFile({ id: 'projects.tsx', title: 'all_projects.tsx', type: 'projects' })}
                                         className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-all text-xs font-medium border
                                             ${activeTabId === 'projects.tsx'
                                                 ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30 shadow-sm'
@@ -573,6 +573,38 @@ export const Sidebar = ({
 
                                     {expandedFolders['src'] && (
                                         <>
+                                            {/* Pages Folder - uses Warning Color */}
+                                            {renderFileTreeItem({
+                                                id: 'pages', name: 'pages', icon: expandedFolders['pages'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                type: 'folder', depth: 1, hasChildren: true, isOpen: expandedFolders['pages'], onToggle: () => toggleFolder('pages')
+                                            })}
+                                            {expandedFolders['pages'] && (
+                                                <>
+                                                    {[
+                                                        { id: "home.tsx", name: "README.md", type: "home" },
+                                                        { id: "projects.tsx", name: "all_projects.tsx", type: "projects" },
+                                                    ].map(f => {
+                                                        const meta = getFileIcon(f.name);
+                                                        return renderFileTreeItem({
+                                                            id: f.id,
+                                                            name: f.name,
+                                                            icon: meta.icon,
+                                                            color: meta.color,
+                                                            type: 'file',
+                                                            depth: 2,
+                                                            onDragStart: (_e, id) => {
+                                                                window.dispatchEvent(
+                                                                    new CustomEvent("explorer-drag-start", {
+                                                                        detail: { id, file: { id: f.id, title: f.name, type: f.type } }
+                                                                    })
+                                                                );
+                                                            },
+                                                            onClick: () => onOpenFile({ id: f.id, title: f.name, type: f.type })
+                                                        });
+                                                    })}
+                                                </>
+                                            )}
+
                                             {/* Projects Folder - uses Success Color */}
                                             {renderFileTreeItem({
                                                 id: 'projects', name: 'projects', icon: expandedFolders['projects'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
@@ -606,38 +638,6 @@ export const Sidebar = ({
                                                     })
                                                 });
                                             })}
-
-                                            {/* Pages Folder - uses Warning Color */}
-                                            {renderFileTreeItem({
-                                                id: 'pages', name: 'pages', icon: expandedFolders['pages'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
-                                                type: 'folder', depth: 1, hasChildren: true, isOpen: expandedFolders['pages'], onToggle: () => toggleFolder('pages')
-                                            })}
-                                            {expandedFolders['pages'] && (
-                                                <>
-                                                    {[
-                                                        { id: "home.tsx", name: "README.md", type: "home" },
-                                                        { id: "projects.tsx", name: "projects.tsx", type: "projects" },
-                                                    ].map(f => {
-                                                        const meta = getFileIcon(f.name);
-                                                        return renderFileTreeItem({
-                                                            id: f.id,
-                                                            name: f.name,
-                                                            icon: meta.icon,
-                                                            color: meta.color,
-                                                            type: 'file',
-                                                            depth: 2,
-                                                            onDragStart: (_e, id) => {
-                                                                window.dispatchEvent(
-                                                                    new CustomEvent("explorer-drag-start", {
-                                                                        detail: { id, file: { id: f.id, title: f.name, type: f.type } }
-                                                                    })
-                                                                );
-                                                            },
-                                                            onClick: () => onOpenFile({ id: f.id, title: f.name, type: f.type })
-                                                        });
-                                                    })}
-                                                </>
-                                            )}
 
                                         </>
                                     )}
