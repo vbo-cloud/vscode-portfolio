@@ -11,6 +11,7 @@ import { Breadcrumbs } from '../UI/Breadcrumbs';
 import { RealMinimap } from './Minimap';
 import { CanvasContributionMap } from '../Widgets/ContributionMap';
 import { TypingEffect } from '../UI/TypingEffect';
+import { TypewriterWords } from '../UI/TypewriterWords';
 
 interface ContentRendererProps {
     type: string;
@@ -163,20 +164,22 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
                                     {/* STATUS GRID - INTEGRATED */}
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-8 border-t border-[var(--border)]">
-                                        {[
-                                            { label: "Current Role", value: "Cloud Engineer (Azure)", color: "text-[var(--warning)]" },
-                                            { label: "Location", value: "Annemasse, France", color: "text-[var(--success)]" },
-                                            { label: "Status", value: "AZ-104 certified, building Job Finder", color: "text-[var(--info)]" }
-                                        ].map((item, idx) => (
-                                            <div key={idx} className="flex flex-col gap-1">
-                                                <span className={`font-sans text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${item.color}`}>
-                                                    {item.label}
-                                                </span>
-                                                <span className="text-[var(--text-primary)] font-sans text-xs md:text-sm font-medium">
-                                                    {item.value}
-                                                </span>
-                                            </div>
-                                        ))}
+                                        <div className="flex flex-col gap-1">
+                                            <span className="font-sans text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-[var(--warning)]">
+                                                Current Role
+                                            </span>
+                                            <span className="text-[var(--text-primary)] font-sans text-xs md:text-sm font-medium">
+                                                <TypewriterWords words={["Cloud Engineer", "DevOps", "Orchestrator"]} />
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <span className="font-sans text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-[var(--info)]">
+                                                Status
+                                            </span>
+                                            <span className="text-[var(--text-primary)] font-sans text-xs md:text-sm font-medium">
+                                                Looking for a new opportunity
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -436,19 +439,13 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             {/* 1. Current Role */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
                                 <span className="text-[var(--warning)] min-w-[80px] md:min-w-[100px]">current_role:</span>
-                                <span className="text-[var(--text-primary)]">"Cloud Engineer (Azure)"</span>
+                                <span className="text-[var(--text-primary)]">"<TypewriterWords words={["Cloud Engineer", "DevOps", "Orchestrator"]} />"</span>
                             </div>
 
-                            {/* 2. Location */}
-                            <div className="flex flex-wrap gap-2 md:gap-4 items-center">
-                                <span className="text-[var(--success)] min-w-[80px] md:min-w-[100px]">location:</span>
-                                <span className="text-[var(--text-primary)]">"Annemasse, France"</span>
-                            </div>
-
-                            {/* 3. Status */}
+                            {/* 2. Status */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
                                 <span className="text-[var(--info)] min-w-[80px] md:min-w-[100px]">status:</span>
-                                <span className="text-[var(--text-primary)]">"AZ-104 certified, building Job Finder"</span>
+                                <span className="text-[var(--text-primary)]">"Looking for a new opportunity"</span>
                             </div>
 
                         </div>
