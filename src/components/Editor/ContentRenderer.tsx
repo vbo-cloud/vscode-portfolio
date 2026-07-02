@@ -31,6 +31,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
     const [activeTab, setActiveTab] = useState('details');
     const [isPreview, setIsPreview] = useState(true);
+    const [vincentTypingDone, setVincentTypingDone] = useState(false);
 
     // Logic to get breadcrumb path
     const getPath = () => {
@@ -154,9 +155,11 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold text-[var(--text-primary)] tracking-tight mb-6 leading-[1.1] md:leading-[1.05]">
                                         Hello, I'm <br />
                                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)]">
-                                            <TypingEffect text="Vincent" speed={150} />
+                                            <TypingEffect text="Vincent" speed={150} onComplete={() => setVincentTypingDone(true)} />
                                         </span>
-                                        <span className="text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
+                                        {!vincentTypingDone && (
+                                            <span className="text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
+                                        )}
                                     </h1>
                                     <p className="text-base md:text-xl text-[var(--text-secondary)] leading-relaxed mb-10 opacity-90 font-sans max-w-lg">
                                         A Cloud Engineer (Azure) automating infrastructure and orchestrating AI pipelines — from a background in VR/game development to cloud architecture.
@@ -169,7 +172,9 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 Current Role
                                             </span>
                                             <span className="text-[var(--text-primary)] font-sans text-xs md:text-sm font-medium">
-                                                <TypewriterWords words={["Cloud Engineer", "DevOps", "Orchestrator"]} />
+                                                {vincentTypingDone && (
+                                                    <TypewriterWords words={["Cloud Engineer", "DevOps", "Orchestrator"]} />
+                                                )}
                                             </span>
                                         </div>
                                         <div className="flex flex-col gap-1">
@@ -426,9 +431,11 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <span className="mr-3">Hello, I'm</span>
                                     {/* DYNAMIC THEME GRADIENT */}
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)]">
-                                        <TypingEffect text="Vincent" speed={150} />
+                                        <TypingEffect text="Vincent" speed={150} onComplete={() => setVincentTypingDone(true)} />
                                     </span>
-                                    <span className="ml-1 text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
+                                    {!vincentTypingDone && (
+                                        <span className="ml-1 text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
+                                    )}
                                 </h1>
                             </div>
                         </div>
@@ -439,7 +446,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             {/* 1. Current Role */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
                                 <span className="text-[var(--warning)] min-w-[80px] md:min-w-[100px]">current_role:</span>
-                                <span className="text-[var(--text-primary)]">"<TypewriterWords words={["Cloud Engineer", "DevOps", "Orchestrator"]} />"</span>
+                                <span className="text-[var(--text-primary)]">"{vincentTypingDone && <TypewriterWords words={["Cloud Engineer", "DevOps", "Orchestrator"]} />}"</span>
                             </div>
 
                             {/* 2. Status */}

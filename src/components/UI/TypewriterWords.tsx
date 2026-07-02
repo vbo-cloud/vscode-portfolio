@@ -45,7 +45,7 @@ export const TypewriterWords = ({
     return (
         <span className={className}>
             {displayedText}
-            <span className="text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
+            <span className="text-white animate-[blink_1s_steps(1)_infinite]">_</span>
         </span>
     );
 };
