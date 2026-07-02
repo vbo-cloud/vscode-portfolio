@@ -115,8 +115,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         );
 
         // Components
-        items.push({ id: 'terminal_comp', title: 'Terminal.tsx', type: 'code', content: FILE_CONTENTS.terminal_component, lang: 'typescript', icon: FileCode, path: 'src/components/Terminal.tsx' });
-        items.push({ id: 'window_comp', title: 'Window.tsx', type: 'code', content: FILE_CONTENTS.window_component, lang: 'typescript', icon: FileCode, path: 'src/components/Window.tsx' });
 
         // Recruiter
         items.push({ id: 'hire_me', title: 'hire_me.json', type: 'code', content: FILE_CONTENTS.hire_me, lang: 'json', icon: FileJson, path: 'recruiter/hire_me.json' });

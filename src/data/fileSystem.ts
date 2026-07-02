@@ -255,46 +255,6 @@ C# enterprise developer
 why am I deploying Terraform at 3am
 AZ-104 certified cloud engineer
 `,
-  terminal_component: `
-import React, { useState } from 'react';
-
-export const Terminal = () => {
-  const [output, setOutput] = useState(['> system_init']);
-
-  // This component powers the CLI interface 
-  // you see at the bottom of the screen!
-  
-  return (
-    <div className="terminal-window">
-      {output.map(line => (
-        <div className="line">{line}</div>
-      ))}
-      <span className="cursor animate-pulse">_</span>
-    </div>
-  );
-};
-`,
-  window_component: `
-import React from 'react';
-
-// The logic behind the draggable windows
-// Uses absolute positioning and mouse event listeners.
-// Yes, this is intentionally overengineered.
-
-export const DraggableWindow = ({ children, x, y }) => {
-  return (
-    <div 
-      style={{ top: y, left: x }} 
-      className="absolute shadow-2xl border border-slate-700"
-    >
-      <div className="title-bar">Drag Me</div>
-      <div className="content">
-        {children}
-      </div>
-    </div>
-  );
-};
-`
 };
 
 /* --- UNIFIED FILE SYSTEM CONFIGURATION --- */

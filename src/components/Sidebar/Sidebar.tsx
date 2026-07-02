@@ -661,54 +661,6 @@ export const Sidebar = ({
                                             {expandedFolders['components'] && (
                                                 <>
                                                     {renderFileTreeItem({
-                                                        id: 'terminal_comp',
-                                                        name: 'Terminal.tsx',
-                                                        icon: getFileIcon("Terminal.tsx").icon,
-                                                        color: getFileIcon("Terminal.tsx").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id: "terminal_comp", title: "Terminal.tsx", type: "code", content: FILE_CONTENTS.terminal_component, lang: "typescript" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "terminal_comp",
-                                                                title: "Terminal.tsx",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.terminal_component,
-                                                                lang: "typescript"
-                                                            })
-                                                    })}
-
-                                                    {renderFileTreeItem({
-                                                        id: 'window_comp',
-                                                        name: 'Window.tsx',
-                                                        icon: getFileIcon("Window.tsx").icon,
-                                                        color: getFileIcon("Window.tsx").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id: "window_comp", title: "Window.tsx", type: "code", content: FILE_CONTENTS.window_component, lang: "typescript" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "window_comp",
-                                                                title: "Window.tsx",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.window_component,
-                                                                lang: "typescript"
-                                                            })
-                                                    })}
-
-                                                    {renderFileTreeItem({
                                                         id: 'word_wrap_from_hell',
                                                         name: 'word_wrap_from_hell.json',
                                                         icon: getFileIcon("word_wrap_from_hell.json").icon,
