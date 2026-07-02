@@ -81,44 +81,6 @@ yarn-error.log*
 # emotional damage
 /burnout
 `,
-  hire_me: `
-{
-  "name": "Vincent Boutin",
-  "role": "Cloud Engineer (Azure)",
-  "looking_for": [
-    "Full-time roles",
-    "Cloud / DevOps engineering",
-    "Contract / Freelance"
-  ],
-  "interests": [
-    "Cloud architecture & IaC (Terraform, Bicep)",
-    "AI-assisted automation & orchestration",
-    "DevOps / CI/CD pipelines"
-  ],
-  "availability": "immediate",
-  "work_style": "documented PR-by-PR, ship-first, iterate-fast",
-  "status": "open_to_opportunities"
-}
-`,
-  skills_json: `
-{
-  "cloud": ["Azure", "Terraform", "Bicep", "ARM Templates"],
-  "code": ["C#", "C++", "Python"],
-  "backend": ["FastAPI", "PostgreSQL", "Service Bus"],
-  "ai": ["OpenAI", "Claude"],
-  "workflow": ["Git", "Agile Methods", "CI/CD", "GitHub Actions", "Docker"],
-  "engines": ["Unity", "Unreal"],
-  "focus": "cloud architecture, automation, and AI orchestration"
-}
-`,
-  career_path: `
-sports science student
-VR/game QA tester
-VR game developer
-C# enterprise developer
-why am I deploying Terraform at 3am
-AZ-104 certified cloud engineer
-`,
 };
 
 /* --- UNIFIED FILE SYSTEM CONFIGURATION --- */

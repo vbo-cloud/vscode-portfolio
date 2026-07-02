@@ -139,8 +139,7 @@ export const Sidebar = ({
     const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
         'src': true,
         'pages': true,
-        'projects': false,
-        'recruiter': true
+        'projects': false
     });
     const [isExplorerMenuOpen, setIsExplorerMenuOpen] = useState(false);
     const [dragOverId, setDragOverId] = useState<string | null>(null);
@@ -496,18 +495,6 @@ export const Sidebar = ({
                                         <LayoutGrid className="w-3.5 h-3.5 opacity-70" />
                                         <span>Featured Projects</span>
                                     </button>
-
-                                    <button
-                                        onClick={() => onOpenFile({ id: 'skills.json', title: 'skills.json', type: 'code', content: FILE_CONTENTS.skills_json, lang: 'json' })}
-                                        className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-all text-xs font-medium border
-                                            ${activeTabId === 'skills.json'
-                                                ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30 shadow-sm'
-                                                : 'text-[var(--text-primary)] hover:bg-[var(--bg-activity)] border-transparent'}
-                                        `}
-                                    >
-                                        <Zap className="w-3.5 h-3.5 opacity-70" />
-                                        <span>Tech Stack & Skills</span>
-                                    </button>
                                 </div>
                             )}
 
@@ -652,46 +639,6 @@ export const Sidebar = ({
                                                 </>
                                             )}
 
-                                        </>
-                                    )}
-
-                                    {/* Recruiter Folder */}
-                                    {renderFileTreeItem({
-                                        id: 'recruiter', name: 'recruiter', icon: expandedFolders['recruiter'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
-                                        type: 'folder', depth: 0, hasChildren: true, isOpen: expandedFolders['recruiter'], onToggle: () => toggleFolder('recruiter')
-                                    })}
-                                    {expandedFolders['recruiter'] && (
-                                        <>
-                                            {[
-                                                { name: "hire_me.json", content: FILE_CONTENTS.hire_me, lang: 'json' },
-                                                { name: "skills.json", content: FILE_CONTENTS.skills_json, lang: 'json' },
-                                                { name: "career_path.txt", content: FILE_CONTENTS.career_path, lang: 'text' }
-                                            ].map(f => {
-                                                const fileMeta = getFileIcon(f.name);
-                                                return renderFileTreeItem({
-                                                    id: `recruiter_${f.name}`,
-                                                    name: f.name,
-                                                    icon: fileMeta.icon,
-                                                    color: fileMeta.color,
-                                                    type: 'file',
-                                                    depth: 1,
-                                                    onDragStart: (_e, id) => {
-                                                        window.dispatchEvent(
-                                                            new CustomEvent("explorer-drag-start", {
-                                                                detail: { id, file: { id, title: `recruiter/${f.name}`, type: 'code', content: f.content, lang: f.lang } }
-                                                            })
-                                                        );
-                                                    },
-                                                    onClick: () =>
-                                                        onOpenFile({
-                                                            id: `recruiter_${f.name}`,
-                                                            title: `recruiter/${f.name}`,
-                                                            type: "code",
-                                                            content: f.content,
-                                                            lang: f.lang
-                                                        })
-                                                });
-                                            })}
                                         </>
                                     )}
 

@@ -62,10 +62,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             return `Portfolio/projects/${data.title}.tsx`;
 
         if (type === 'code') {
-            // recruiter files
-            if (title?.startsWith('recruiter/'))
-                return title;
-
             // root config files
             if (title?.startsWith('.'))
                 return title;

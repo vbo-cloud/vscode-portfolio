@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
     Terminal, FileCode, Lock, GitBranch, Box, FileText,
-    FileJson, Palette, ToggleLeft, Info
+    Palette, ToggleLeft, Info
 } from 'lucide-react';
 import { PROJECTS_DATA } from '../../data/projects';
 import { THEMES } from '../../data/themes';
@@ -93,10 +93,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         items.push({ id: 'env', title: '.env', type: 'code', content: FILE_CONTENTS.env, lang: 'bash', icon: Lock, path: '.env' });
         items.push({ id: 'gitignore', title: '.gitignore', type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash', icon: GitBranch, path: '.gitignore' });
         items.push({ id: 'package', title: 'package.json', type: 'package', icon: Box, path: 'package.json' });
-
-        // Recruiter
-        items.push({ id: 'hire_me', title: 'hire_me.json', type: 'code', content: FILE_CONTENTS.hire_me, lang: 'json', icon: FileJson, path: 'recruiter/hire_me.json' });
-        items.push({ id: 'skills', title: 'skills.json', type: 'code', content: FILE_CONTENTS.skills_json, lang: 'json', icon: FileJson, path: 'recruiter/skills.json' });
 
         return items;
     }, [installedThemes]);
