@@ -581,7 +581,6 @@ export const Sidebar = ({
                                             {expandedFolders['pages'] && (
                                                 <>
                                                     {[
-                                                        { id: "home.tsx", name: "README.md", type: "home" },
                                                         { id: "projects.tsx", name: "all_projects.tsx", type: "projects" },
                                                     ].map(f => {
                                                         const meta = getFileIcon(f.name);
@@ -647,11 +646,13 @@ export const Sidebar = ({
                                         { name: ".env", type: 'code', content: FILE_CONTENTS.env, lang: 'bash' },
                                         { name: ".gitignore", type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash' },
                                         { name: "package.json", type: "code", content: FILE_CONTENTS.package_json, lang: "json" },
+                                        { id: "home.tsx", name: "README.md", type: "home" },
                                         { name: "resume.pdf", type: 'pdf' }
                                     ].map(f => {
                                         const fileMeta = getFileIcon(f.name);
+                                        const fileId = f.id ?? f.name;
                                         return renderFileTreeItem({
-                                            id: f.name,
+                                            id: fileId,
                                             name: f.name,
                                             icon: fileMeta.icon,
                                             color: fileMeta.color,
@@ -660,13 +661,13 @@ export const Sidebar = ({
                                             onDragStart: (_e, id) => {
                                                 window.dispatchEvent(
                                                     new CustomEvent("explorer-drag-start", {
-                                                        detail: { id, file: { id: f.name, title: f.name, type: f.type, content: f.content, lang: f.lang } }
+                                                        detail: { id, file: { id: fileId, title: f.name, type: f.type, content: f.content, lang: f.lang } }
                                                     })
                                                 );
                                             },
                                             onClick: () =>
                                                 onOpenFile({
-                                                    id: f.name,
+                                                    id: fileId,
                                                     title: f.name,
                                                     type: f.type,
                                                     content: f.content,
