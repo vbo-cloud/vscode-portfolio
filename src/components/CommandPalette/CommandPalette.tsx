@@ -94,27 +94,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         items.push({ id: 'gitignore', title: '.gitignore', type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash', icon: GitBranch, path: '.gitignore' });
         items.push({ id: 'package', title: 'package.json', type: 'package', icon: Box, path: 'package.json' });
         items.push({ id: 'readme', title: 'README.md', type: 'readme', icon: FileText, path: 'README.md' });
-        items.push({
-            id: 'word_wrap_from_hell',
-            title: 'word_wrap_from_hell.json',
-            type: 'code',
-            content: FILE_CONTENTS.word_wrap_from_hell,
-            lang: 'json',
-            icon: FileJson,
-            path: 'word_wrap_from_hell.json'
-        });
-        items.push({
-            id: "minimap_stress_test",
-            title: "minimap_stress_test.json",
-            type: "code",
-            content: FILE_CONTENTS.minimap_stress_test,
-            lang: "json",
-            icon: FileJson,
-            path: "minimap_stress_test.json"
-        }
-        );
-
-        // Components
 
         // Recruiter
         items.push({ id: 'hire_me', title: 'hire_me.json', type: 'code', content: FILE_CONTENTS.hire_me, lang: 'json', icon: FileJson, path: 'recruiter/hire_me.json' });

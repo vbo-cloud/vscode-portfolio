@@ -138,7 +138,6 @@ export const Sidebar = ({
     }, [isPanelVisible]);
     const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
         'src': true,
-        'components': false,
         'pages': true,
         'projects': false,
         'recruiter': true
@@ -653,62 +652,6 @@ export const Sidebar = ({
                                                 </>
                                             )}
 
-                                            {/* Components Folder */}
-                                            {renderFileTreeItem({
-                                                id: 'components', name: 'components', icon: expandedFolders['components'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
-                                                type: 'folder', depth: 1, hasChildren: true, isOpen: expandedFolders['components'], onToggle: () => toggleFolder('components')
-                                            })}
-                                            {expandedFolders['components'] && (
-                                                <>
-                                                    {renderFileTreeItem({
-                                                        id: 'word_wrap_from_hell',
-                                                        name: 'word_wrap_from_hell.json',
-                                                        icon: getFileIcon("word_wrap_from_hell.json").icon,
-                                                        color: getFileIcon("word_wrap_from_hell.json").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id, title: "components/word_wrap_from_hell.json", type: "code", content: FILE_CONTENTS.word_wrap_from_hell, lang: "json" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "word_wrap_from_hell",
-                                                                title: "components/word_wrap_from_hell.json",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.word_wrap_from_hell,
-                                                                lang: "json"
-                                                            })
-                                                    })}
-
-                                                    {renderFileTreeItem({
-                                                        id: 'minimap_stress_test',
-                                                        name: 'minimap_stress_test.json',
-                                                        icon: getFileIcon("minimap_stress_test.json").icon,
-                                                        color: getFileIcon("minimap_stress_test.json").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id: "minimap_stress_test", title: "components/minimap_stress_test.json", type: "code", content: FILE_CONTENTS.minimap_stress_test, lang: "json" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "minimap_stress_test",
-                                                                title: "components/minimap_stress_test.json",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.minimap_stress_test,
-                                                                lang: "json"
-                                                            })
-                                                    })}
-                                                </>
-                                            )}
                                         </>
                                     )}
 

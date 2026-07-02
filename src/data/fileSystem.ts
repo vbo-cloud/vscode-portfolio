@@ -122,40 +122,6 @@ This project is licensed under the MIT License.
   Built with ❤️ for the Developer Community
 </p>
 `,
-  word_wrap_from_hell: JSON.stringify(
-    {
-      warning: "DO NOT TURN OFF WORD WRAP",
-      reason: "because some people like pain",
-      payload: "A".repeat(50000)
-    },
-    null,
-    2
-  ),
-
-  minimap_stress_test: `
-{
-  "meta": {
-    "file": "minimap_stress_test.json",
-    "purpose": "stress minimap scrolling",
-    "vibes": "vertical suffering"
-  },
-  "rows": [
-${Array.from({ length: 200 }, (_, i) => `
-    {
-      "row": ${i + 1},
-      "status": "OK",
-      "payload": {
-        "numbers": [${i}, ${i + 1}, ${i + 2}, ${i + 3}, ${i + 4}],
-        "nested": {
-          "level": ${i % 5},
-          "message": "scrolling intensifies"
-        }
-      }
-    }${i < 199 ? "," : ""}
-`).join("")}
-  ]
-}
-`,
   package_json: `
 {
   "name": "vincent-boutin-portfolio",
