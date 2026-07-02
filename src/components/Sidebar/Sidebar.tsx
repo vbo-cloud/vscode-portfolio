@@ -572,7 +572,7 @@ export const Sidebar = ({
                                     size={14}
                                     className={`text-[var(--text-secondary)] transition-transform duration-150 ${(expandedFolders['workspace'] ?? true) ? '' : '-rotate-90'}`}
                                 />
-                                <span className="text-[11px] font-bold text-[var(--text-secondary)] ml-1 tracking-tight uppercase">{easyMode ? 'Files' : 'Portfolio'}</span>
+                                <span className="text-[11px] font-bold text-[var(--text-secondary)] ml-1 tracking-tight uppercase">{easyMode ? 'Files' : 'Vincent Boutin'}</span>
                             </div>
 
                             {(expandedFolders['workspace'] ?? true) && (
@@ -580,7 +580,7 @@ export const Sidebar = ({
 
                                     {/* SRC Folder */}
                                     {renderFileTreeItem({
-                                        id: 'src', name: 'src', icon: expandedFolders['src'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                        id: 'src', name: 'Portfolio', icon: expandedFolders['src'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
                                         type: 'folder', depth: 0, hasChildren: true, isOpen: expandedFolders['src'], onToggle: () => toggleFolder('src')
                                     })}
 

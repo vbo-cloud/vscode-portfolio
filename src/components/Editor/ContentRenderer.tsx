@@ -42,11 +42,11 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             return title || '';
         }
 
-        if (type === 'home') return 'src/pages/home.tsx';
-        if (type === 'projects') return 'src/pages/projects.tsx';
+        if (type === 'home') return 'Portfolio/pages/home.tsx';
+        if (type === 'projects') return 'Portfolio/pages/projects.tsx';
 
         if (type === 'detail' && data)
-            return `src/projects/${data.title}.tsx`;
+            return `Portfolio/projects/${data.title}.tsx`;
 
         if (type === 'code') {
             // recruiter files
@@ -59,7 +59,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
             // components
             if (title?.endsWith('.tsx'))
-                return `src/components/${title}`;
+                return `Portfolio/components/${title}`;
 
             return title || 'Unknown';
         }
@@ -340,7 +340,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                     <FileCode size={16} className="text-[var(--accent)] shrink-0" />
                                                     <span className="text-sm text-[var(--text-primary)] truncate font-sans">{p.title}</span>
                                                 </div>
-                                                <span className="text-[10px] text-[var(--text-secondary)] opacity-0 group-hover:opacity-60 transition-opacity font-mono whitespace-nowrap ml-4">src/projects</span>
+                                                <span className="text-[10px] text-[var(--text-secondary)] opacity-0 group-hover:opacity-60 transition-opacity font-mono whitespace-nowrap ml-4">Portfolio/projects</span>
                                             </div>
                                         ))}
                                     </div>

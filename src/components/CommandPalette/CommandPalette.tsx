@@ -42,12 +42,12 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         });
 
         // Pages
-        items.push({ id: 'home', title: 'home.tsx', type: 'home', icon: FileCode, path: 'src/pages/home.tsx' });
-        items.push({ id: 'projects_tsx', title: 'projects.tsx', type: 'projects', icon: FileCode, path: 'src/pages/projects.tsx' });
+        items.push({ id: 'home', title: 'home.tsx', type: 'home', icon: FileCode, path: 'Portfolio/pages/home.tsx' });
+        items.push({ id: 'projects_tsx', title: 'projects.tsx', type: 'projects', icon: FileCode, path: 'Portfolio/pages/projects.tsx' });
 
         // Projects
         PROJECTS_DATA.forEach(p => {
-            items.push({ id: p.id, title: `${p.title}.tsx`, type: 'detail', data: p, icon: FileCode, path: `src/projects/${p.title}.tsx` });
+            items.push({ id: p.id, title: `${p.title}.tsx`, type: 'detail', data: p, icon: FileCode, path: `Portfolio/projects/${p.title}.tsx` });
         });
         Object.entries(THEMES).forEach(([key, theme]) => {
             if (installedThemes.includes(key)) {
