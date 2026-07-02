@@ -13,6 +13,19 @@ import { CanvasContributionMap } from '../Widgets/ContributionMap';
 import { TypingEffect } from '../UI/TypingEffect';
 import { TypewriterWords } from '../UI/TypewriterWords';
 
+const TRANSITION_TEXT = "Transitioning from VR/game development into cloud architecture and AI-assisted automation.";
+
+const WORK_ON_TEXT = 'I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.';
+
+const CORE_STACK_ITEMS = [
+    { emoji: '☁️', color: 'text-sky-400', label: 'Azure / Terraform / Bicep' },
+    { emoji: '🟢', color: 'text-green-500', label: 'FastAPI / PostgreSQL / Service Bus' },
+    { emoji: '🤖', color: 'text-orange-400', label: 'OpenAI / Claude / AI orchestration' },
+    { emoji: '🔷', color: 'text-violet-400', label: 'C# / C++ / Python' },
+    { emoji: '⚙️', color: 'text-slate-300', label: 'Git / Agile / CI/CD / Docker' },
+    { emoji: '🎮', color: 'text-cyan-300', label: 'Unity / Unreal (VR & game dev background)' },
+];
+
 interface ContentRendererProps {
     type: string;
     data?: any;
@@ -189,6 +202,37 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 </div>
                             </div>
 
+                            {/* TRANSITION STATEMENT */}
+                            <div className="mb-12 flex items-start gap-4 max-w-3xl">
+                                <span className="text-3xl md:text-4xl shrink-0">☁️</span>
+                                <p className="text-base md:text-lg text-[var(--text-secondary)] leading-relaxed font-sans pt-1">
+                                    {TRANSITION_TEXT}
+                                </p>
+                            </div>
+
+                            {/* WHAT I WORK ON */}
+                            <div className="mb-12">
+                                <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+                                    <span>🧠</span> What I Work On
+                                </h2>
+                                <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed font-sans max-w-3xl">
+                                    {WORK_ON_TEXT}
+                                </p>
+                            </div>
+
+                            {/* CORE STACK */}
+                            <div className="mb-12">
+                                <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
+                                    <span>🛠</span> Core Stack
+                                </h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                                    {CORE_STACK_ITEMS.map(item => (
+                                        <div key={item.label} className="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border)] p-3 rounded-sm text-sm text-[var(--text-primary)] font-sans">
+                                            <span className={item.color}>{item.emoji}</span> {item.label}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
                             {/* PINNED PROJECTS - AMAZING IMAGE GRID */}
                             <div className="mb-12">
@@ -455,6 +499,38 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 <span className="text-[var(--text-primary)]">"Looking for a new opportunity"</span>
                             </div>
 
+                        </div>
+
+                        {/* TRANSITION STATEMENT */}
+                        <div className="mb-8 flex items-start gap-3">
+                            <span className="text-2xl md:text-3xl shrink-0">☁️</span>
+                            <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed font-sans pt-1">
+                                {TRANSITION_TEXT}
+                            </p>
+                        </div>
+
+                        {/* WHAT I WORK ON */}
+                        <div className="mb-8">
+                            <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2 font-sans">
+                                <span>🧠</span> What I Work On
+                            </h2>
+                            <p className="text-sm text-[var(--text-secondary)] leading-relaxed font-sans">
+                                {WORK_ON_TEXT}
+                            </p>
+                        </div>
+
+                        {/* CORE STACK */}
+                        <div className="mb-8">
+                            <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2 font-sans">
+                                <span>🛠</span> Core Stack
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {CORE_STACK_ITEMS.map(item => (
+                                    <div key={item.label} className="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border)] p-3 rounded-sm text-sm text-[var(--text-primary)] font-sans">
+                                        <span className={item.color}>{item.emoji}</span> {item.label}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         {/* PINNED PROJECTS */}
@@ -1138,15 +1214,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <p className="lead text-lg text-[var(--text-secondary)] mb-6">Cloud Engineer (Azure), AZ-104 certified, transitioning from VR/game development into cloud architecture and AI-assisted automation.</p>
                                     <hr className="border-[var(--border)] my-8" />
                                     <h3 className="text-[var(--success)] text-xl font-bold mb-4">🧠 What I Work On</h3>
-                                    <p className="mb-6 text-[var(--text-primary)] leading-relaxed">I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.</p>
+                                    <p className="mb-6 text-[var(--text-primary)] leading-relaxed">{WORK_ON_TEXT}</p>
                                     <h3 className="text-[var(--accent)] text-xl font-bold mb-4">🛠 Core Stack</h3>
                                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 list-none pl-0 mb-8">
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-sky-400">☁️</span> Azure / Terraform / Bicep</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-green-500">🟢</span> FastAPI / PostgreSQL / Service Bus</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-orange-400">🤖</span> OpenAI / Claude / AI orchestration</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-violet-400">🔷</span> C# / C++ / Python</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-slate-300">⚙️</span> Git / Agile / CI/CD / Docker</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-cyan-300">🎮</span> Unity / Unreal (VR & game dev background)</li>
+                                        {CORE_STACK_ITEMS.map(item => (
+                                            <li key={item.label} className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className={item.color}>{item.emoji}</span> {item.label}</li>
+                                        ))}
                                     </ul>
                                 </div>
                             ) : (
