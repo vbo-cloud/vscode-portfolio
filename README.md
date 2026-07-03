@@ -1,10 +1,8 @@
-# ide-portfolio
+# vscode-portfolio — Vincent Boutin
 
 ![Status](https://img.shields.io/badge/status-stable-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![React](https://img.shields.io/badge/react-18-cyan) ![TypeScript](https://img.shields.io/badge/typescript-5-blue)
 
-A developer portfolio reimagined as a fully functional IDE. This project is built to look, feel, and behave like Visual Studio Code, providing an immersive experience for visitors to explore your work.
-
-![ide-portfolio Preview](https://raw.githubusercontent.com/arnofrxdd/portfolio/main/portfolio.png)
+Vincent Boutin's developer portfolio, reimagined as a fully functional IDE. Built to look, feel, and behave like Visual Studio Code, providing an immersive experience for visitors to explore his transition from VR/game development to Azure cloud engineering.
 
 ## ✨ Features
 
@@ -28,8 +26,8 @@ A developer portfolio reimagined as a fully functional IDE. This project is buil
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/arnofrxdd/ide-portfolio.git
-cd ide-portfolio
+git clone https://github.com/vbo-cloud/vscode-portfolio.git
+cd vscode-portfolio
 npm install
 ```
 
@@ -66,4 +64,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for a detailed guide on:
 
 ## 📄 License
 
-MIT © Arnav
+MIT © Vincent Boutin

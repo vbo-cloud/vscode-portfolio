@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export const TypingEffect = ({ text, speed = 50, startDelay = 0 }: { text: string, speed?: number, startDelay?: number }) => {
+export const TypingEffect = ({ text, speed = 50, startDelay = 0, onComplete }: { text: string, speed?: number, startDelay?: number, onComplete?: () => void }) => {
     const [displayedText, setDisplayedText] = useState("");
     const [started, setStarted] = useState(false);
 
@@ -18,9 +18,11 @@ export const TypingEffect = ({ text, speed = 50, startDelay = 0 }: { text: strin
                 i++;
             } else {
                 clearInterval(interval);
+                onComplete?.();
             }
         }, speed);
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [text, speed, started]);
 
     return <span>{displayedText}</span>;

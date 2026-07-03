@@ -13,7 +13,7 @@ export const Breadcrumbs = ({ path }: BreadcrumbsProps) => {
     return (
         <div className="h-6 flex items-center px-2 text-[11px] text-[var(--text-secondary)] bg-[var(--bg-main)] border-b border-[var(--border)] select-none overflow-hidden whitespace-nowrap z-20 shrink-0">
             <div className="flex items-center hover:text-[var(--text-primary)] cursor-pointer group px-0.5 rounded transition-colors">
-                <span>Portfolio</span>
+                <span>Vincent Boutin</span>
             </div>
 
             {parts.map((part, i) => {

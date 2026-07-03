@@ -260,7 +260,7 @@ export const SecondarySidebar = ({ isOpen, activeTabId, onClose }: SecondarySide
                                                 )}
                                                 {/* Check for 'live' link safely since its optional in type */}
                                                 {(currentProject.links as any).live && (
-                                                    <a href="https://linkedin.com/in/arnav" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--bg-activity)] border border-[var(--border)] text-[var(--text-primary)] text-[11px] font-bold hover:bg-[var(--bg-activity)]/80 transition-all">
+                                                    <a href="https://linkedin.com/in/vincent-boutin/" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--bg-activity)] border border-[var(--border)] text-[var(--text-primary)] text-[11px] font-bold hover:bg-[var(--bg-activity)]/80 transition-all">
                                                         <Linkedin size={12} />
                                                         Get in Touch
                                                     </a>
@@ -268,15 +268,15 @@ export const SecondarySidebar = ({ isOpen, activeTabId, onClose }: SecondarySide
                                             </>
                                         ) : (
                                             <>
-                                                <a href="https://github.com/arnofrxdd" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--bg-activity)] border border-[var(--border)] text-[var(--text-primary)] text-[11px] font-bold hover:bg-[var(--bg-activity)]/80 transition-all">
+                                                <a href="https://github.com/vbo-cloud" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--bg-activity)] border border-[var(--border)] text-[var(--text-primary)] text-[11px] font-bold hover:bg-[var(--bg-activity)]/80 transition-all">
                                                     <Github size={12} />
                                                     GitHub
                                                 </a>
-                                                <a href="https://linkedin.com/in/arnav" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--bg-activity)] border border-[var(--border)] text-[var(--text-primary)] text-[11px] font-bold hover:bg-[var(--bg-activity)]/80 transition-all">
+                                                <a href="https://linkedin.com/in/vincent-boutin/" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--bg-activity)] border border-[var(--border)] text-[var(--text-primary)] text-[11px] font-bold hover:bg-[var(--bg-activity)]/80 transition-all">
                                                     <Linkedin size={12} />
                                                     LinkedIn
                                                 </a>
-                                                <a href="mailto:arnav@example.com" className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--bg-activity)] border border-[var(--border)] text-[var(--text-primary)] text-[11px] font-bold hover:bg-[var(--bg-activity)]/80 transition-all">
+                                                <a href="mailto:contact@vincentboutin.dev" className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[var(--bg-activity)] border border-[var(--border)] text-[var(--text-primary)] text-[11px] font-bold hover:bg-[var(--bg-activity)]/80 transition-all">
                                                     <Mail size={12} />
                                                     Email
                                                 </a>
@@ -402,15 +402,15 @@ export const SecondarySidebar = ({ isOpen, activeTabId, onClose }: SecondarySide
                                             </>
                                         ) : (
                                             <>
-                                                <a href="https://github.com/arnofrxdd" target="_blank" rel="noreferrer" className="flex items-center gap-2 p-2 hover:bg-[var(--bg-activity)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                                                <a href="https://github.com/vbo-cloud" target="_blank" rel="noreferrer" className="flex items-center gap-2 p-2 hover:bg-[var(--bg-activity)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
                                                     <Github size={13} />
                                                     <span className="text-[11px] font-sans">GitHub</span>
                                                 </a>
-                                                <a href="https://www.linkedin.com/in/arnav-dalai-557214252/" target="_blank" rel="noreferrer" className="flex items-center gap-2 p-2 hover:bg-[var(--bg-activity)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                                                <a href="https://www.linkedin.com/in/vincent-boutin/" target="_blank" rel="noreferrer" className="flex items-center gap-2 p-2 hover:bg-[var(--bg-activity)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
                                                     <Linkedin size={13} />
                                                     <span className="text-[11px] font-sans">LinkedIn</span>
                                                 </a>
-                                                <a href="mailto:arnav@example.com" className="flex items-center gap-2 p-2 hover:bg-[var(--bg-activity)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                                                <a href="mailto:contact@vincentboutin.dev" className="flex items-center gap-2 p-2 hover:bg-[var(--bg-activity)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
                                                     <Mail size={13} />
                                                     <span className="text-[11px] font-sans">Email</span>
                                                 </a>

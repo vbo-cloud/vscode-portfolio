@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
     Terminal, FileCode, Lock, GitBranch, Box, FileText,
-    FileJson, Palette, ToggleLeft
+    Palette, ToggleLeft, Info
 } from 'lucide-react';
 import { PROJECTS_DATA } from '../../data/projects';
 import { THEMES } from '../../data/themes';
@@ -42,12 +42,12 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         });
 
         // Pages
-        items.push({ id: 'home', title: 'home.tsx', type: 'home', icon: FileCode, path: 'src/pages/home.tsx' });
-        items.push({ id: 'projects_tsx', title: 'projects.tsx', type: 'projects', icon: FileCode, path: 'src/pages/projects.tsx' });
+        items.push({ id: 'home', title: 'README.md', type: 'home', icon: Info, path: 'README.md' });
+        items.push({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects', icon: FileCode, path: 'Portfolio/pages/all_projects.tsx' });
 
         // Projects
         PROJECTS_DATA.forEach(p => {
-            items.push({ id: p.id, title: `${p.title}.tsx`, type: 'detail', data: p, icon: FileCode, path: `src/projects/${p.title}.tsx` });
+            items.push({ id: p.id, title: `${p.title}.tsx`, type: 'detail', data: p, icon: FileCode, path: `Portfolio/projects/${p.title}.tsx` });
         });
         Object.entries(THEMES).forEach(([key, theme]) => {
             if (installedThemes.includes(key)) {
@@ -93,35 +93,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         items.push({ id: 'env', title: '.env', type: 'code', content: FILE_CONTENTS.env, lang: 'bash', icon: Lock, path: '.env' });
         items.push({ id: 'gitignore', title: '.gitignore', type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash', icon: GitBranch, path: '.gitignore' });
         items.push({ id: 'package', title: 'package.json', type: 'package', icon: Box, path: 'package.json' });
-        items.push({ id: 'readme', title: 'README.md', type: 'readme', icon: FileText, path: 'README.md' });
-        items.push({ id: 'projects_json', title: 'projects.json', type: 'code', content: FILE_CONTENTS.projects_json, lang: 'json', icon: FileJson, path: 'src/projects.json' });
-        items.push({
-            id: 'word_wrap_from_hell',
-            title: 'word_wrap_from_hell.json',
-            type: 'code',
-            content: FILE_CONTENTS.word_wrap_from_hell,
-            lang: 'json',
-            icon: FileJson,
-            path: 'word_wrap_from_hell.json'
-        });
-        items.push({
-            id: "minimap_stress_test",
-            title: "minimap_stress_test.json",
-            type: "code",
-            content: FILE_CONTENTS.minimap_stress_test,
-            lang: "json",
-            icon: FileJson,
-            path: "minimap_stress_test.json"
-        }
-        );
-
-        // Components
-        items.push({ id: 'terminal_comp', title: 'Terminal.tsx', type: 'code', content: FILE_CONTENTS.terminal_component, lang: 'typescript', icon: FileCode, path: 'src/components/Terminal.tsx' });
-        items.push({ id: 'window_comp', title: 'Window.tsx', type: 'code', content: FILE_CONTENTS.window_component, lang: 'typescript', icon: FileCode, path: 'src/components/Window.tsx' });
-
-        // Recruiter
-        items.push({ id: 'hire_me', title: 'hire_me.json', type: 'code', content: FILE_CONTENTS.hire_me, lang: 'json', icon: FileJson, path: 'recruiter/hire_me.json' });
-        items.push({ id: 'skills', title: 'skills.json', type: 'code', content: FILE_CONTENTS.skills_json, lang: 'json', icon: FileJson, path: 'recruiter/skills.json' });
 
         return items;
     }, [installedThemes]);
