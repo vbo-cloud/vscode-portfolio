@@ -3,13 +3,13 @@ import { X } from 'lucide-react';
 import { PROJECTS_DATA } from '../../data/projects';
 import { generateGeminiResponse } from '../../services/gemini';
 
-interface TerminalProps {
+interface BottomPanelProps {
     isOpen: boolean;
     onClose: () => void;
     onOpenFile: (file: any) => void;
 }
 
-export const IntegratedTerminal = ({ isOpen, onClose, onOpenFile }: TerminalProps) => {
+export const BottomPanel = ({ isOpen, onClose, onOpenFile }: BottomPanelProps) => {
     const [history, setHistory] = useState([
         { type: 'system', content: 'Shell v2.5.0' },
         { type: 'system', content: 'Type "help" for commands or just ask a question.' },
