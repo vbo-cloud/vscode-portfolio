@@ -916,7 +916,7 @@ const App = () => {
                 </div>
               )}
             </div>
-            <BottomPanel isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} onOpenFile={openFile} />
+            <BottomPanel isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
           </div>
 
           <SecondarySidebar isOpen={isSecondarySidebarOpen} activeTabId={activeTabId} onClose={() => setIsSecondarySidebarOpen(false)} />
