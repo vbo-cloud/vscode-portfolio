@@ -66,3 +66,26 @@ export const placeholderImage = (title: string, accent = "#38bdf8") => {
 </svg>`.trim();
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
+
+/**
+ * Extracts the video ID from a youtube.com/watch?v= or youtu.be/ URL,
+ * so callers only need to store the plain watch URL and can derive
+ * both the embed src and the "watch on YouTube" link from it.
+ */
+export const getYouTubeEmbedId = (url: string): string | null => {
+    try {
+        const u = new URL(url);
+        if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
+        return u.searchParams.get("v");
+    } catch {
+        return null;
+    }
+};
+
+/**
+ * Prefixes a public/-relative asset path with Vite's configured base
+ * (this app is deployed under /ide-portfolio/, not domain root), so
+ * project media keeps resolving correctly wherever it's hosted.
+ */
+export const withBasePath = (path: string): string =>
+    `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
