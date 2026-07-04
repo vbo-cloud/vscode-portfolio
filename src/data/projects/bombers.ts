@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const bombers = {
     id: "bombers",
@@ -15,7 +15,12 @@ Bombers is my first-year final project at IIM, developed entirely solo: every fe
     links: {
         live: "https://unrealitygames.itch.io/bombers"
     },
-    image: placeholderImage("Bombers", "#475569"),
+    image: withBasePath("/projects/games/bombers/cover.png"),
+    gallery: [
+        withBasePath("/projects/games/bombers/gallery-1-menu.png"),
+        withBasePath("/projects/games/bombers/gallery-2.png"),
+        withBasePath("/projects/games/bombers/gallery-3.png")
+    ],
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

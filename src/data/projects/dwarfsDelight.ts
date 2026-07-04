@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const dwarfsDelight = {
     id: "dwarfs-delight",
@@ -17,7 +17,12 @@ I was Lead Programmer on a large cross-discipline team (2 programmers, 3 artists
     links: {
         live: "https://dwarfsdelight.itch.io/dwarfs-delight"
     },
-    image: placeholderImage("Dwarfs Delight", "#f59e0b"),
+    image: withBasePath("/projects/games/dwarfs-delight/gallery-1-home.png"),
+    gallery: [
+        withBasePath("/projects/games/dwarfs-delight/gallery-2-gameplay.png"),
+        withBasePath("/projects/games/dwarfs-delight/gallery-3-leaderboard.png")
+    ],
+    video: { title: "Dwarfs Delight", url: "https://www.youtube.com/watch?v=mlVmQVqUZ7E" },
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

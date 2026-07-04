@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const bombMoji = {
     id: "bomb-moji",
@@ -17,7 +17,12 @@ I built the controls (ground/ice movement, dash, weapon recoil), the interface (
     links: {
         live: "https://unrealitygames.itch.io/bombmoji"
     },
-    image: placeholderImage("Bomb'Moji", "#f97316"),
+    image: withBasePath("/projects/games/bomb-moji/cover.png"),
+    gallery: [
+        withBasePath("/projects/games/bomb-moji/gallery-1.png"),
+        withBasePath("/projects/games/bomb-moji/gallery-2.png"),
+        withBasePath("/projects/games/bomb-moji/gallery-3.png")
+    ],
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

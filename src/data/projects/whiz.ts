@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const whiz = {
     id: "whiz",
@@ -17,7 +17,12 @@ I built player and camera movement (boost, brake, grappling-hook swings, a super
     links: {
         live: "https://unrealitygames.itch.io/whiz"
     },
-    image: placeholderImage("Whiz", "#fb923c"),
+    image: withBasePath("/projects/games/whiz/cover.png"),
+    gallery: [
+        withBasePath("/projects/games/whiz/gallery-1.png"),
+        withBasePath("/projects/games/whiz/gallery-2.png"),
+        withBasePath("/projects/games/whiz/gallery-3.png")
+    ],
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

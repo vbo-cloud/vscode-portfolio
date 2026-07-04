@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const saveThem = {
     id: "save-them",
@@ -15,7 +15,11 @@ A solo personal project built at IIM: a small puzzle game where you guide captur
     links: {
         live: "https://unrealitygames.itch.io/save-them"
     },
-    image: placeholderImage("Save Them", "#64748b"),
+    image: withBasePath("/projects/games/save-them/cover.png"),
+    gallery: [
+        withBasePath("/projects/games/save-them/gallery-1.png"),
+        withBasePath("/projects/games/save-them/gallery-2.png")
+    ],
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const pescalera = {
     id: "pescalera",
@@ -17,7 +17,11 @@ As Lead Programmer, I built player/camera movement, input handling, weapon and a
     links: {
         live: "https://antxn.itch.io/pescalera"
     },
-    image: placeholderImage("Pescalera", "#0ea5e9"),
+    image: withBasePath("/projects/games/pescalera/gallery-1.png"),
+    gallery: [
+        withBasePath("/projects/games/pescalera/gallery-2.png"),
+        withBasePath("/projects/games/pescalera/gallery-3.png")
+    ],
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",
