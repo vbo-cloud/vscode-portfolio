@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const proceduralDungeon = {
     id: "procedural-dungeon-generation",
@@ -15,7 +15,10 @@ Rather than starting from scratch, we adapted "Dwarfs Delight" to the constraint
     type: "Procedural Generation",
     tech: ["Unity", "C#", "Git"],
     links: {},
-    image: placeholderImage("Procedural Dungeon", "#eab308"),
+    image: withBasePath("/projects/technical/procedural-dungeon-generation/cover.png"),
+    pdfs: [
+        { label: "Report (FR)", path: withBasePath("/projects/technical/procedural-dungeon-generation/report-fr.pdf") }
+    ],
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",
