@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const lsGroup = {
     id: "ls-group",
@@ -15,7 +15,12 @@ The work centered on improving UX and performance while following an MVC-inspire
     type: "VR / Industrial Software",
     tech: ["Unity", "C#", "Git", "CI/CD", "Agile Methods"],
     links: {},
-    image: placeholderImage("XRTwin", "#22d3ee"),
+    image: withBasePath("/projects/companies/ls-group/cover.png"),
+    video: { title: "XR Twin : Simplicity for your Reality", url: "https://www.youtube.com/watch?v=7_1Ufyg3mHM" },
+    pdfs: [
+        { label: "Work-study Report — Master 1 (FR)", path: withBasePath("/projects/companies/ls-group/work-study-report-master1.pdf") },
+        { label: "Work-study Report — Master 2 (FR)", path: withBasePath("/projects/companies/ls-group/work-study-report-master2.pdf") }
+    ],
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",
