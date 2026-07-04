@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
+import { getYouTubeEmbedId } from '../../utils/helpers';
 // @ts-ignore
 import FONT_5x7 from '../../data/font5x7';
 import { Breadcrumbs } from '../UI/Breadcrumbs';
@@ -913,6 +914,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 <Github size={18} /> Source Code
                                             </a>
                                         )}
+                                        {data.pdfs?.map((pdf: { label: string; path: string }) => (
+                                            <a key={pdf.path} href={pdf.path} target="_blank" rel="noopener noreferrer"
+                                                className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold rounded-sm hover:bg-white/20 transition-all flex items-center gap-2">
+                                                <FileText size={18} /> {pdf.label}
+                                            </a>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -928,6 +935,41 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         {data.longDescription || data.description}
                                     </p>
                                 </section>
+
+                                {data.video && (
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Video
+                                        </h2>
+                                        <div className="aspect-video w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-lg">
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
+                                                title={data.video.title}
+                                                className="w-full h-full"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            />
+                                        </div>
+                                    </section>
+                                )}
+
+                                {data.gallery && data.gallery.length > 0 && (
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Gallery
+                                        </h2>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                            {data.gallery.map((src: string, i: number) => (
+                                                <img
+                                                    key={src}
+                                                    src={src}
+                                                    alt={`${data.title} screenshot ${i + 2}`}
+                                                    className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
+                                                />
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
 
                                 {data.architecture && (
                                     <section>
@@ -1056,6 +1098,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             <Github size={14} /> Repository
                                         </a>
                                     )}
+                                    {data.pdfs?.map((pdf: { label: string; path: string }) => (
+                                        <a key={pdf.path} href={pdf.path} target="_blank" rel="noopener noreferrer"
+                                            className="px-4 py-1.5 bg-[var(--bg-activity)] hover:bg-[var(--bg-panel)] border border-[var(--border)] text-[var(--text-primary)] text-sm font-medium rounded-sm transition-all flex items-center gap-2">
+                                            <FileText size={14} /> {pdf.label}
+                                        </a>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -1098,6 +1146,18 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             </p>
                                         </div>
 
+                                        {data.video && (
+                                            <div className="mb-6 aspect-video max-w-2xl w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-xl">
+                                                <iframe
+                                                    src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
+                                                    title={data.video.title}
+                                                    className="w-full h-full"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                />
+                                            </div>
+                                        )}
+
                                         {/* Fixed Size Screenshot */}
                                         <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl max-w-2xl w-full">
                                             <img
@@ -1106,6 +1166,19 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 className="w-full h-auto object-cover"
                                             />
                                         </div>
+
+                                        {data.gallery && data.gallery.length > 0 && (
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 max-w-2xl w-full">
+                                                {data.gallery.map((src: string, i: number) => (
+                                                    <img
+                                                        key={src}
+                                                        src={src}
+                                                        alt={`${data.title} screenshot ${i + 2}`}
+                                                        className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 
