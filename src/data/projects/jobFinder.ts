@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { placeholderImage, withBasePath } from "../../utils/helpers";
 
 export const jobFinder = {
     id: "job-finder",
@@ -35,6 +35,10 @@ Development itself leans on an AI-assisted workflow: up to 4 Claude Code agents 
         github: "https://github.com/vbo-cloud/job-finder"
     },
     image: placeholderImage("Job Finder", "#38bdf8"),
+    htmlEmbed: {
+        title: "Job Finder — Architecture Diagram",
+        path: withBasePath("/projects/cloud/job-finder/architecture-diagram.html")
+    },
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

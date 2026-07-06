@@ -18,6 +18,83 @@ const TRANSITION_TEXT = "Transitioning from VR/game development into cloud archi
 
 const WORK_ON_TEXT = 'I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.';
 
+/**
+ * Renders a self-contained HTML embed (e.g. an exported architecture diagram)
+ * scaled to fit — with the container height matched to the scaled content, so
+ * the iframe's own natural size never overflows and no scrollbar ever appears.
+ * `section` (the bounding rect of the wider outer section, measured by the
+ * caller) grows the display size beyond the narrow column it actually sits in.
+ * Centering by an even bleed around the *column's* own center would misalign
+ * it whenever that column isn't itself centered on the page (e.g. the left
+ * 2/3 of a 3-column grid) — so instead we align the embed's left edge to the
+ * section's actual left edge via `marginLeft`, computed from both elements'
+ * real viewport positions (`getBoundingClientRect`), not just their widths.
+ */
+const HtmlEmbedFrame = ({ embed, section }: { embed: { title: string; path: string }; section?: { left: number; width: number } }) => {
+    const measureRef = useRef<HTMLDivElement>(null);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+    const [localRect, setLocalRect] = useState({ left: 0, width: 0 });
+    const [contentSize, setContentSize] = useState<{ width: number; height: number } | null>(null);
+
+    useEffect(() => {
+        const el = measureRef.current;
+        if (!el) return;
+        const update = () => {
+            const rect = el.getBoundingClientRect();
+            setLocalRect({ left: rect.left, width: rect.width });
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(el);
+        window.addEventListener('resize', update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', update);
+        };
+    }, []);
+
+    const handleLoad = () => {
+        const doc = iframeRef.current?.contentDocument;
+        if (doc?.documentElement) {
+            setContentSize({
+                width: doc.documentElement.scrollWidth,
+                height: doc.documentElement.scrollHeight
+            });
+        }
+    };
+
+    const displayWidth = Math.max(section?.width || 0, localRect.width);
+    const scale = contentSize && displayWidth ? displayWidth / contentSize.width : 1;
+    const offsetLeft = section ? section.left - localRect.left : 0;
+
+    return (
+        <div ref={measureRef} className="w-full">
+            <div
+                className="overflow-hidden rounded-sm border border-[var(--border)] shadow-lg"
+                style={{
+                    width: displayWidth || '100%',
+                    height: contentSize ? contentSize.height * scale : 600,
+                    marginLeft: offsetLeft
+                }}
+            >
+                <iframe
+                    ref={iframeRef}
+                    src={embed.path}
+                    title={embed.title}
+                    onLoad={handleLoad}
+                    style={{
+                        width: contentSize ? contentSize.width : '100%',
+                        height: contentSize ? contentSize.height : '100%',
+                        border: 'none',
+                        transform: contentSize ? `scale(${scale})` : undefined,
+                        transformOrigin: 'top left'
+                    }}
+                />
+            </div>
+        </div>
+    );
+};
+
 const CORE_STACK_ITEMS = [
     { emoji: '☁️', color: 'text-sky-400', label: 'Azure / Terraform / Bicep' },
     { emoji: '🟢', color: 'text-green-500', label: 'FastAPI / PostgreSQL / Service Bus' },
@@ -45,6 +122,26 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
     const [activeTab, setActiveTab] = useState('details');
     const [vincentTypingDone, setVincentTypingDone] = useState(false);
+
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const [sectionRect, setSectionRect] = useState({ left: 0, width: 0 });
+
+    useEffect(() => {
+        const el = sectionRef.current;
+        if (!el) return;
+        const update = () => {
+            const rect = el.getBoundingClientRect();
+            setSectionRect({ left: rect.left, width: rect.width });
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(el);
+        window.addEventListener('resize', update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', update);
+        };
+    }, []);
 
     // Logic to get breadcrumb path
     const getPath = () => {
@@ -886,7 +983,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
         if (easyMode) {
             return (
                 <div className="h-full flex flex-col bg-[var(--bg-main)]">
-                    <div className="flex-1 overflow-y-auto custom-scrollbar" onScroll={onScroll}>
+                    <div ref={sectionRef} className="flex-1 overflow-y-auto custom-scrollbar" onScroll={onScroll}>
                         {/* Immersive Detail Header */}
                         <div className="relative h-[40vh] min-h-[300px] w-full overflow-hidden">
                             <img src={data.image} alt={data.title} className="w-full h-full object-cover" />
@@ -935,6 +1032,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         {data.longDescription || data.description}
                                     </p>
                                 </section>
+
+                                {data.htmlEmbed && (
+                                    <section>
+                                        <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
+                                    </section>
+                                )}
 
                                 {data.video && (
                                     <section>
@@ -1058,7 +1161,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <Breadcrumbs path={path} />
                     </div>
                 )}
-                <div className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0" onScroll={onScroll}>
+                <div ref={sectionRef} className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0" onScroll={onScroll}>
                     {/* EXTENSION HEADER */}
                     <div className="px-4 md:px-12 max-w-5xl mx-auto w-full py-8">
                         <div className="flex flex-col md:flex-row gap-6 mb-6">
@@ -1145,6 +1248,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 {data.longDescription?.trim()}
                                             </p>
                                         </div>
+
+                                        {data.htmlEmbed && (
+                                            <div className="mb-6 max-w-2xl w-full">
+                                                <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
+                                            </div>
+                                        )}
 
                                         {data.video && (
                                             <div className="mb-6 aspect-video max-w-2xl w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-xl">
