@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const xenosHeresy = {
     id: "xenos-heresy",
@@ -17,7 +17,7 @@ I owned the project's architecture: tile-selection tooling for movement and atta
     links: {
         live: "https://play.google.com/store/apps/details?id=com.iimjv24T1.xenosHeresy"
     },
-    image: placeholderImage("Xenos Heresy", "#ef4444"),
+    image: withBasePath("/projects/games/xenos-heresy/cover.png"),
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

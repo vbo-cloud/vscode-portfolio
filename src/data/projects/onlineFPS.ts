@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const onlineFPS = {
     id: "online-fps",
@@ -17,7 +17,8 @@ I set up the entire network architecture: Enet integration, binary packet serial
     links: {
         live: "https://antxn.itch.io/pescalera"
     },
-    image: placeholderImage("Online FPS", "#84cc16"),
+    image: withBasePath("/projects/technical/online-fps/cover.png"),
+    video: { title: "OnlineFPS Project", url: "https://www.youtube.com/watch?v=gOHP8Xui4ig" },
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

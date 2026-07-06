@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const realityAcademy = {
     id: "reality-academy",
@@ -15,7 +15,10 @@ The core deliverable was a visual graph system letting non-developers author VR 
     type: "VR / Tooling",
     tech: ["Unity", "C#", "Git"],
     links: {},
-    image: placeholderImage("Reality Academy", "#f472b6"),
+    image: withBasePath("/projects/companies/reality-academy/cover.jpg"),
+    pdfs: [
+        { label: "Internship Report", path: withBasePath("/projects/companies/reality-academy/internship-report.pdf") }
+    ],
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

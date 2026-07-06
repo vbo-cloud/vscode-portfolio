@@ -27,3 +27,6 @@ dist-ssr
 *.sln
 *.sw?
 src/AppBackup.tsx
+
+# Claude Code
+.claude/

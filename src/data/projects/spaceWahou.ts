@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const spaceWahou = {
     id: "space-wahou",
@@ -17,7 +17,7 @@ I built player movement, the system that attaches collected blue ships to the pl
     links: {
         live: "https://unrealitygames.itch.io/space-wahou"
     },
-    image: placeholderImage("Space Wahou", "#a855f7"),
+    image: withBasePath("/projects/games/space-wahou/cover.png"),
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

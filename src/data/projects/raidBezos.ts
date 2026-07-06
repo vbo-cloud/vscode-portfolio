@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const raidBezos = {
     id: "raid-bezos",
@@ -17,7 +17,7 @@ The pitch: Big Corporations have come to enslave Santa's elves the day before Ch
     links: {
         live: "https://unrealitygames.itch.io/raid-bezos"
     },
-    image: placeholderImage("Raid Bezos", "#dc2626"),
+    image: withBasePath("/projects/games/raid-bezos/cover.png"),
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

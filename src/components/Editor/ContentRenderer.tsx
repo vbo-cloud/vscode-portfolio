@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
+import { getYouTubeEmbedId } from '../../utils/helpers';
 // @ts-ignore
 import FONT_5x7 from '../../data/font5x7';
 import { Breadcrumbs } from '../UI/Breadcrumbs';
@@ -16,6 +17,83 @@ import { TypewriterWords } from '../UI/TypewriterWords';
 const TRANSITION_TEXT = "Transitioning from VR/game development into cloud architecture and AI-assisted automation.";
 
 const WORK_ON_TEXT = 'I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.';
+
+/**
+ * Renders a self-contained HTML embed (e.g. an exported architecture diagram)
+ * scaled to fit — with the container height matched to the scaled content, so
+ * the iframe's own natural size never overflows and no scrollbar ever appears.
+ * `section` (the bounding rect of the wider outer section, measured by the
+ * caller) grows the display size beyond the narrow column it actually sits in.
+ * Centering by an even bleed around the *column's* own center would misalign
+ * it whenever that column isn't itself centered on the page (e.g. the left
+ * 2/3 of a 3-column grid) — so instead we align the embed's left edge to the
+ * section's actual left edge via `marginLeft`, computed from both elements'
+ * real viewport positions (`getBoundingClientRect`), not just their widths.
+ */
+const HtmlEmbedFrame = ({ embed, section }: { embed: { title: string; path: string }; section?: { left: number; width: number } }) => {
+    const measureRef = useRef<HTMLDivElement>(null);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+    const [localRect, setLocalRect] = useState({ left: 0, width: 0 });
+    const [contentSize, setContentSize] = useState<{ width: number; height: number } | null>(null);
+
+    useEffect(() => {
+        const el = measureRef.current;
+        if (!el) return;
+        const update = () => {
+            const rect = el.getBoundingClientRect();
+            setLocalRect({ left: rect.left, width: rect.width });
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(el);
+        window.addEventListener('resize', update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', update);
+        };
+    }, []);
+
+    const handleLoad = () => {
+        const doc = iframeRef.current?.contentDocument;
+        if (doc?.documentElement) {
+            setContentSize({
+                width: doc.documentElement.scrollWidth,
+                height: doc.documentElement.scrollHeight
+            });
+        }
+    };
+
+    const displayWidth = Math.max(section?.width || 0, localRect.width);
+    const scale = contentSize && displayWidth ? displayWidth / contentSize.width : 1;
+    const offsetLeft = section ? section.left - localRect.left : 0;
+
+    return (
+        <div ref={measureRef} className="w-full">
+            <div
+                className="overflow-hidden rounded-sm border border-[var(--border)] shadow-lg"
+                style={{
+                    width: displayWidth || '100%',
+                    height: contentSize ? contentSize.height * scale : 600,
+                    marginLeft: offsetLeft
+                }}
+            >
+                <iframe
+                    ref={iframeRef}
+                    src={embed.path}
+                    title={embed.title}
+                    onLoad={handleLoad}
+                    style={{
+                        width: contentSize ? contentSize.width : '100%',
+                        height: contentSize ? contentSize.height : '100%',
+                        border: 'none',
+                        transform: contentSize ? `scale(${scale})` : undefined,
+                        transformOrigin: 'top left'
+                    }}
+                />
+            </div>
+        </div>
+    );
+};
 
 const CORE_STACK_ITEMS = [
     { emoji: '☁️', color: 'text-sky-400', label: 'Azure / Terraform / Bicep' },
@@ -44,6 +122,26 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
     const [activeTab, setActiveTab] = useState('details');
     const [vincentTypingDone, setVincentTypingDone] = useState(false);
+
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const [sectionRect, setSectionRect] = useState({ left: 0, width: 0 });
+
+    useEffect(() => {
+        const el = sectionRef.current;
+        if (!el) return;
+        const update = () => {
+            const rect = el.getBoundingClientRect();
+            setSectionRect({ left: rect.left, width: rect.width });
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(el);
+        window.addEventListener('resize', update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', update);
+        };
+    }, []);
 
     // Logic to get breadcrumb path
     const getPath = () => {
@@ -885,7 +983,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
         if (easyMode) {
             return (
                 <div className="h-full flex flex-col bg-[var(--bg-main)]">
-                    <div className="flex-1 overflow-y-auto custom-scrollbar" onScroll={onScroll}>
+                    <div ref={sectionRef} className="flex-1 overflow-y-auto custom-scrollbar" onScroll={onScroll}>
                         {/* Immersive Detail Header */}
                         <div className="relative h-[40vh] min-h-[300px] w-full overflow-hidden">
                             <img src={data.image} alt={data.title} className="w-full h-full object-cover" />
@@ -913,6 +1011,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 <Github size={18} /> Source Code
                                             </a>
                                         )}
+                                        {data.pdfs?.map((pdf: { label: string; path: string }) => (
+                                            <a key={pdf.path} href={pdf.path} target="_blank" rel="noopener noreferrer"
+                                                className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold rounded-sm hover:bg-white/20 transition-all flex items-center gap-2">
+                                                <FileText size={18} /> {pdf.label}
+                                            </a>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -928,6 +1032,47 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         {data.longDescription || data.description}
                                     </p>
                                 </section>
+
+                                {data.htmlEmbed && (
+                                    <section>
+                                        <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
+                                    </section>
+                                )}
+
+                                {data.video && (
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Video
+                                        </h2>
+                                        <div className="aspect-video w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-lg">
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
+                                                title={data.video.title}
+                                                className="w-full h-full"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            />
+                                        </div>
+                                    </section>
+                                )}
+
+                                {data.gallery && data.gallery.length > 0 && (
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Gallery
+                                        </h2>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                            {data.gallery.map((src: string, i: number) => (
+                                                <img
+                                                    key={src}
+                                                    src={src}
+                                                    alt={`${data.title} screenshot ${i + 2}`}
+                                                    className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
+                                                />
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
 
                                 {data.architecture && (
                                     <section>
@@ -1016,7 +1161,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <Breadcrumbs path={path} />
                     </div>
                 )}
-                <div className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0" onScroll={onScroll}>
+                <div ref={sectionRef} className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0" onScroll={onScroll}>
                     {/* EXTENSION HEADER */}
                     <div className="px-4 md:px-12 max-w-5xl mx-auto w-full py-8">
                         <div className="flex flex-col md:flex-row gap-6 mb-6">
@@ -1056,6 +1201,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             <Github size={14} /> Repository
                                         </a>
                                     )}
+                                    {data.pdfs?.map((pdf: { label: string; path: string }) => (
+                                        <a key={pdf.path} href={pdf.path} target="_blank" rel="noopener noreferrer"
+                                            className="px-4 py-1.5 bg-[var(--bg-activity)] hover:bg-[var(--bg-panel)] border border-[var(--border)] text-[var(--text-primary)] text-sm font-medium rounded-sm transition-all flex items-center gap-2">
+                                            <FileText size={14} /> {pdf.label}
+                                        </a>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -1098,6 +1249,24 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             </p>
                                         </div>
 
+                                        {data.htmlEmbed && (
+                                            <div className="mb-6 max-w-2xl w-full">
+                                                <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
+                                            </div>
+                                        )}
+
+                                        {data.video && (
+                                            <div className="mb-6 aspect-video max-w-2xl w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-xl">
+                                                <iframe
+                                                    src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
+                                                    title={data.video.title}
+                                                    className="w-full h-full"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                />
+                                            </div>
+                                        )}
+
                                         {/* Fixed Size Screenshot */}
                                         <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl max-w-2xl w-full">
                                             <img
@@ -1106,6 +1275,19 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 className="w-full h-auto object-cover"
                                             />
                                         </div>
+
+                                        {data.gallery && data.gallery.length > 0 && (
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 max-w-2xl w-full">
+                                                {data.gallery.map((src: string, i: number) => (
+                                                    <img
+                                                        key={src}
+                                                        src={src}
+                                                        alt={`${data.title} screenshot ${i + 2}`}
+                                                        className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 

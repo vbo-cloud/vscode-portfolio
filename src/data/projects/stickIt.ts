@@ -1,4 +1,4 @@
-import { placeholderImage } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const stickIt = {
     id: "stick-it",
@@ -15,7 +15,12 @@ My work covered directional jump preview and physics (stickiness/slipping, colli
     type: "Local Multiplayer Brawler",
     tech: ["Unity", "C#", "Git"],
     links: {},
-    image: placeholderImage("Stick It", "#22c55e"),
+    image: withBasePath("/projects/games/stick-it/cover.png"),
+    gallery: [
+        withBasePath("/projects/games/stick-it/gallery-1.gif"),
+        withBasePath("/projects/games/stick-it/gallery-2.gif"),
+        withBasePath("/projects/games/stick-it/gallery-3.gif")
+    ],
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",
