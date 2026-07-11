@@ -16,7 +16,7 @@ import { CustomScrollbarStyles } from './components/Styles/CustomScrollbar';
 import { ToastContainer } from './components/UI/Toast';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { ContentRenderer } from './components/Editor/ContentRenderer';
-import { IntegratedTerminal } from './components/Terminal/Terminal';
+import { BottomPanel } from './components/BottomPanel/BottomPanel';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
 import { ContextMenu } from './components/UI/ContextMenu';
 import { SecondarySidebar } from './components/Sidebar/SecondarySidebar';
@@ -916,7 +916,7 @@ const App = () => {
                 </div>
               )}
             </div>
-            <IntegratedTerminal isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} onOpenFile={openFile} />
+            <BottomPanel isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
           </div>
 
           <SecondarySidebar isOpen={isSecondarySidebarOpen} activeTabId={activeTabId} onClose={() => setIsSecondarySidebarOpen(false)} />
