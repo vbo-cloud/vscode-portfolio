@@ -1,16 +1,108 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import {
     Zap, ExternalLink, Terminal, GitBranch, Filter, LayoutGrid, List,
-    FileText, Github, Globe, Eye, Edit3, FileCode, Linkedin, Code2, ArrowLeft
+    FileText, Github, Globe, FileCode, Linkedin, Code2, ArrowLeft
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
+import { getYouTubeEmbedId } from '../../utils/helpers';
 // @ts-ignore
 import FONT_5x7 from '../../data/font5x7';
 import { Breadcrumbs } from '../UI/Breadcrumbs';
 import { RealMinimap } from './Minimap';
 import { CanvasContributionMap } from '../Widgets/ContributionMap';
 import { TypingEffect } from '../UI/TypingEffect';
+import { TypewriterWords } from '../UI/TypewriterWords';
+
+const TRANSITION_TEXT = "Transitioning from VR/game development into cloud architecture and AI-assisted automation.";
+
+const WORK_ON_TEXT = 'I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.';
+
+/**
+ * Renders a self-contained HTML embed (e.g. an exported architecture diagram)
+ * scaled to fit — with the container height matched to the scaled content, so
+ * the iframe's own natural size never overflows and no scrollbar ever appears.
+ * `section` (the bounding rect of the wider outer section, measured by the
+ * caller) grows the display size beyond the narrow column it actually sits in.
+ * Centering by an even bleed around the *column's* own center would misalign
+ * it whenever that column isn't itself centered on the page (e.g. the left
+ * 2/3 of a 3-column grid) — so instead we align the embed's left edge to the
+ * section's actual left edge via `marginLeft`, computed from both elements'
+ * real viewport positions (`getBoundingClientRect`), not just their widths.
+ */
+const HtmlEmbedFrame = ({ embed, section }: { embed: { title: string; path: string }; section?: { left: number; width: number } }) => {
+    const measureRef = useRef<HTMLDivElement>(null);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+    const [localRect, setLocalRect] = useState({ left: 0, width: 0 });
+    const [contentSize, setContentSize] = useState<{ width: number; height: number } | null>(null);
+
+    useEffect(() => {
+        const el = measureRef.current;
+        if (!el) return;
+        const update = () => {
+            const rect = el.getBoundingClientRect();
+            setLocalRect({ left: rect.left, width: rect.width });
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(el);
+        window.addEventListener('resize', update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', update);
+        };
+    }, []);
+
+    const handleLoad = () => {
+        const doc = iframeRef.current?.contentDocument;
+        if (doc?.documentElement) {
+            setContentSize({
+                width: doc.documentElement.scrollWidth,
+                height: doc.documentElement.scrollHeight
+            });
+        }
+    };
+
+    const displayWidth = Math.max(section?.width || 0, localRect.width);
+    const scale = contentSize && displayWidth ? displayWidth / contentSize.width : 1;
+    const offsetLeft = section ? section.left - localRect.left : 0;
+
+    return (
+        <div ref={measureRef} className="w-full">
+            <div
+                className="overflow-hidden rounded-sm border border-[var(--border)] shadow-lg"
+                style={{
+                    width: displayWidth || '100%',
+                    height: contentSize ? contentSize.height * scale : 600,
+                    marginLeft: offsetLeft
+                }}
+            >
+                <iframe
+                    ref={iframeRef}
+                    src={embed.path}
+                    title={embed.title}
+                    onLoad={handleLoad}
+                    style={{
+                        width: contentSize ? contentSize.width : '100%',
+                        height: contentSize ? contentSize.height : '100%',
+                        border: 'none',
+                        transform: contentSize ? `scale(${scale})` : undefined,
+                        transformOrigin: 'top left'
+                    }}
+                />
+            </div>
+        </div>
+    );
+};
+
+const CORE_STACK_ITEMS = [
+    { emoji: '☁️', color: 'text-sky-400', label: 'Azure / Terraform / Bicep' },
+    { emoji: '🟢', color: 'text-green-500', label: 'FastAPI / PostgreSQL / Service Bus' },
+    { emoji: '🤖', color: 'text-orange-400', label: 'OpenAI / Claude / AI orchestration' },
+    { emoji: '🔷', color: 'text-violet-400', label: 'C# / C++ / Python' },
+    { emoji: '⚙️', color: 'text-slate-300', label: 'Git / Agile / CI/CD / Docker' },
+    { emoji: '🎮', color: 'text-cyan-300', label: 'Unity / Unreal (VR & game dev background)' },
+];
 
 interface ContentRendererProps {
     type: string;
@@ -29,7 +121,27 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
     const editorScrollRef = useRef<HTMLDivElement>(null);
 
     const [activeTab, setActiveTab] = useState('details');
-    const [isPreview, setIsPreview] = useState(true);
+    const [vincentTypingDone, setVincentTypingDone] = useState(false);
+
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const [sectionRect, setSectionRect] = useState({ left: 0, width: 0 });
+
+    useEffect(() => {
+        const el = sectionRef.current;
+        if (!el) return;
+        const update = () => {
+            const rect = el.getBoundingClientRect();
+            setSectionRect({ left: rect.left, width: rect.width });
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(el);
+        window.addEventListener('resize', update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', update);
+        };
+    }, []);
 
     // Logic to get breadcrumb path
     const getPath = () => {
@@ -37,38 +149,28 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             if (type === 'home') return 'Home';
             if (type === 'projects') return 'Projects';
             if (type === 'detail' && data) return data.title;
-            if (type === 'readme') return 'Readme';
             if (type === 'pdf') return 'Resume';
             return title || '';
         }
 
-        if (type === 'home') return 'src/pages/home.tsx';
-        if (type === 'projects') return 'src/pages/projects.tsx';
+        if (type === 'home') return 'README.md';
+        if (type === 'projects') return 'Portfolio/pages/all_projects.tsx';
 
         if (type === 'detail' && data)
-            return `src/projects/${data.title}.tsx`;
+            return `Portfolio/projects/${data.title}.tsx`;
 
         if (type === 'code') {
-            // recruiter files
-            if (title?.startsWith('recruiter/'))
-                return title;
-
-            // pages-level json
-            if (title === 'projects.json')
-                return 'src/pages/projects.json';
-
             // root config files
             if (title?.startsWith('.'))
                 return title;
 
             // components
             if (title?.endsWith('.tsx'))
-                return `src/components/${title}`;
+                return `Portfolio/components/${title}`;
 
             return title || 'Unknown';
         }
 
-        if (type === 'readme') return 'README.md';
         if (type === 'pdf') return 'RESUME.PDF';
 
         return '';
@@ -140,10 +242,10 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
     if (type === 'home') {
         const featuredProjects = PROJECTS_DATA.filter(p => p.featured);
         const recentActivity = [
-            { action: "Optimizing", target: "frontend performance", time: "ongoing" },
-            { action: "Designing", target: "scalable systems", time: "active" },
-            { action: "Refining", target: "developer experience", time: "constant" },
-            { action: "Building", target: "production-ready tools", time: "always" },
+            { action: "Automating", target: "Azure infrastructure with Terraform", time: "ongoing" },
+            { action: "Orchestrating", target: "AI agent pipelines", time: "active" },
+            { action: "Hardening", target: "secretless CI/CD with OIDC", time: "constant" },
+            { action: "Documenting", target: "every decision, PR by PR", time: "always" },
         ];
 
         if (easyMode) {
@@ -157,34 +259,71 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold text-[var(--text-primary)] tracking-tight mb-6 leading-[1.1] md:leading-[1.05]">
                                         Hello, I'm <br />
                                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)]">
-                                            <TypingEffect text="Arnav" speed={150} />
+                                            <TypingEffect text="Vincent" speed={150} onComplete={() => setVincentTypingDone(true)} />
                                         </span>
-                                        <span className="text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
+                                        {!vincentTypingDone && (
+                                            <span className="text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
+                                        )}
                                     </h1>
                                     <p className="text-base md:text-xl text-[var(--text-secondary)] leading-relaxed mb-10 opacity-90 font-sans max-w-lg">
-                                        A Full-Stack Engineer crafting high-performance digital experiences and developer-centric engineering solutions.
+                                        A Cloud Engineer (Azure) automating infrastructure and orchestrating AI pipelines — from a background in VR/game development to cloud architecture.
                                     </p>
 
                                     {/* STATUS GRID - INTEGRATED */}
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-8 border-t border-[var(--border)]">
-                                        {[
-                                            { label: "Current Role", value: "Full Stack Engineer", color: "text-[var(--warning)]" },
-                                            { label: "Location", value: "Remote", color: "text-[var(--success)]" },
-                                            { label: "Status", value: "Building cool things", color: "text-[var(--info)]" }
-                                        ].map((item, idx) => (
-                                            <div key={idx} className="flex flex-col gap-1">
-                                                <span className={`font-sans text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${item.color}`}>
-                                                    {item.label}
-                                                </span>
-                                                <span className="text-[var(--text-primary)] font-sans text-xs md:text-sm font-medium">
-                                                    {item.value}
-                                                </span>
-                                            </div>
-                                        ))}
+                                        <div className="flex flex-col gap-1">
+                                            <span className="font-sans text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-[var(--warning)]">
+                                                Current Role
+                                            </span>
+                                            <span className="text-[var(--text-primary)] font-sans text-xs md:text-sm font-medium">
+                                                {vincentTypingDone && (
+                                                    <TypewriterWords words={["Cloud Engineer", "DevOps", "Orchestrator"]} />
+                                                )}
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <span className="font-sans text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-[var(--info)]">
+                                                Status
+                                            </span>
+                                            <span className="text-[var(--text-primary)] font-sans text-xs md:text-sm font-medium">
+                                                Looking for a new opportunity
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
+                            {/* TRANSITION STATEMENT */}
+                            <div className="mb-12 flex items-start gap-4 max-w-3xl">
+                                <span className="text-3xl md:text-4xl shrink-0">☁️</span>
+                                <p className="text-base md:text-lg text-[var(--text-secondary)] leading-relaxed font-sans pt-1">
+                                    {TRANSITION_TEXT}
+                                </p>
+                            </div>
+
+                            {/* WHAT I WORK ON */}
+                            <div className="mb-12">
+                                <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+                                    <span>🧠</span> What I Work On
+                                </h2>
+                                <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed font-sans max-w-3xl">
+                                    {WORK_ON_TEXT}
+                                </p>
+                            </div>
+
+                            {/* CORE STACK */}
+                            <div className="mb-12">
+                                <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
+                                    <span>🛠</span> Core Stack
+                                </h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                                    {CORE_STACK_ITEMS.map(item => (
+                                        <div key={item.label} className="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border)] p-3 rounded-sm text-sm text-[var(--text-primary)] font-sans">
+                                            <span className={item.color}>{item.emoji}</span> {item.label}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
                             {/* PINNED PROJECTS - AMAZING IMAGE GRID */}
                             <div className="mb-12">
@@ -194,7 +333,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         Pinned Deployments
                                     </h2>
                                     <button
-                                        onClick={() => onOpenFile({ id: 'projects_tsx', title: 'projects.tsx', type: 'projects' })}
+                                        onClick={() => onOpenFile({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects' })}
                                         className="text-[var(--accent)] hover:text-[var(--accent)]/80 text-sm font-bold flex items-center gap-2 group transition-all self-start md:self-auto"
                                     >
                                         Explore Projects
@@ -291,14 +430,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="p-8 md:p-12 max-w-5xl mx-auto animate-in fade-in duration-500">
                             <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                                 <div>
-                                    <h1 className="text-4xl text-[var(--text-primary)] font-light mb-2">Arnav's Portfolio</h1>
-                                    <p className="text-lg text-[var(--text-secondary)] opacity-70">Full Stack Engineer & System Architect</p>
+                                    <h1 className="text-4xl text-[var(--text-primary)] font-light mb-2">Vincent Boutin's Portfolio</h1>
+                                    <p className="text-lg text-[var(--text-secondary)] opacity-70">Cloud Engineer (Azure) — from game dev to cloud engineering</p>
                                 </div>
                                 <div className="flex gap-4">
-                                    <a href="https://github.com/arnofrxdd" target="_blank" rel="noopener noreferrer" className="p-2 bg-[var(--bg-activity)] hover:bg-[var(--accent)]/20 border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all">
+                                    <a href="https://github.com/vbo-cloud" target="_blank" rel="noopener noreferrer" className="p-2 bg-[var(--bg-activity)] hover:bg-[var(--accent)]/20 border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all">
                                         <Github size={20} />
                                     </a>
-                                    <a href="https://www.linkedin.com/in/arnav-dalai-557214252/" target="_blank" rel="noopener noreferrer" className="p-2 bg-[var(--bg-activity)] hover:bg-[var(--accent)]/20 border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all" title="LinkedIn">
+                                    <a href="https://www.linkedin.com/in/vincent-boutin/" target="_blank" rel="noopener noreferrer" className="p-2 bg-[var(--bg-activity)] hover:bg-[var(--accent)]/20 border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all" title="LinkedIn">
                                         <Linkedin size={20} />
                                     </a>
                                 </div>
@@ -310,14 +449,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <h2 className="text-sm font-bold text-[var(--text-primary)] mb-4 tracking-wider uppercase opacity-80">Start</h2>
                                     <div className="space-y-4">
                                         <button
-                                            onClick={() => onOpenFile({ id: 'projects_tsx', title: 'projects.tsx', type: 'projects' })}
+                                            onClick={() => onOpenFile({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects' })}
                                             className="w-full flex items-center gap-3 text-[var(--accent)] hover:underline text-sm group"
                                         >
                                             <LayoutGrid size={18} className="group-hover:scale-110 transition-transform" />
                                             <span>Explore All Projects</span>
                                         </button>
                                         <button
-                                            onClick={() => onOpenFile({ id: 'README.md', title: 'README.md', type: 'readme', content: '' })}
+                                            onClick={() => onOpenFile({ id: 'home.tsx', title: 'README.md', type: 'home' })}
                                             className="w-full flex items-center gap-3 text-[var(--accent)] hover:underline text-sm group"
                                         >
                                             <FileText size={18} className="group-hover:scale-110 transition-transform" />
@@ -344,7 +483,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                     <FileCode size={16} className="text-[var(--accent)] shrink-0" />
                                                     <span className="text-sm text-[var(--text-primary)] truncate font-sans">{p.title}</span>
                                                 </div>
-                                                <span className="text-[10px] text-[var(--text-secondary)] opacity-0 group-hover:opacity-60 transition-opacity font-mono whitespace-nowrap ml-4">src/projects</span>
+                                                <span className="text-[10px] text-[var(--text-secondary)] opacity-0 group-hover:opacity-60 transition-opacity font-mono whitespace-nowrap ml-4">Portfolio/projects</span>
                                             </div>
                                         ))}
                                     </div>
@@ -427,9 +566,11 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <span className="mr-3">Hello, I'm</span>
                                     {/* DYNAMIC THEME GRADIENT */}
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)]">
-                                        <TypingEffect text="Arnav" speed={150} />
+                                        <TypingEffect text="Vincent" speed={150} onComplete={() => setVincentTypingDone(true)} />
                                     </span>
-                                    <span className="ml-1 text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
+                                    {!vincentTypingDone && (
+                                        <span className="ml-1 text-[var(--accent)] animate-[blink_1s_steps(1)_infinite]">_</span>
+                                    )}
                                 </h1>
                             </div>
                         </div>
@@ -440,21 +581,47 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             {/* 1. Current Role */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
                                 <span className="text-[var(--warning)] min-w-[80px] md:min-w-[100px]">current_role:</span>
-                                <span className="text-[var(--text-primary)]">"Full Stack Engineer"</span>
+                                <span className="text-[var(--text-primary)]">"{vincentTypingDone && <TypewriterWords words={["Cloud Engineer", "DevOps", "Orchestrator"]} />}"</span>
                             </div>
 
-                            {/* 2. Location */}
-                            <div className="flex flex-wrap gap-2 md:gap-4 items-center">
-                                <span className="text-[var(--success)] min-w-[80px] md:min-w-[100px]">location:</span>
-                                <span className="text-[var(--text-primary)]">"Remote"</span>
-                            </div>
-
-                            {/* 3. Status */}
+                            {/* 2. Status */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
                                 <span className="text-[var(--info)] min-w-[80px] md:min-w-[100px]">status:</span>
-                                <span className="text-[var(--text-primary)]">"Building cool things"</span>
+                                <span className="text-[var(--text-primary)]">"Looking for a new opportunity"</span>
                             </div>
 
+                        </div>
+
+                        {/* TRANSITION STATEMENT */}
+                        <div className="mb-8 flex items-start gap-3">
+                            <span className="text-2xl md:text-3xl shrink-0">☁️</span>
+                            <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed font-sans pt-1">
+                                {TRANSITION_TEXT}
+                            </p>
+                        </div>
+
+                        {/* WHAT I WORK ON */}
+                        <div className="mb-8">
+                            <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2 font-sans">
+                                <span>🧠</span> What I Work On
+                            </h2>
+                            <p className="text-sm text-[var(--text-secondary)] leading-relaxed font-sans">
+                                {WORK_ON_TEXT}
+                            </p>
+                        </div>
+
+                        {/* CORE STACK */}
+                        <div className="mb-8">
+                            <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2 font-sans">
+                                <span>🛠</span> Core Stack
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {CORE_STACK_ITEMS.map(item => (
+                                    <div key={item.label} className="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border)] p-3 rounded-sm text-sm text-[var(--text-primary)] font-sans">
+                                        <span className={item.color}>{item.emoji}</span> {item.label}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         {/* PINNED PROJECTS */}
@@ -499,7 +666,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 onClick={() =>
                                     onOpenFile({
                                         id: 'projects_tsx',
-                                        title: 'projects.tsx',
+                                        title: 'all_projects.tsx',
                                         type: 'projects'
                                     })
                                 }
@@ -816,7 +983,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
         if (easyMode) {
             return (
                 <div className="h-full flex flex-col bg-[var(--bg-main)]">
-                    <div className="flex-1 overflow-y-auto custom-scrollbar" onScroll={onScroll}>
+                    <div ref={sectionRef} className="flex-1 overflow-y-auto custom-scrollbar" onScroll={onScroll}>
                         {/* Immersive Detail Header */}
                         <div className="relative h-[40vh] min-h-[300px] w-full overflow-hidden">
                             <img src={data.image} alt={data.title} className="w-full h-full object-cover" />
@@ -844,6 +1011,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 <Github size={18} /> Source Code
                                             </a>
                                         )}
+                                        {data.pdfs?.map((pdf: { label: string; path: string }) => (
+                                            <a key={pdf.path} href={pdf.path} target="_blank" rel="noopener noreferrer"
+                                                className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold rounded-sm hover:bg-white/20 transition-all flex items-center gap-2">
+                                                <FileText size={18} /> {pdf.label}
+                                            </a>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -859,6 +1032,47 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         {data.longDescription || data.description}
                                     </p>
                                 </section>
+
+                                {data.htmlEmbed && (
+                                    <section>
+                                        <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
+                                    </section>
+                                )}
+
+                                {data.video && (
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Video
+                                        </h2>
+                                        <div className="aspect-video w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-lg">
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
+                                                title={data.video.title}
+                                                className="w-full h-full"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            />
+                                        </div>
+                                    </section>
+                                )}
+
+                                {data.gallery && data.gallery.length > 0 && (
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Gallery
+                                        </h2>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                            {data.gallery.map((src: string, i: number) => (
+                                                <img
+                                                    key={src}
+                                                    src={src}
+                                                    alt={`${data.title} screenshot ${i + 2}`}
+                                                    className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
+                                                />
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
 
                                 {data.architecture && (
                                     <section>
@@ -927,7 +1141,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </div>
 
                                     <button
-                                        onClick={() => onOpenFile({ id: 'projects.tsx', title: 'projects.tsx', type: 'projects' })}
+                                        onClick={() => onOpenFile({ id: 'projects.tsx', title: 'all_projects.tsx', type: 'projects' })}
                                         className="w-full mt-12 py-4 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm text-[var(--text-primary)] text-sm font-bold hover:bg-[var(--bg-panel)] transition-all flex items-center justify-center gap-2"
                                     >
                                         Back to Assignments
@@ -947,7 +1161,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <Breadcrumbs path={path} />
                     </div>
                 )}
-                <div className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0" onScroll={onScroll}>
+                <div ref={sectionRef} className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0" onScroll={onScroll}>
                     {/* EXTENSION HEADER */}
                     <div className="px-4 md:px-12 max-w-5xl mx-auto w-full py-8">
                         <div className="flex flex-col md:flex-row gap-6 mb-6">
@@ -987,6 +1201,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             <Github size={14} /> Repository
                                         </a>
                                     )}
+                                    {data.pdfs?.map((pdf: { label: string; path: string }) => (
+                                        <a key={pdf.path} href={pdf.path} target="_blank" rel="noopener noreferrer"
+                                            className="px-4 py-1.5 bg-[var(--bg-activity)] hover:bg-[var(--bg-panel)] border border-[var(--border)] text-[var(--text-primary)] text-sm font-medium rounded-sm transition-all flex items-center gap-2">
+                                            <FileText size={14} /> {pdf.label}
+                                        </a>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -1029,6 +1249,24 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             </p>
                                         </div>
 
+                                        {data.htmlEmbed && (
+                                            <div className="mb-6 max-w-2xl w-full">
+                                                <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
+                                            </div>
+                                        )}
+
+                                        {data.video && (
+                                            <div className="mb-6 aspect-video max-w-2xl w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-xl">
+                                                <iframe
+                                                    src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
+                                                    title={data.video.title}
+                                                    className="w-full h-full"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                />
+                                            </div>
+                                        )}
+
                                         {/* Fixed Size Screenshot */}
                                         <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl max-w-2xl w-full">
                                             <img
@@ -1037,6 +1275,19 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 className="w-full h-auto object-cover"
                                             />
                                         </div>
+
+                                        {data.gallery && data.gallery.length > 0 && (
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 max-w-2xl w-full">
+                                                {data.gallery.map((src: string, i: number) => (
+                                                    <img
+                                                        key={src}
+                                                        src={src}
+                                                        alt={`${data.title} screenshot ${i + 2}`}
+                                                        className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 
@@ -1107,63 +1358,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
         );
     }
 
-    if (type === 'readme') {
-        return (
-            <div className="h-full flex flex-col relative">
-                {!easyMode && (
-                    <div className={`absolute md:relative top-9 md:top-0 left-0 w-full z-30 transition-all duration-300 ease-in-out md:translate-y-0 ${!isNavBarVisible ? '-translate-y-[71px] opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`}>
-                        <Breadcrumbs path={path} />
-                    </div>
-                )}
-                <div className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0">
-                    <div className="p-4 md:p-12 max-w-4xl mx-auto w-full flex flex-col">
-                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-[var(--border)]">
-                            <div className="flex items-center gap-2 text-[var(--text-primary)] font-mono font-bold text-xl">
-                                <FileText size={20} className="text-[var(--info)]" />
-                                <span>README.md</span>
-                            </div>
-                            <div className="flex bg-[var(--bg-activity)] rounded-lg p-1 border border-[var(--border)]">
-                                <button onClick={() => setIsPreview(true)} className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-all ${isPreview ? 'bg-[var(--bg-main)] text-[var(--accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
-                                    <Eye size={14} /> Preview
-                                </button>
-                                <button onClick={() => setIsPreview(false)} className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-all ${!isPreview ? 'bg-[var(--bg-main)] text-[var(--accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
-                                    <Edit3 size={14} /> Source
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex-1 overflow-y-auto custom-scrollbar">
-                            {isPreview ? (
-                                <div className="prose prose-invert prose-slate max-w-none font-sans text-[var(--text-primary)]">
-                                    <h1 className="flex items-center gap-3 text-3xl font-bold mb-4"><span className="text-4xl">⚙️</span><span>Hi, I’m Arnav</span></h1>
-                                    <p className="lead text-lg text-[var(--text-secondary)] mb-6">Developer focused on building performant interfaces, low-level tooling, and systems that actually ship.</p>
-                                    <hr className="border-[var(--border)] my-8" />
-                                    <h3 className="text-[var(--success)] text-xl font-bold mb-4">🧠 What I Work On</h3>
-                                    <p className="mb-6 text-[var(--text-primary)] leading-relaxed">I build full-stack applications with React and Node.js, desktop tools in C++ and Python, and infrastructure-level solutions involving networking, automation, and system internals.</p>
-                                    <h3 className="text-[var(--accent)] text-xl font-bold mb-4">🛠 Core Stack</h3>
-                                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 list-none pl-0 mb-8">
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-cyan-400">⚛️</span> React / Vite / Tailwind</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-green-500">🟢</span> Node.js / Express</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-blue-400">🔷</span> TypeScript / JavaScript</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-orange-400">🧠</span> C++ / Win32 / System APIs</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-yellow-400">🐍</span> Python / Automation</li>
-                                        <li className="flex items-center gap-2 bg-[var(--bg-activity)]/50 p-2 rounded border border-[var(--border)]"><span className="text-sky-400">🌐</span> Networking / Proxies / Tunnels</li>
-                                    </ul>
-                                </div>
-                            ) : (
-                                <div className="flex">
-                                    <div className="w-8 border-r border-[var(--border)] text-right pr-2 text-[var(--line-number)] select-none">1<br />2<br />3</div>
-                                    <div className="pl-2 font-mono text-sm text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
-                                        {`# ⚙️ Hi, I’m Arnav\n\nDeveloper focused on building performant interfaces...`}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     if (type === 'pdf') {
         return (
             <div className="h-full flex flex-col bg-[var(--bg-main)] relative">
@@ -1173,25 +1367,16 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                     </div>
                 )}
                 <div className="flex-1 flex flex-col min-h-0 pt-[71px] md:pt-0">
-                    <div className="flex items-center justify-between px-4 py-1.5 border-b border-[var(--border)] bg-[var(--bg-panel)]">
-                        <div className="flex items-center gap-2 text-[var(--accent)] font-mono font-bold text-[11px]">
-                            <FileText size={14} />
-                            <span>RESUME.PDF</span>
-                        </div>
-                        <a
-                            href="./resume.pdf"
-                            download
-                            className="flex items-center gap-2 px-3 py-1 bg-[var(--accent)] hover:bg-[var(--accent)]/80 text-[var(--accent-fg)] text-[10px] rounded-[2px] transition-all"
-                        >
-                            <Zap size={12} /> Download PDF
-                        </a>
+                    <div className="flex items-center gap-2 px-4 py-1.5 border-b border-[var(--border)] bg-[var(--bg-panel)] text-[var(--accent)] font-mono font-bold text-[11px]">
+                        <FileText size={14} />
+                        <span>RESUME</span>
                     </div>
                     <div className="flex-1 bg-[#1e1e1e] overflow-hidden">
                         <iframe
-                            src="./resume.pdf#view=Fit"
+                            src="https://cv.vincentboutin.dev/"
                             className="w-full h-full border-none"
                             style={{ minHeight: 'calc(100vh - 120px)' }}
-                            title="Arnav Resume"
+                            title="Vincent Boutin — Interactive Resume"
                         />
                     </div>
                 </div>

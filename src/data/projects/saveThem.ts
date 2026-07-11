@@ -1,0 +1,62 @@
+import { withBasePath } from "../../utils/helpers";
+
+export const saveThem = {
+    id: "save-them",
+    category: "games",
+    title: "Save Them",
+    subtitle: "Solo puzzle project — free your fellow captives with the help of the dead",
+    description:
+        "Control a group of humans captured by a psychopath, who will let them leave if they reach the exit of his detention center — with help from their... dead friends.",
+    longDescription: `
+A solo personal project built at IIM: a small puzzle game where you guide captured humans to the exit of a detention center, relying on the help of their dead friends to solve the way out.
+`,
+    type: "Personal Project — Puzzle",
+    tech: ["Unity", "C#"],
+    links: {
+        live: "https://unrealitygames.itch.io/save-them"
+    },
+    image: withBasePath("/projects/games/save-them/cover.png"),
+    gallery: [
+        withBasePath("/projects/games/save-them/gallery-1.png"),
+        withBasePath("/projects/games/save-them/gallery-2.png")
+    ],
+    imageStyle: {
+        maxWidth: "1000px",
+        maxHeight: "800px",
+        objectFit: "contain"
+    },
+
+    date: "IIM — Personal project",
+    role: "Solo Developer",
+    highlights: [
+        "Solo-developed puzzle mechanics end-to-end",
+        "Unity / C#"
+    ],
+    featured: false,
+    languages: [
+        { name: "C#", percent: 100, color: "#68217A" }
+    ],
+    deployHistory: [
+        {
+            version: "v1.0",
+            msg: "Playable build released on itch.io",
+            time: "IIM",
+            status: "success"
+        }
+    ],
+    snippet: `// Ghost-assisted puzzle interaction
+public void UseGhostHelper(Ghost ghost, Interactable target)
+{
+    if (ghost.CanInteractWith(target)) target.Trigger(ghost);
+}
+`,
+    architecture: `
+[ Player-controlled group ]
+          |
+          v
+[ Ghost Helper System ] -- dead friends assist puzzle solving
+          |
+          v
+[ Detention Center Levels ] -- exit-focused puzzles
+`
+};

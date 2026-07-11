@@ -16,7 +16,7 @@ import { CustomScrollbarStyles } from './components/Styles/CustomScrollbar';
 import { ToastContainer } from './components/UI/Toast';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { ContentRenderer } from './components/Editor/ContentRenderer';
-import { IntegratedTerminal } from './components/Terminal/Terminal';
+import { BottomPanel } from './components/BottomPanel/BottomPanel';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
 import { ContextMenu } from './components/UI/ContextMenu';
 import { SecondarySidebar } from './components/Sidebar/SecondarySidebar';
@@ -28,11 +28,11 @@ const App = () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         // If the user closed everything and reloads, force home to reopen for better UX
-        return parsed.length > 0 ? parsed : [{ id: 'home', title: 'home.tsx', type: 'home', data: null }];
+        return parsed.length > 0 ? parsed : [{ id: 'home', title: 'README.md', type: 'home', data: null }];
       }
-      return [{ id: 'home', title: 'home.tsx', type: 'home', data: null }];
+      return [{ id: 'home', title: 'README.md', type: 'home', data: null }];
     } catch (e) {
-      return [{ id: 'home', title: 'home.tsx', type: 'home', data: null }];
+      return [{ id: 'home', title: 'README.md', type: 'home', data: null }];
     }
   });
   const [activeTabId, setActiveTabId] = useState(() => {
@@ -906,17 +906,17 @@ const App = () => {
 
                   {!windows.find(w => w.id === 'home') && (
                     <button
-                      onClick={() => openFile({ id: 'home', title: 'home.tsx', type: 'home', data: null })}
+                      onClick={() => openFile({ id: 'home', title: 'README.md', type: 'home', data: null })}
                       className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--accent-fg)] rounded hover:bg-[var(--accent)]/90 transition-colors"
                     >
                       <Terminal size={14} />
-                      <span>Reopen home.tsx</span>
+                      <span>Reopen README.md</span>
                     </button>
                   )}
                 </div>
               )}
             </div>
-            <IntegratedTerminal isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} onOpenFile={openFile} />
+            <BottomPanel isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
           </div>
 
           <SecondarySidebar isOpen={isSecondarySidebarOpen} activeTabId={activeTabId} onClose={() => setIsSecondarySidebarOpen(false)} />

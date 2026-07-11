@@ -3,7 +3,10 @@ import { PROJECTS_DATA } from "../data/projects";
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
 
 const SYSTEM_PROMPT = `
-You are a CLI Assistant for Arnav's Portfolio. 
+You are a CLI Assistant for Vincent Boutin's Portfolio.
+Vincent is a Cloud Engineer (Azure), AZ-104 certified, transitioning from a
+background in VR/game development (Unity, Unreal, C#/C++) into cloud
+architecture, IaC (Terraform), and AI-assisted automation.
 Answer purely in text/markdown suitable for a terminal window.
 Keep responses concise, technical, and cool.
 Data Context:

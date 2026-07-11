@@ -138,10 +138,8 @@ export const Sidebar = ({
     }, [isPanelVisible]);
     const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
         'src': true,
-        'components': false,
         'pages': true,
-        'projects': false,
-        'recruiter': true
+        'projects': false
     });
     const [isExplorerMenuOpen, setIsExplorerMenuOpen] = useState(false);
     const [dragOverId, setDragOverId] = useState<string | null>(null);
@@ -207,35 +205,35 @@ export const Sidebar = ({
 
     const certifications = [
         {
-            name: "AWS Solutions Architect",
-            issuer: "Amazon Web Services",
-            id: "aws-sa",
-            description: "Validation of expertise in designing distributed systems on AWS.",
+            name: "AZ-104: Microsoft Azure Administrator",
+            issuer: "Microsoft",
+            id: "az-104",
+            description: "Validation of expertise in Azure VMs, networking, storage, identity (Azure AD), RBAC, monitoring, and governance.",
             status: "Certified",
             icon: Cloud
         },
         {
-            name: "Meta Front-End Designer",
-            issuer: "Meta / Coursera",
-            id: "meta-fed",
-            description: "Advanced proficiency in React, JS, and responsive UI/UX systems.",
-            status: "Verified",
+            name: "Master's Degree in Game Programming",
+            issuer: "IIM, Courbevoie",
+            id: "iim-master",
+            description: "Unity, Unreal, C#, C++, OOP, algorithms, AI and networking. Graduated with Jury Honors.",
+            status: "Jury Honors",
             icon: LayoutGrid
         },
         {
-            name: "Google Cloud Engineer",
-            issuer: "Google Cloud",
-            id: "google-ace",
-            description: "Associate level certification for cloud infrastructure management.",
-            status: "Certified",
+            name: "Bachelor's Degree in Sports Science (STAPS)",
+            issuer: "UPEC, Créteil",
+            id: "upec-staps",
+            description: "Pedagogy, group coaching, adaptability, active listening, and program design (APA).",
+            status: "Graduated",
             icon: Globe
         },
         {
-            name: "System Architect Award",
-            issuer: "Tech Expo 2024",
-            id: "award-24",
-            description: "1st Place Winner for innovative distributed terminal architecture.",
-            status: "Awarded",
+            name: "Pégases Selection",
+            issuer: "IIM",
+            id: "pegases-24",
+            description: "\"Dwarfs Delight\" selected by IIM for submission to the Pégases awards.",
+            status: "Selected",
             icon: Trophy
         }
     ];
@@ -350,6 +348,35 @@ export const Sidebar = ({
             onClose={props.onClose}
         />
     );
+
+    const renderProjectFileItem = (p: any, depth: number) => {
+        const fileName = `${p.title}.tsx`;
+        const fileMeta = getFileIcon(fileName);
+        return renderFileTreeItem({
+            id: p.id,
+            name: fileName,
+            icon: fileMeta.icon,
+            color: fileMeta.color,
+            type: 'file',
+            depth,
+            onDragStart: (_e, id) => {
+                window.dispatchEvent(
+                    new CustomEvent("explorer-drag-start", {
+                        detail: {
+                            id,
+                            file: { id: p.id, title: fileName, type: 'detail', data: p }
+                        }
+                    })
+                );
+            },
+            onClick: () => onOpenFile({
+                id: p.id,
+                title: fileName,
+                type: 'detail',
+                data: p
+            })
+        });
+    };
 
     const filteredProjects = PROJECTS_DATA.filter(p =>
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -475,7 +502,7 @@ export const Sidebar = ({
                                     <h3 className="px-2 text-[10px] font-bold text-[var(--accent)] uppercase opacity-60 mb-1 tracking-widest">Bookmarks</h3>
 
                                     <button
-                                        onClick={() => onOpenFile({ id: 'home.tsx', title: 'home.tsx', type: 'home' })}
+                                        onClick={() => onOpenFile({ id: 'home.tsx', title: 'README.md', type: 'home' })}
                                         className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-all text-xs font-medium border
                                             ${activeTabId === 'home.tsx'
                                                 ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30 shadow-sm'
@@ -487,7 +514,7 @@ export const Sidebar = ({
                                     </button>
 
                                     <button
-                                        onClick={() => onOpenFile({ id: 'projects.tsx', title: 'projects.tsx', type: 'projects' })}
+                                        onClick={() => onOpenFile({ id: 'projects.tsx', title: 'all_projects.tsx', type: 'projects' })}
                                         className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-all text-xs font-medium border
                                             ${activeTabId === 'projects.tsx'
                                                 ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30 shadow-sm'
@@ -496,18 +523,6 @@ export const Sidebar = ({
                                     >
                                         <LayoutGrid className="w-3.5 h-3.5 opacity-70" />
                                         <span>Featured Projects</span>
-                                    </button>
-
-                                    <button
-                                        onClick={() => onOpenFile({ id: 'skills.json', title: 'skills.json', type: 'code', content: FILE_CONTENTS.skills_json, lang: 'json' })}
-                                        className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-all text-xs font-medium border
-                                            ${activeTabId === 'skills.json'
-                                                ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30 shadow-sm'
-                                                : 'text-[var(--text-primary)] hover:bg-[var(--bg-activity)] border-transparent'}
-                                        `}
-                                    >
-                                        <Zap className="w-3.5 h-3.5 opacity-70" />
-                                        <span>Tech Stack & Skills</span>
                                     </button>
                                 </div>
                             )}
@@ -573,7 +588,7 @@ export const Sidebar = ({
                                     size={14}
                                     className={`text-[var(--text-secondary)] transition-transform duration-150 ${(expandedFolders['workspace'] ?? true) ? '' : '-rotate-90'}`}
                                 />
-                                <span className="text-[11px] font-bold text-[var(--text-secondary)] ml-1 tracking-tight uppercase">{easyMode ? 'Files' : 'Portfolio'}</span>
+                                <span className="text-[11px] font-bold text-[var(--text-secondary)] ml-1 tracking-tight uppercase">{easyMode ? 'Files' : 'Vincent Boutin'}</span>
                             </div>
 
                             {(expandedFolders['workspace'] ?? true) && (
@@ -581,46 +596,12 @@ export const Sidebar = ({
 
                                     {/* SRC Folder */}
                                     {renderFileTreeItem({
-                                        id: 'src', name: 'src', icon: expandedFolders['src'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                        id: 'src', name: 'Portfolio', icon: expandedFolders['src'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
                                         type: 'folder', depth: 0, hasChildren: true, isOpen: expandedFolders['src'], onToggle: () => toggleFolder('src')
                                     })}
 
                                     {expandedFolders['src'] && (
                                         <>
-                                            {/* Projects Folder - uses Success Color */}
-                                            {renderFileTreeItem({
-                                                id: 'projects', name: 'projects', icon: expandedFolders['projects'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
-                                                type: 'folder', depth: 1, hasChildren: true, isOpen: expandedFolders['projects'], onToggle: () => toggleFolder('projects')
-                                            })}
-                                            {expandedFolders['projects'] && PROJECTS_DATA.map(p => {
-                                                const fileName = `${p.title}.tsx`;
-                                                const fileMeta = getFileIcon(fileName);
-                                                return renderFileTreeItem({
-                                                    id: p.id,
-                                                    name: fileName,
-                                                    icon: fileMeta.icon,
-                                                    color: fileMeta.color,
-                                                    type: 'file',
-                                                    depth: 2,
-                                                    onDragStart: (_e, id) => {
-                                                        window.dispatchEvent(
-                                                            new CustomEvent("explorer-drag-start", {
-                                                                detail: {
-                                                                    id,
-                                                                    file: { id: p.id, title: fileName, type: 'detail', data: p }
-                                                                }
-                                                            })
-                                                        );
-                                                    },
-                                                    onClick: () => onOpenFile({
-                                                        id: p.id,
-                                                        title: fileName,
-                                                        type: 'detail',
-                                                        data: p
-                                                    })
-                                                });
-                                            })}
-
                                             {/* Pages Folder - uses Warning Color */}
                                             {renderFileTreeItem({
                                                 id: 'pages', name: 'pages', icon: expandedFolders['pages'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
@@ -629,12 +610,11 @@ export const Sidebar = ({
                                             {expandedFolders['pages'] && (
                                                 <>
                                                     {[
-                                                        { name: "home.tsx", type: "home" },
-                                                        { name: "projects.tsx", type: "projects" },
+                                                        { id: "projects.tsx", name: "all_projects.tsx", type: "projects" },
                                                     ].map(f => {
                                                         const meta = getFileIcon(f.name);
                                                         return renderFileTreeItem({
-                                                            id: f.name,
+                                                            id: f.id,
                                                             name: f.name,
                                                             icon: meta.icon,
                                                             color: meta.color,
@@ -643,184 +623,62 @@ export const Sidebar = ({
                                                             onDragStart: (_e, id) => {
                                                                 window.dispatchEvent(
                                                                     new CustomEvent("explorer-drag-start", {
-                                                                        detail: { id, file: { id: f.name, title: f.name, type: f.type } }
+                                                                        detail: { id, file: { id: f.id, title: f.name, type: f.type } }
                                                                     })
                                                                 );
                                                             },
-                                                            onClick: () => onOpenFile({ id: f.name, title: f.name, type: f.type })
+                                                            onClick: () => onOpenFile({ id: f.id, title: f.name, type: f.type })
                                                         });
                                                     })}
-                                                    {/* Projects JSON */}
-                                                    {renderFileTreeItem({
-                                                        id: 'projects_json',
-                                                        name: 'projects.json',
-                                                        icon: getFileIcon("projects.json").icon,
-                                                        color: getFileIcon("projects.json").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id: "projects_json", title: "projects.json", type: "code", content: FILE_CONTENTS.projects_json, lang: "json" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "projects_json",
-                                                                title: "projects.json",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.projects_json,
-                                                                lang: "json"
-                                                            })
-                                                    })}
                                                 </>
                                             )}
 
-                                            {/* Components Folder */}
+                                            {/* Projects Folder - uses Success Color */}
                                             {renderFileTreeItem({
-                                                id: 'components', name: 'components', icon: expandedFolders['components'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
-                                                type: 'folder', depth: 1, hasChildren: true, isOpen: expandedFolders['components'], onToggle: () => toggleFolder('components')
+                                                id: 'projects', name: 'projects', icon: expandedFolders['projects'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                type: 'folder', depth: 1, hasChildren: true, isOpen: expandedFolders['projects'], onToggle: () => toggleFolder('projects')
                                             })}
-                                            {expandedFolders['components'] && (
+                                            {expandedFolders['projects'] && (
                                                 <>
+                                                    {/* Cloud subfolder */}
                                                     {renderFileTreeItem({
-                                                        id: 'terminal_comp',
-                                                        name: 'Terminal.tsx',
-                                                        icon: getFileIcon("Terminal.tsx").icon,
-                                                        color: getFileIcon("Terminal.tsx").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id: "terminal_comp", title: "Terminal.tsx", type: "code", content: FILE_CONTENTS.terminal_component, lang: "typescript" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "terminal_comp",
-                                                                title: "Terminal.tsx",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.terminal_component,
-                                                                lang: "typescript"
-                                                            })
+                                                        id: 'projects_cloud', name: 'cloud', icon: expandedFolders['projects_cloud'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                        type: 'folder', depth: 2, hasChildren: true, isOpen: expandedFolders['projects_cloud'], onToggle: () => toggleFolder('projects_cloud')
                                                     })}
+                                                    {expandedFolders['projects_cloud'] && PROJECTS_DATA.filter(p => p.category === 'cloud').map(p => renderProjectFileItem(p, 3))}
 
+                                                    {/* Companies subfolder */}
                                                     {renderFileTreeItem({
-                                                        id: 'window_comp',
-                                                        name: 'Window.tsx',
-                                                        icon: getFileIcon("Window.tsx").icon,
-                                                        color: getFileIcon("Window.tsx").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id: "window_comp", title: "Window.tsx", type: "code", content: FILE_CONTENTS.window_component, lang: "typescript" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "window_comp",
-                                                                title: "Window.tsx",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.window_component,
-                                                                lang: "typescript"
-                                                            })
+                                                        id: 'projects_companies', name: 'companies', icon: expandedFolders['projects_companies'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                        type: 'folder', depth: 2, hasChildren: true, isOpen: expandedFolders['projects_companies'], onToggle: () => toggleFolder('projects_companies')
                                                     })}
+                                                    {expandedFolders['projects_companies'] && PROJECTS_DATA.filter(p => p.category === 'companies').map(p => renderProjectFileItem(p, 3))}
 
+                                                    {/* Video games subfolder */}
                                                     {renderFileTreeItem({
-                                                        id: 'word_wrap_from_hell',
-                                                        name: 'word_wrap_from_hell.json',
-                                                        icon: getFileIcon("word_wrap_from_hell.json").icon,
-                                                        color: getFileIcon("word_wrap_from_hell.json").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id, title: "components/word_wrap_from_hell.json", type: "code", content: FILE_CONTENTS.word_wrap_from_hell, lang: "json" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "word_wrap_from_hell",
-                                                                title: "components/word_wrap_from_hell.json",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.word_wrap_from_hell,
-                                                                lang: "json"
-                                                            })
+                                                        id: 'projects_videogames', name: 'video games', icon: expandedFolders['projects_videogames'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                        type: 'folder', depth: 2, hasChildren: true, isOpen: expandedFolders['projects_videogames'], onToggle: () => toggleFolder('projects_videogames')
                                                     })}
+                                                    {expandedFolders['projects_videogames'] && (
+                                                        <>
+                                                            {/* Games subfolder */}
+                                                            {renderFileTreeItem({
+                                                                id: 'projects_games', name: 'games', icon: expandedFolders['projects_games'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                                type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_games'], onToggle: () => toggleFolder('projects_games')
+                                                            })}
+                                                            {expandedFolders['projects_games'] && PROJECTS_DATA.filter(p => p.category === 'games').map(p => renderProjectFileItem(p, 4))}
 
-                                                    {renderFileTreeItem({
-                                                        id: 'minimap_stress_test',
-                                                        name: 'minimap_stress_test.json',
-                                                        icon: getFileIcon("minimap_stress_test.json").icon,
-                                                        color: getFileIcon("minimap_stress_test.json").color,
-                                                        type: 'file',
-                                                        depth: 2,
-                                                        onDragStart: (_e, id) => {
-                                                            window.dispatchEvent(
-                                                                new CustomEvent("explorer-drag-start", {
-                                                                    detail: { id, file: { id: "minimap_stress_test", title: "components/minimap_stress_test.json", type: "code", content: FILE_CONTENTS.minimap_stress_test, lang: "json" } }
-                                                                })
-                                                            );
-                                                        },
-                                                        onClick: () =>
-                                                            onOpenFile({
-                                                                id: "minimap_stress_test",
-                                                                title: "components/minimap_stress_test.json",
-                                                                type: "code",
-                                                                content: FILE_CONTENTS.minimap_stress_test,
-                                                                lang: "json"
-                                                            })
-                                                    })}
+                                                            {/* Technical projects subfolder */}
+                                                            {renderFileTreeItem({
+                                                                id: 'projects_technical', name: 'technical projects', icon: expandedFolders['projects_technical'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                                type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_technical'], onToggle: () => toggleFolder('projects_technical')
+                                                            })}
+                                                            {expandedFolders['projects_technical'] && PROJECTS_DATA.filter(p => p.category === 'technical').map(p => renderProjectFileItem(p, 4))}
+                                                        </>
+                                                    )}
                                                 </>
                                             )}
-                                        </>
-                                    )}
 
-                                    {/* Recruiter Folder */}
-                                    {renderFileTreeItem({
-                                        id: 'recruiter', name: 'recruiter', icon: expandedFolders['recruiter'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
-                                        type: 'folder', depth: 0, hasChildren: true, isOpen: expandedFolders['recruiter'], onToggle: () => toggleFolder('recruiter')
-                                    })}
-                                    {expandedFolders['recruiter'] && (
-                                        <>
-                                            {[
-                                                { name: "hire_me.json", content: FILE_CONTENTS.hire_me, lang: 'json' },
-                                                { name: "skills.json", content: FILE_CONTENTS.skills_json, lang: 'json' },
-                                                { name: "career_path.txt", content: FILE_CONTENTS.career_path, lang: 'text' }
-                                            ].map(f => {
-                                                const fileMeta = getFileIcon(f.name);
-                                                return renderFileTreeItem({
-                                                    id: `recruiter_${f.name}`,
-                                                    name: f.name,
-                                                    icon: fileMeta.icon,
-                                                    color: fileMeta.color,
-                                                    type: 'file',
-                                                    depth: 1,
-                                                    onDragStart: (_e, id) => {
-                                                        window.dispatchEvent(
-                                                            new CustomEvent("explorer-drag-start", {
-                                                                detail: { id, file: { id, title: `recruiter/${f.name}`, type: 'code', content: f.content, lang: f.lang } }
-                                                            })
-                                                        );
-                                                    },
-                                                    onClick: () =>
-                                                        onOpenFile({
-                                                            id: `recruiter_${f.name}`,
-                                                            title: `recruiter/${f.name}`,
-                                                            type: "code",
-                                                            content: f.content,
-                                                            lang: f.lang
-                                                        })
-                                                });
-                                            })}
                                         </>
                                     )}
 
@@ -829,12 +687,13 @@ export const Sidebar = ({
                                         { name: ".env", type: 'code', content: FILE_CONTENTS.env, lang: 'bash' },
                                         { name: ".gitignore", type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash' },
                                         { name: "package.json", type: "code", content: FILE_CONTENTS.package_json, lang: "json" },
-                                        { name: "README.md", type: 'readme', content: FILE_CONTENTS.readme },
+                                        { id: "home.tsx", name: "README.md", type: "home" },
                                         { name: "resume.pdf", type: 'pdf' }
                                     ].map(f => {
                                         const fileMeta = getFileIcon(f.name);
+                                        const fileId = f.id ?? f.name;
                                         return renderFileTreeItem({
-                                            id: f.name,
+                                            id: fileId,
                                             name: f.name,
                                             icon: fileMeta.icon,
                                             color: fileMeta.color,
@@ -843,13 +702,13 @@ export const Sidebar = ({
                                             onDragStart: (_e, id) => {
                                                 window.dispatchEvent(
                                                     new CustomEvent("explorer-drag-start", {
-                                                        detail: { id, file: { id: f.name, title: f.name, type: f.type, content: f.content, lang: f.lang } }
+                                                        detail: { id, file: { id: fileId, title: f.name, type: f.type, content: f.content, lang: f.lang } }
                                                     })
                                                 );
                                             },
                                             onClick: () =>
                                                 onOpenFile({
-                                                    id: f.name,
+                                                    id: fileId,
                                                     title: f.name,
                                                     type: f.type,
                                                     content: f.content,
@@ -1080,15 +939,15 @@ export const Sidebar = ({
                                         <div className="text-[10px] font-bold text-[var(--text-secondary)] uppercase opacity-50 mb-1">Production Domains</div>
                                         <div className="space-y-1.5 text-[11px]">
                                             <div className="flex items-center justify-between text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors group cursor-pointer">
-                                                <span>portfolio.arnav.dev</span>
+                                                <span>vincentboutin.dev</span>
                                                 <ExternalLink size={10} className="opacity-0 group-hover:opacity-100" />
                                             </div>
                                             <div className="flex items-center justify-between text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors group cursor-pointer">
-                                                <span>mouseshifter.io</span>
+                                                <span>cv.vincentboutin.dev</span>
                                                 <ExternalLink size={10} className="opacity-0 group-hover:opacity-100" />
                                             </div>
                                             <div className="flex items-center justify-between text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors group cursor-pointer">
-                                                <span>api.netbridge.tech</span>
+                                                <span>github.com/vbo-cloud</span>
                                                 <ExternalLink size={10} className="opacity-0 group-hover:opacity-100" />
                                             </div>
                                         </div>
@@ -1348,11 +1207,11 @@ export const Sidebar = ({
                                 {/* Main Account Row */}
                                 <div className="flex items-center gap-3 p-2 rounded bg-[var(--bg-activity)]/50 border border-[var(--border)] mb-4">
                                     <div className="w-10 h-10 rounded bg-gradient-to-br from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)] flex items-center justify-center text-sm font-bold text-white shrink-0">
-                                        A
+                                        V
                                     </div>
                                     <div className="min-w-0">
-                                        <div className="text-sm font-bold text-[var(--text-primary)] truncate">Arnav</div>
-                                        <div className="text-[10px] text-[var(--text-secondary)] truncate">arnav@development.env</div>
+                                        <div className="text-sm font-bold text-[var(--text-primary)] truncate">Vincent Boutin</div>
+                                        <div className="text-[10px] text-[var(--text-secondary)] truncate">contact@vincentboutin.dev</div>
                                     </div>
                                 </div>
 
