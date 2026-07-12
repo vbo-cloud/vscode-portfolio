@@ -4,6 +4,8 @@
 
 Vincent Boutin's developer portfolio, reimagined as a fully functional IDE. Built to look, feel, and behave like Visual Studio Code, providing an immersive experience for visitors to explore his transition from VR/game development to Azure cloud engineering.
 
+> Based on [arnofrxdd's ide-portfolio template](https://github.com/arnofrxdd/ide-portfolio) — this repository is a personal fork, customized and extended for Vincent Boutin's own portfolio. Credit for the original IDE concept and template goes to the original author.
+
 ## ✨ Features
 
 *   **Virtual File System**: Browse projects and files just like in a real editor.
@@ -64,4 +66,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for a detailed guide on:
 
 ## 📄 License
 
-MIT © Vincent Boutin
+MIT — based on the original [ide-portfolio](https://github.com/arnofrxdd/ide-portfolio) by arnofrxdd, with modifications © Vincent Boutin.
