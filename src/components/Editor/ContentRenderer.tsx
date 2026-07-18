@@ -986,7 +986,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         `}
                                         >
                                             {/* IMAGE / ICON */}
-                                            <div className={viewMode === 'grid' ? "h-32 w-full bg-[var(--bg-activity)] relative overflow-hidden shrink-0" : "w-16 h-16 md:w-24 md:h-24 bg-[var(--bg-activity)] shrink-0 border border-[var(--border)]"}>
+                                            <div className={viewMode === 'grid' ? "h-48 w-full bg-[var(--bg-activity)] relative overflow-hidden shrink-0" : "w-16 h-16 md:w-24 md:h-24 bg-[var(--bg-activity)] shrink-0 border border-[var(--border)]"}>
                                                 <img
                                                     src={p.image}
                                                     alt={p.title}
