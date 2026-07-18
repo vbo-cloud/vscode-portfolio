@@ -56,17 +56,32 @@ const HtmlEmbedFrame = ({ embed, section }: { embed: { title: string; path: stri
 
     const handleLoad = () => {
         const doc = iframeRef.current?.contentDocument;
-        if (doc?.documentElement) {
-            setContentSize({
-                width: doc.documentElement.scrollWidth,
-                height: doc.documentElement.scrollHeight
-            });
-        }
+        if (!doc?.documentElement) return;
+
+        // Artifact bundles wrap the real content in a shadow-host div that's
+        // sized independently of it (often to the parent page's viewport),
+        // leaving empty space beside the actual content. Descend through
+        // single-child wrappers to find the real content root instead of
+        // trusting documentElement.scrollWidth, which measures the host.
+        let el: Element | null = doc.body.firstElementChild;
+        while (el && el.children.length === 1) el = el.firstElementChild;
+        const contentRoot = (el ? [...el.children] : [])
+            .find((c): c is HTMLElement => c.tagName !== 'TEMPLATE' && c.getBoundingClientRect().width > 0)
+            || doc.documentElement;
+
+        setContentSize({
+            width: contentRoot.scrollWidth,
+            height: contentRoot.scrollHeight
+        });
     };
 
     const displayWidth = Math.max(section?.width || 0, localRect.width);
     const scale = contentSize && displayWidth ? displayWidth / contentSize.width : 1;
-    const offsetLeft = section ? section.left - localRect.left : 0;
+    // Centers the box within `section` (rather than aligning left edges) so it stays
+    // centered even when displayWidth ends up narrower than the full section width.
+    const offsetLeft = section
+        ? (section.left + section.width / 2) - (localRect.left + displayWidth / 2)
+        : 0;
 
     return (
         <div ref={measureRef} className="w-full">
@@ -1388,7 +1403,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 {activeTab === 'architecture' && (data.htmlEmbed || data.architecture) && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                                         {data.htmlEmbed ? (
-                                            <div className="max-w-2xl w-full">
+                                            <div className="w-full mx-auto">
                                                 <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
                                             </div>
                                         ) : (
