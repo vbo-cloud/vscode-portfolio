@@ -122,23 +122,34 @@ const WORKFLOW_ICONS: Record<string, React.ComponentType<{ size?: number; classN
     Bot, ShieldCheck, Code2, Users, Terminal, GitBranch, GitPullRequest
 };
 
+const WORKFLOW_COLORS: Record<string, { icon: string; iconBg: string; title: string; border: string; bullet: string }> = {
+    Bot: { icon: 'text-orange-400', iconBg: 'bg-orange-500/10', title: 'text-orange-400', border: 'border-orange-400/30', bullet: 'before:text-orange-400' },
+    ShieldCheck: { icon: 'text-rose-400', iconBg: 'bg-rose-500/10', title: 'text-rose-400', border: 'border-rose-400/30', bullet: 'before:text-rose-400' },
+    Code2: { icon: 'text-blue-400', iconBg: 'bg-blue-500/10', title: 'text-blue-400', border: 'border-blue-400/30', bullet: 'before:text-blue-400' },
+    Users: { icon: 'text-violet-400', iconBg: 'bg-violet-500/10', title: 'text-violet-400', border: 'border-violet-400/30', bullet: 'before:text-violet-400' },
+    Terminal: { icon: 'text-cyan-400', iconBg: 'bg-cyan-500/10', title: 'text-cyan-400', border: 'border-cyan-400/30', bullet: 'before:text-cyan-400' },
+    GitBranch: { icon: 'text-emerald-400', iconBg: 'bg-emerald-500/10', title: 'text-emerald-400', border: 'border-emerald-400/30', bullet: 'before:text-emerald-400' },
+    GitPullRequest: { icon: 'text-pink-400', iconBg: 'bg-pink-500/10', title: 'text-pink-400', border: 'border-pink-400/30', bullet: 'before:text-pink-400' }
+};
+
 const WorkflowPanel = ({ sections }: { sections: WorkflowSection[] }) => (
     <div className="space-y-4">
         {sections.map((section) => {
             const Icon = WORKFLOW_ICONS[section.icon] || Code2;
+            const colors = WORKFLOW_COLORS[section.icon] || WORKFLOW_COLORS.Code2;
             return (
-                <div key={section.title} className="bg-[var(--bg-activity)]/30 border border-[var(--border)] rounded-sm p-5">
+                <div key={section.title} className={`bg-[var(--bg-activity)]/30 border ${colors.border} rounded-sm p-5`}>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-8 h-8 rounded-sm bg-[var(--accent)]/10 flex items-center justify-center shrink-0">
-                            <Icon size={16} className="text-[var(--accent)]" />
+                        <div className={`w-8 h-8 rounded-sm ${colors.iconBg} flex items-center justify-center shrink-0`}>
+                            <Icon size={16} className={colors.icon} />
                         </div>
-                        <h4 className="text-sm font-sans font-bold text-[var(--text-primary)]">{section.title}</h4>
+                        <h4 className={`text-sm font-sans font-bold ${colors.title}`}>{section.title}</h4>
                     </div>
                     <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed mb-3">{section.description}</p>
                     {section.items && section.items.length > 0 && (
                         <ul className="space-y-1.5">
                             {section.items.map((item, i) => (
-                                <li key={i} className="text-xs font-mono text-[var(--text-secondary)] leading-relaxed pl-4 relative before:content-['›'] before:absolute before:left-0 before:text-[var(--accent)]">
+                                <li key={i} className={`text-xs font-mono text-[var(--text-secondary)] leading-relaxed pl-4 relative before:content-['›'] before:absolute before:left-0 ${colors.bullet}`}>
                                     {item}
                                 </li>
                             ))}
