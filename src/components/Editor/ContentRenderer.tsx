@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import {
     Zap, ExternalLink, Terminal, GitBranch, Filter, LayoutGrid, List,
-    FileText, Github, Globe, FileCode, Linkedin, Code2, ArrowLeft
+    FileText, Github, Globe, FileCode, Linkedin, Code2, ArrowLeft,
+    Bot, ShieldCheck, Users, GitPullRequest
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
@@ -94,6 +95,45 @@ const HtmlEmbedFrame = ({ embed, section }: { embed: { title: string; path: stri
         </div>
     );
 };
+
+interface WorkflowSection {
+    icon: string;
+    title: string;
+    description: string;
+    items?: string[];
+}
+
+const WORKFLOW_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+    Bot, ShieldCheck, Code2, Users, Terminal, GitBranch, GitPullRequest
+};
+
+const WorkflowPanel = ({ sections }: { sections: WorkflowSection[] }) => (
+    <div className="space-y-4">
+        {sections.map((section) => {
+            const Icon = WORKFLOW_ICONS[section.icon] || Code2;
+            return (
+                <div key={section.title} className="bg-[var(--bg-activity)]/30 border border-[var(--border)] rounded-sm p-5">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="w-8 h-8 rounded-sm bg-[var(--accent)]/10 flex items-center justify-center shrink-0">
+                            <Icon size={16} className="text-[var(--accent)]" />
+                        </div>
+                        <h4 className="text-sm font-sans font-bold text-[var(--text-primary)]">{section.title}</h4>
+                    </div>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed mb-3">{section.description}</p>
+                    {section.items && section.items.length > 0 && (
+                        <ul className="space-y-1.5">
+                            {section.items.map((item, i) => (
+                                <li key={i} className="text-xs font-mono text-[var(--text-secondary)] leading-relaxed pl-4 relative before:content-['›'] before:absolute before:left-0 before:text-[var(--accent)]">
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            );
+        })}
+    </div>
+);
 
 const CORE_STACK_ITEMS = [
     { emoji: '☁️', color: 'text-sky-400', label: 'Azure / Terraform / Bicep' },
@@ -1088,22 +1128,26 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </section>
                                 )}
 
-                                {data.snippet && (
+                                {(data.workflow || data.snippet) && (
                                     <section>
-                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">Core Implementation</h2>
-                                        <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-sm overflow-hidden shadow-lg">
-                                            <div className="bg-[var(--bg-activity)] px-4 py-2 border-b border-[var(--border)] flex justify-between items-center">
-                                                <span className="text-xs font-mono text-[var(--text-secondary)]">implementation.ts</span>
-                                                <div className="flex gap-1.5">
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">{data.workflow ? 'Workflow' : 'Core Implementation'}</h2>
+                                        {data.workflow ? (
+                                            <WorkflowPanel sections={data.workflow} />
+                                        ) : (
+                                            <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-sm overflow-hidden shadow-lg">
+                                                <div className="bg-[var(--bg-activity)] px-4 py-2 border-b border-[var(--border)] flex justify-between items-center">
+                                                    <span className="text-xs font-mono text-[var(--text-secondary)]">implementation.ts</span>
+                                                    <div className="flex gap-1.5">
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
+                                                    </div>
+                                                </div>
+                                                <div className="p-6 overflow-x-auto custom-scrollbar">
+                                                    <pre className="font-mono text-xs text-[var(--success)] leading-relaxed">{data.snippet}</pre>
                                                 </div>
                                             </div>
-                                            <div className="p-6 overflow-x-auto custom-scrollbar">
-                                                <pre className="font-mono text-xs text-[var(--success)] leading-relaxed">{data.snippet}</pre>
-                                            </div>
-                                        </div>
+                                        )}
                                     </section>
                                 )}
                             </div>
@@ -1211,15 +1255,25 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             </div>
                         </div>
 
+                        {/* TECHNOLOGIES */}
+                        <div className="mb-6">
+                            <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Technologies</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {data.tech?.map((t: string) => (
+                                    <span key={t} className="px-2 py-1 bg-[var(--bg-activity)] text-[var(--text-primary)] text-[11px] rounded-sm border border-[var(--border)] font-sans">{t}</span>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* TABS */}
                         <div className="flex items-center gap-6 border-b border-[var(--border)] mt-1">
                             <button
                                 onClick={() => setActiveTab('details')}
                                 className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'details' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                             >
-                                Details
+                                Description
                             </button>
-                            {data.architecture && (
+                            {(data.architecture || data.htmlEmbed) && (
                                 <button
                                     onClick={() => setActiveTab('architecture')}
                                     className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'architecture' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
@@ -1227,17 +1281,17 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     Architecture
                                 </button>
                             )}
-                            {data.snippet && (
+                            {(data.workflow || data.snippet) && (
                                 <button
                                     onClick={() => setActiveTab('implementation')}
                                     className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'implementation' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                                 >
-                                    Core Implementation
+                                    Workflow
                                 </button>
                             )}
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-8 mt-6">
+                        <div className="mt-6">
                             {/* MAIN CONTENT AREA */}
                             <div className="min-w-0">
                                 {/* DETAILS TAB */}
@@ -1248,12 +1302,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 {data.longDescription?.trim()}
                                             </p>
                                         </div>
-
-                                        {data.htmlEmbed && (
-                                            <div className="mb-6 max-w-2xl w-full">
-                                                <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
-                                            </div>
-                                        )}
 
                                         {data.video && (
                                             <div className="mb-6 aspect-video max-w-2xl w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-xl">
@@ -1292,64 +1340,42 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 )}
 
                                 {/* ARCHITECTURE TAB */}
-                                {activeTab === 'architecture' && data.architecture && (
+                                {activeTab === 'architecture' && (data.htmlEmbed || data.architecture) && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                        <div className="bg-[var(--bg-activity)]/30 border border-[var(--border)] rounded-sm p-6 overflow-x-auto custom-scrollbar">
-                                            <pre className="font-mono text-xs text-[var(--text-secondary)] leading-relaxed">{data.architecture}</pre>
-                                        </div>
+                                        {data.htmlEmbed ? (
+                                            <div className="max-w-2xl w-full">
+                                                <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
+                                            </div>
+                                        ) : (
+                                            <div className="bg-[var(--bg-activity)]/30 border border-[var(--border)] rounded-sm p-6 overflow-x-auto custom-scrollbar">
+                                                <pre className="font-mono text-xs text-[var(--text-secondary)] leading-relaxed">{data.architecture}</pre>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 
-                                {/* CORE IMPLEMENTATION TAB */}
-                                {activeTab === 'implementation' && data.snippet && (
+                                {/* WORKFLOW TAB */}
+                                {activeTab === 'implementation' && (data.workflow || data.snippet) && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                        <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-sm overflow-hidden shadow-lg">
-                                            <div className="bg-[var(--bg-activity)] px-4 py-2 border-b border-[var(--border)] flex justify-between items-center">
-                                                <span className="text-xs font-mono text-[var(--text-secondary)]">implementation.ts</span>
-                                                <div className="flex gap-1.5">
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
+                                        {data.workflow ? (
+                                            <WorkflowPanel sections={data.workflow} />
+                                        ) : (
+                                            <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-sm overflow-hidden shadow-lg">
+                                                <div className="bg-[var(--bg-activity)] px-4 py-2 border-b border-[var(--border)] flex justify-between items-center">
+                                                    <span className="text-xs font-mono text-[var(--text-secondary)]">implementation.ts</span>
+                                                    <div className="flex gap-1.5">
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
+                                                    </div>
+                                                </div>
+                                                <div className="p-6 overflow-x-auto custom-scrollbar">
+                                                    <pre className="font-mono text-xs text-[var(--success)] leading-relaxed">{data.snippet}</pre>
                                                 </div>
                                             </div>
-                                            <div className="p-6 overflow-x-auto custom-scrollbar">
-                                                <pre className="font-mono text-xs text-[var(--success)] leading-relaxed">{data.snippet}</pre>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 )}
-                            </div>
-
-                            {/* SIDEBAR */}
-                            <div className="space-y-8 lg:border-l lg:border-[var(--border)] lg:pl-8 mt-8 lg:mt-0 pt-8 lg:pt-0 border-t lg:border-t-0 border-[var(--border)]">
-                                <div>
-                                    <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Technologies</h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {data.tech?.map((t: string) => (
-                                            <span key={t} className="px-2 py-1 bg-[var(--bg-activity)] text-[var(--text-primary)] text-[11px] rounded-sm border border-[var(--border)] font-sans">{t}</span>
-                                        ))}
-                                    </div>
-                                </div>
-
-
-
-                                <div>
-                                    <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Resources</h3>
-                                    <div className="text-xs space-y-3 text-[var(--text-primary)] font-sans">
-                                        <div className="flex justify-between py-1.5 border-b border-[var(--border)] border-dashed">
-                                            <span>Version</span>
-                                            <span className="text-[var(--text-secondary)] font-mono">{data.deployHistory?.[0]?.version || 'v2.5'}</span>
-                                        </div>
-                                        <div className="flex justify-between py-1.5 border-b border-[var(--border)] border-dashed">
-                                            <span>Last Update</span>
-                                            <span className="text-[var(--text-secondary)]">2 days ago</span>
-                                        </div>
-                                        <div className="flex justify-between py-1.5">
-                                            <span>License</span>
-                                            <span className="text-[var(--text-secondary)] font-mono">MIT</span>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
