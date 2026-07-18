@@ -135,6 +135,33 @@ const WorkflowPanel = ({ sections }: { sections: WorkflowSection[] }) => (
     </div>
 );
 
+interface JourneyStep {
+    title: string;
+    description: string;
+    image: string;
+}
+
+const UserJourneyPanel = ({ steps }: { steps: JourneyStep[] }) => (
+    <div className="space-y-12 w-full">
+        {steps.map((step, i) => (
+            <div key={step.title} className="flex flex-col items-start">
+                <div className="flex items-start gap-3 mb-4 text-left">
+                    <div className="w-6 h-6 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-xs font-mono font-bold flex items-center justify-center shrink-0 mt-0.5">
+                        {i + 1}
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-sans font-bold text-[var(--text-primary)] mb-1">{step.title}</h4>
+                        <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed">{step.description}</p>
+                    </div>
+                </div>
+                <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl w-full">
+                    <img src={step.image} alt={step.title} className="w-full h-auto object-cover" />
+                </div>
+            </div>
+        ))}
+    </div>
+);
+
 const CORE_STACK_ITEMS = [
     { emoji: '☁️', color: 'text-sky-400', label: 'Azure / Terraform / Bicep' },
     { emoji: '🟢', color: 'text-green-500', label: 'FastAPI / PostgreSQL / Service Bus' },
@@ -1114,6 +1141,15 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </section>
                                 )}
 
+                                {data.userJourney && (
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> User Journey
+                                        </h2>
+                                        <UserJourneyPanel steps={data.userJourney} />
+                                    </section>
+                                )}
+
                                 {data.architecture && (
                                     <section>
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">System Architecture</h2>
@@ -1207,7 +1243,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                 )}
                 <div ref={sectionRef} className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0" onScroll={onScroll}>
                     {/* EXTENSION HEADER */}
-                    <div className="px-4 md:px-12 max-w-5xl mx-auto w-full py-8">
+                    <div className={`px-4 md:px-12 mx-auto w-full py-8 ${data.userJourney ? 'max-w-[88rem]' : 'max-w-5xl'}`}>
                         <div className="flex flex-col md:flex-row gap-6 mb-6">
                             <div className="w-32 h-32 bg-[var(--bg-activity)] border border-[var(--border)] shrink-0 shadow-sm relative overflow-hidden">
                                 <img
@@ -1316,13 +1352,15 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         )}
 
                                         {/* Fixed Size Screenshot */}
-                                        <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl max-w-2xl w-full">
-                                            <img
-                                                src={data.image}
-                                                alt={`${data.title} Screenshot`}
-                                                className="w-full h-auto object-cover"
-                                            />
-                                        </div>
+                                        {!data.userJourney && (
+                                            <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl max-w-2xl w-full">
+                                                <img
+                                                    src={data.image}
+                                                    alt={`${data.title} Screenshot`}
+                                                    className="w-full h-auto object-cover"
+                                                />
+                                            </div>
+                                        )}
 
                                         {data.gallery && data.gallery.length > 0 && (
                                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 max-w-2xl w-full">
@@ -1334,6 +1372,13 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                         className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
                                                     />
                                                 ))}
+                                            </div>
+                                        )}
+
+                                        {data.userJourney && (
+                                            <div className="mt-20 w-full">
+                                                <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans text-center">User Journey</h3>
+                                                <UserJourneyPanel steps={data.userJourney} />
                                             </div>
                                         )}
                                     </div>

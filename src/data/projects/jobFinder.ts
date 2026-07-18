@@ -84,6 +84,38 @@ Development itself leans on an AI-assisted workflow: up to 4 Claude Code agents 
             status: "success"
         }
     ],
+    userJourney: [
+        {
+            title: "Drop a CV, no sign-up wall",
+            description:
+                "The journey starts on a plain map of France. There's no form to fill in first — you just drop your CV (or click to browse for it) and the app takes it from there.",
+            image: withBasePath("/projects/cloud/job-finder/journey/01-home.jpg")
+        },
+        {
+            title: "Your CV, scored and reviewed",
+            description:
+                "The CV lands in a personal library with a compatibility score, a short written summary of the profile, what's working well, what's holding it back, and concrete suggestions to improve it.",
+            image: withBasePath("/projects/cloud/job-finder/journey/02-library.jpg")
+        },
+        {
+            title: "Matches, ranked and explained",
+            description:
+                "Every job offer in the pool gets compared against the CV and comes back as a ranked list with a match percentage and the specific skills that pushed the score up or down for that offer.",
+            image: withBasePath("/projects/cloud/job-finder/journey/03-matches.jpg")
+        },
+        {
+            title: "See exactly why an offer fits — or doesn't",
+            description:
+                "Opening an offer surfaces a full breakdown: the mission in plain language, why it matches from both sides, the strengths it rewards, the gaps to work on, and even likely interview questions for that specific role.",
+            image: withBasePath("/projects/cloud/job-finder/journey/04-offer-detail.jpg")
+        },
+        {
+            title: "Fine-tune the profile anytime",
+            description:
+                "Experience level and a few free-text notes can be adjusted at any time to steer future matches, alongside a simple view of remaining analysis credits.",
+            image: withBasePath("/projects/cloud/job-finder/journey/05-profile.jpg")
+        }
+    ],
     workflow: [
         {
             icon: "Bot",
