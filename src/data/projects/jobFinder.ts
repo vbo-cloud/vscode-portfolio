@@ -92,28 +92,34 @@ Development itself leans on an AI-assisted workflow: up to 4 Claude Code agents 
             image: withBasePath("/projects/cloud/job-finder/journey/01-home.jpg")
         },
         {
+            title: "Narrow the search to specific areas",
+            description:
+                "The map doubles as a filter: draw over any region, city, or cluster of towns to restrict matches to exactly those areas — no postcode list to type in, just a shape drawn by hand.",
+            image: withBasePath("/projects/cloud/job-finder/journey/02-zone-selection.jpg")
+        },
+        {
             title: "Your CV, scored and reviewed",
             description:
                 "The CV lands in a personal library with a compatibility score, a short written summary of the profile, what's working well, what's holding it back, and concrete suggestions to improve it.",
-            image: withBasePath("/projects/cloud/job-finder/journey/02-library.jpg")
+            image: withBasePath("/projects/cloud/job-finder/journey/03-library.jpg")
         },
         {
             title: "Matches, ranked and explained",
             description:
                 "Every job offer in the pool gets compared against the CV and comes back as a ranked list with a match percentage and the specific skills that pushed the score up or down for that offer.",
-            image: withBasePath("/projects/cloud/job-finder/journey/03-matches.jpg")
+            image: withBasePath("/projects/cloud/job-finder/journey/04-matches.jpg")
         },
         {
             title: "See exactly why an offer fits — or doesn't",
             description:
                 "Opening an offer surfaces a full breakdown: the mission in plain language, why it matches from both sides, the strengths it rewards, the gaps to work on, and even likely interview questions for that specific role.",
-            image: withBasePath("/projects/cloud/job-finder/journey/04-offer-detail.jpg")
+            image: withBasePath("/projects/cloud/job-finder/journey/05-offer-detail.jpg")
         },
         {
             title: "Fine-tune the profile anytime",
             description:
                 "Experience level and a few free-text notes can be adjusted at any time to steer future matches, alongside a simple view of remaining analysis credits.",
-            image: withBasePath("/projects/cloud/job-finder/journey/05-profile.jpg")
+            image: withBasePath("/projects/cloud/job-finder/journey/06-profile.jpg")
         }
     ],
     workflow: [
