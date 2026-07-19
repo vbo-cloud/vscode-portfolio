@@ -15,7 +15,7 @@ Day to day work covered new feature development and bug fixes against a C# / Ora
 Beyond feature work, I contributed to broader architecture improvements and to the team's Gitflow process, backed by Azure DevOps pipelines for build and release.
 `,
     type: "Enterprise Software",
-    tech: ["C#", "Oracle Database", "Azure DevOps", "GitFlow"],
+    tech: ["C#", "Oracle Database", "Azure DevOps"],
     links: {},
     image: placeholderImage("Akanea", "#a78bfa"),
     imageStyle: {
