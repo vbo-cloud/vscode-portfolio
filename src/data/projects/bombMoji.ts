@@ -20,6 +20,7 @@ I built the controls (ground/ice movement, dash, weapon recoil), the interface (
         live: "https://unrealitygames.itch.io/bombmoji"
     },
     image: withBasePath("/projects/games/bomb-moji/cover.png"),
+    video: { title: "Bomb'Moji", url: "https://www.youtube.com/watch?v=dVJFuEFkYZU" },
     gallery: [
         withBasePath("/projects/games/bomb-moji/gallery-1.png"),
         withBasePath("/projects/games/bomb-moji/gallery-2.png"),
@@ -52,24 +53,5 @@ I built the controls (ground/ice movement, dash, weapon recoil), the interface (
             time: "4.5 days",
             status: "success"
         }
-    ],
-    snippet: `// Kill-counter-driven enemy spawn activation
-void OnEnemyKilled()
-{
-    killCount++;
-    spawner.SetActiveWaves(waveTable.WavesUnlockedAt(killCount));
-}
-`,
-    architecture: `
-[ Player Controller ] -- ground/ice movement, dash, recoil
-          |
-          v
-[ Kill Counter ] -- drives spawn activation & UI
-          |
-          v
-[ Enemy Spawner ] -- doors, wave activation
-          |
-          v
-[ FX Layer ] -- hit-flash, explosion particles
-`
+    ]
 };

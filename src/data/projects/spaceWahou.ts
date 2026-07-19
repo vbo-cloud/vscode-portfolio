@@ -20,6 +20,7 @@ I built player movement, the system that attaches collected blue ships to the pl
         live: "https://unrealitygames.itch.io/space-wahou"
     },
     image: withBasePath("/projects/games/space-wahou/cover.png"),
+    video: { title: "Space Wahou", url: "https://www.youtube.com/watch?v=Xz0Q9cr38qE" },
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",
@@ -46,26 +47,5 @@ I built player movement, the system that attaches collected blue ships to the pl
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Follower ships trailing the player mothership
-void FollowerShip::update(const sf::Vector2f& leaderPos, float dt) {
-    sf::Vector2f dir = (targetOffset + leaderPos) - position;
-    position += dir * followSpeed * dt;
-}
-`,
-    architecture: `
-[ SFML Render/Update Loop ]
-          |
-          v
-[ Player Mothership ]
-  - Movement
-  - Shield
-  - Weapon fire
-          |
-          v
-[ Follower Ships ] -- collected blue ships
-          |
-          v
-[ Pickups ] -- green (heal) / yellow (ultimate charge)
-`
+    ]
 };

@@ -20,6 +20,7 @@ I built player and camera movement (boost, brake, grappling-hook swings, a super
         live: "https://unrealitygames.itch.io/whiz"
     },
     image: withBasePath("/projects/games/whiz/cover.png"),
+    video: { title: "Whiz", url: "https://www.youtube.com/watch?v=s1sdixXM5aU" },
     gallery: [
         withBasePath("/projects/games/whiz/gallery-1.png"),
         withBasePath("/projects/games/whiz/gallery-2.png"),
@@ -52,29 +53,5 @@ I built player and camera movement (boost, brake, grappling-hook swings, a super
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Ghost trail + high-score save (time + replay)
-void ASpeedrunGameMode::OnRaceFinished(float time, const TArray<FGhostFrame>& replay)
-{
-    if (time < BestTime)
-    {
-        BestTime = time;
-        SaveGame->GhostReplay = replay;
-        UGameplayStatics::SaveGameToSlot(SaveGame, TEXT("Whiz"), 0);
-    }
-}
-`,
-    architecture: `
-[ Player Controller ]
-  - Boost / Brake / Grapple / Supersonic
-          |
-          v
-[ Timer & Ghost System ] -- records + replays best run
-          |
-          v
-[ Shader & VFX Layer ] -- player/ghost shader, speed particles, FOV
-          |
-          v
-[ Level Geometry ] -- supersonic walls/zones, grappable surfaces
-`
+    ]
 };

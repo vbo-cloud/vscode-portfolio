@@ -19,8 +19,9 @@ I was Lead Programmer on a large cross-discipline team (2 programmers, 3 artists
     links: {
         live: "https://dwarfsdelight.itch.io/dwarfs-delight"
     },
-    image: withBasePath("/projects/games/dwarfs-delight/gallery-1-home.png"),
+    image: withBasePath("/projects/games/dwarfs-delight/cover-logo.png"),
     gallery: [
+        withBasePath("/projects/games/dwarfs-delight/gallery-1-home.png"),
         withBasePath("/projects/games/dwarfs-delight/gallery-2-gameplay.png"),
         withBasePath("/projects/games/dwarfs-delight/gallery-3-leaderboard.png")
     ],
@@ -53,35 +54,5 @@ I was Lead Programmer on a large cross-discipline team (2 programmers, 3 artists
             time: "IIM final year",
             status: "success"
         }
-    ],
-    snippet: `// Bomb throw + explosion feature
-public class BombThrow : MonoBehaviour
-{
-    [SerializeField] private float force;
-
-    public void Throw(Vector3 direction)
-    {
-        var bomb = Instantiate(bombPrefab, transform.position, Quaternion.identity);
-        bomb.GetComponent<Rigidbody>().AddForce(direction * force, ForceMode.Impulse);
-        bomb.GetComponent<Bomb>().OnExplode += HandleExplosion;
-    }
-}
-`,
-    architecture: `
-[ Local Input (2-4 players) ]
-          |
-          v
-[ Player Controller ]
-  - Movement / Camera
-  - Punch / Bump / Stun
-          |
-          v
-[ Bomb System ] -- throw, physics, explosion
-          |
-          v
-[ Scoring & Leaderboard UI ]
-          |
-          v
-[ Sound Manager ] -- custom import/sort tooling
-`
+    ]
 };

@@ -2,7 +2,6 @@ import { jobFinder } from "./projects/jobFinder";
 import { dwarfsDelight } from "./projects/dwarfsDelight";
 import { xenosHeresy } from "./projects/xenosHeresy";
 import { pescalera } from "./projects/pescalera";
-import { akanea } from "./projects/akanea";
 import { lsGroup } from "./projects/lsGroup";
 import { realityAcademy } from "./projects/realityAcademy";
 import { onlineFPS } from "./projects/onlineFPS";
@@ -20,7 +19,6 @@ export const PROJECTS_DATA = [
     dwarfsDelight,
     xenosHeresy,
     pescalera,
-    akanea,
     lsGroup,
     realityAcademy,
     onlineFPS,

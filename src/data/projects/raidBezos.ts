@@ -20,6 +20,7 @@ The pitch: Big Corporations have come to enslave Santa's elves the day before Ch
         live: "https://unrealitygames.itch.io/raid-bezos"
     },
     image: withBasePath("/projects/games/raid-bezos/cover.png"),
+    video: { title: "Raid Bezos", url: "https://www.youtube.com/watch?v=5hqurTxFarU" },
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",
@@ -44,21 +45,5 @@ The pitch: Big Corporations have come to enslave Santa's elves the day before Ch
             time: "5 days",
             status: "success"
         }
-    ],
-    snippet: `// Special gift: hidden effect revealed on unwrap
-void AGiftBox::Unwrap()
-{
-    const FGiftEffect Effect = GiftPool[FMath::RandRange(0, GiftPool.Num() - 1)];
-    Effect.ApplyTo(OwningElf);
-}
-`,
-    architecture: `
-[ Game Jam Build — 5 days ]
-          |
-          v
-[ Gift System ] -- randomized "special gift" effects
-          |
-          v
-[ Elf / Big Corp AI ]
-`
+    ]
 };

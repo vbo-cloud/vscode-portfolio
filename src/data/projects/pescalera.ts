@@ -19,8 +19,10 @@ As Lead Programmer, I built player/camera movement, input handling, weapon and a
     links: {
         live: "https://antxn.itch.io/pescalera"
     },
-    image: withBasePath("/projects/games/pescalera/gallery-1.png"),
+    image: withBasePath("/projects/games/pescalera/cover-keyart.png"),
+    video: { title: "Pescalera", url: "https://www.youtube.com/watch?v=FQ1w2VKe7F8" },
     gallery: [
+        withBasePath("/projects/games/pescalera/gallery-1.png"),
         withBasePath("/projects/games/pescalera/gallery-2.png"),
         withBasePath("/projects/games/pescalera/gallery-3.png")
     ],
@@ -51,28 +53,5 @@ As Lead Programmer, I built player/camera movement, input handling, weapon and a
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Boid-based seagull flocking
-Vector3 Flock(Boid self, List<Boid> neighbors)
-{
-    var separation = Separation(self, neighbors);
-    var alignment = Alignment(neighbors);
-    var cohesion = Cohesion(self, neighbors);
-    return (separation * 1.5f + alignment + cohesion).normalized;
-}
-`,
-    architecture: `
-[ Wave Spawner ]
-          |
-          v
-[ Boid Flocking System ] -- seagull enemies
-          |
-          v
-[ Player Controller ]
-  - Camera / Movement
-  - Harpoon weapon + ammo (captured fish)
-          |
-          v
-[ Gamefeel & UI Layer ] -- dash-ready, next-wave
-`
+    ]
 };

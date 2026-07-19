@@ -18,6 +18,7 @@ My work covered directional jump preview and physics (stickiness/slipping, colli
     tech: ["Unity", "C#", "Git"],
     links: {},
     image: withBasePath("/projects/games/stick-it/cover.png"),
+    video: { title: "Stick It - Official Launch Trailer", url: "https://www.youtube.com/watch?v=imdtWzWj024" },
     gallery: [
         withBasePath("/projects/games/stick-it/gallery-1.gif"),
         withBasePath("/projects/games/stick-it/gallery-2.gif"),
@@ -50,20 +51,5 @@ My work covered directional jump preview and physics (stickiness/slipping, colli
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Mass system reshaping collision/jump/stickiness rules
-float StickinessFor(SlimeMass mass) => Mathf.Clamp01(1f - (mass.Value / MaxMass) * 0.5f);
-`,
-    architecture: `
-[ Player Manager ] -- respawn, transitions, score, mass
-          |
-          v
-[ Slime Physics ]
-  - Directional jump
-  - Stickiness / slipping
-  - Mass-based collision rules
-          |
-          v
-[ FX Layer ] -- appear/disappear shader, elimination particles
-`
+    ]
 };

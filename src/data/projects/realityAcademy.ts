@@ -91,39 +91,5 @@ export const realityAcademy = {
             time: "2022",
             status: "success"
         }
-    ],
-    snippet: `// Speeds up 360 training video playback for repeated QA passes
-public class TimeAccelerator : MonoBehaviour
-{
-    [SerializeField] private VideoController m_videoController;
-    [SerializeField] private float m_speed = 5f;
-    private bool m_isAccelerated;
-
-    private void Toggle()
-    {
-        m_isAccelerated = !m_isAccelerated;
-        float factor = m_isAccelerated ? m_speed : 1f;
-        m_videoController.Player.playbackSpeed = factor;
-        Time.timeScale = factor;
-    }
-}
-`,
-    architecture: `
-[ BehaviorTree GameObject ]
-          |
-          v
-[ Node graph (UI Builder) ] -- one clear timeline per training
-          |
-          v
-[ Awake() ] -- instantiates INSTANCES_MUSTHAVE + first node's prefabs only
-          |
-          v
-[ Node completes ] -- disables its prefabs, activates next node
-          |
-          v
-[ Training ends ]
-
-Cross-cutting: Editor Mode (headset-free testing) - Accelerator (5x video
-speed) - camera-relative object placement for skybox-only 360 scenes
-`
+    ]
 };
