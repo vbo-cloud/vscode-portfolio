@@ -49,30 +49,5 @@ I owned the project's architecture: tile-selection tooling for movement and atta
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Turn-based tile selection tooling
-public IEnumerable<Tile> GetReachableTiles(Unit unit, int range)
-{
-    return grid.Tiles
-        .Where(t => Pathfinder.Distance(unit.Tile, t) <= range)
-        .Where(t => !t.IsOccupied);
-}
-`,
-    architecture: `
-[ Turn Manager ]
-          |
-          v
-[ Tile Selection Tooling ] -- movement / attack ranges
-          |
-          v
-[ Unit / AI Layer ]
-  - Player units
-  - Enemy AI
-          |
-          v
-[ Dialogue & Tutorial Systems ]
-          |
-          v
-[ Designer Tools ] -- heroes, enemies, attacks, levels
-`
+    ]
 };

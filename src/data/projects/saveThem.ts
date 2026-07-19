@@ -46,20 +46,5 @@ A solo personal project built at IIM: a small puzzle game where you guide captur
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Ghost-assisted puzzle interaction
-public void UseGhostHelper(Ghost ghost, Interactable target)
-{
-    if (ghost.CanInteractWith(target)) target.Trigger(ghost);
-}
-`,
-    architecture: `
-[ Player-controlled group ]
-          |
-          v
-[ Ghost Helper System ] -- dead friends assist puzzle solving
-          |
-          v
-[ Detention Center Levels ] -- exit-focused puzzles
-`
+    ]
 };

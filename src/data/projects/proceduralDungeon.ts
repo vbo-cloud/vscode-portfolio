@@ -49,25 +49,5 @@ Rather than starting from scratch, we adapted "Dwarfs Delight" to the constraint
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Room-to-room transition driven by generated dungeon data
-public void EnterRoom(RoomNode node)
-{
-    currentRoom.Unload();
-    currentRoom = RoomFactory.Instantiate(node.RoomType, node.Position);
-    currentRoom.SetLocked(node.RequiresKey && !player.HasKey(node.KeyId));
-}
-`,
-    architecture: `
-[ Dungeon Generation Algorithm ]
-          |
-          v
-[ Dungeon Graph ] -- floors, rooms, secret room, key/door gate
-          |
-          v
-[ Room Prefabs ] -- content, layout
-          |
-          v
-[ Room Transition Logic ] -- reads graph, loads/unloads rooms
-`
+    ]
 };

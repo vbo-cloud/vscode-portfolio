@@ -51,20 +51,5 @@ My work covered directional jump preview and physics (stickiness/slipping, colli
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Mass system reshaping collision/jump/stickiness rules
-float StickinessFor(SlimeMass mass) => Mathf.Clamp01(1f - (mass.Value / MaxMass) * 0.5f);
-`,
-    architecture: `
-[ Player Manager ] -- respawn, transitions, score, mass
-          |
-          v
-[ Slime Physics ]
-  - Directional jump
-  - Stickiness / slipping
-  - Mass-based collision rules
-          |
-          v
-[ FX Layer ] -- appear/disappear shader, elimination particles
-`
+    ]
 };

@@ -48,20 +48,5 @@ Bombers is my first-year final project at IIM, developed entirely solo: every fe
             time: "IIM first year",
             status: "success"
         }
-    ],
-    snippet: `// Robot expansion controller
-public class RobotExpansionController : MonoBehaviour
-{
-    public void ClaimSector(Sector sector) => sector.SetOwner(RobotFaction.Instance);
-}
-`,
-    architecture: `
-[ Machine City Simulation ]
-          |
-          v
-[ Robot AI ] -- expansion & defense
-          |
-          v
-[ Player Controller ] -- find humans, stop expansion
-`
+    ]
 };

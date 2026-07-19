@@ -49,25 +49,5 @@ I set up the entire network architecture: Enet integration, binary packet serial
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Client-side prediction + server reconciliation (simplified)
-void ApplyServerState(const PlayerState& authoritative) {
-    localState.position = authoritative.position;
-    for (auto& input : pendingInputs.since(authoritative.lastProcessedInput)) {
-        localState = Simulate(localState, input);
-    }
-}
-`,
-    architecture: `
-[ Unity Client ]
-  - Local gameplay
-  - Prediction (movement, shots)
-          |
-          v  Enet (binary packets)
-          |
-[ C++ Server ]
-  - Reconciliation
-  - Physics via PhysX (colliders extracted from Unity)
-  - Text chat
-`
+    ]
 };

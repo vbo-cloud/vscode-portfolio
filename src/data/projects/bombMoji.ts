@@ -53,24 +53,5 @@ I built the controls (ground/ice movement, dash, weapon recoil), the interface (
             time: "4.5 days",
             status: "success"
         }
-    ],
-    snippet: `// Kill-counter-driven enemy spawn activation
-void OnEnemyKilled()
-{
-    killCount++;
-    spawner.SetActiveWaves(waveTable.WavesUnlockedAt(killCount));
-}
-`,
-    architecture: `
-[ Player Controller ] -- ground/ice movement, dash, recoil
-          |
-          v
-[ Kill Counter ] -- drives spawn activation & UI
-          |
-          v
-[ Enemy Spawner ] -- doors, wave activation
-          |
-          v
-[ FX Layer ] -- hit-flash, explosion particles
-`
+    ]
 };
