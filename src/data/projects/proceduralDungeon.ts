@@ -13,6 +13,8 @@ A focused 2-week, 2-programmer exploration of procedural generation: a dungeon c
 Rather than starting from scratch, we adapted "Dwarfs Delight" to the constraints of a dungeon: I stripped out numerous dependencies (the lobby, the "Crown" game mode), reworked the player spawn system, and made abilities acquirable mid-run. I completed the dungeon-generation algorithm my colleague had started, built the room prefabs and their content (everything except enemies and the Wave Function Collapse logic), and wrote the transition logic between rooms based on the algorithm's output.
 `,
     type: "Procedural Generation",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {},
     image: withBasePath("/projects/technical/procedural-dungeon-generation/cover.png"),

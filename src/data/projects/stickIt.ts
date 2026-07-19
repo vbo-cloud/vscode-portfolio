@@ -13,6 +13,8 @@ Stick It is a 2-month student project (3 designers, 2 artists, 4 programmers, 2 
 My work covered directional jump preview and physics (stickiness/slipping, collisions between players, a mass system that reshapes the rules of collision, jump and stickiness), the multiplayer hub and a player manager handling respawn, map transitions, scoring and mass, plus FX work: an appear/disappear shader for walls and mushrooms, and a particle behavior for the "musical chairs" maps (particles turn red and eliminate all remaining players when the countdown ends). I also heavily contributed to the game design.
 `,
     type: "Local Multiplayer Brawler",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {},
     image: withBasePath("/projects/games/stick-it/cover.png"),

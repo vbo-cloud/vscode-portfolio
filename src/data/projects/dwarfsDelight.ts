@@ -13,6 +13,8 @@ Dwarfs Delight is my final year project at IIM: a local multiplayer couch game f
 I was Lead Programmer on a large cross-discipline team (2 programmers, 3 artists, 2 designers, 3 producers, 2 sound designers, 1 compositor). My work spanned player/camera movement, the bomb-throw and explosion feature, physical interactions (punch, bump between players, stun), UI animations for scoring and the leaderboard, a full sound implementation pass (plus a custom tool to import and sort sounds faster), VFX, and a scale-safe shader material. I also acted as the team's Git referent and took an active role in game/level design and the overall game architecture.
 `,
     type: "Local Multiplayer Game",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {
         live: "https://dwarfsdelight.itch.io/dwarfs-delight"

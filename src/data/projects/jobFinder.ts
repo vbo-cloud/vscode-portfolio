@@ -19,6 +19,8 @@ The backend is FastAPI with JWT auth via Microsoft Entra External ID, paired wit
 Development itself leans on an AI-assisted workflow: up to 4 Claude Code agents running implementation in parallel, Claude for architecture/planning discussions, and an autonomous Claude-based reviewer agent wired into CI/CD to review every PR automatically.
 `,
     type: "Cloud / AI Engineering",
+    showArchitectureTab: true,
+    showWorkflowTab: true,
     tech: [
         "Azure",
         "Terraform",

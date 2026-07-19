@@ -11,6 +11,8 @@ export const bombers = {
 Bombers is my first-year final project at IIM, developed entirely solo: every feature was built by me, using Mixamo for models and some animations, while I modeled the robots and the boss animations myself with 3DS Max.
 `,
     type: "Personal Project — Action",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#"],
     links: {
         live: "https://unrealitygames.itch.io/bombers"

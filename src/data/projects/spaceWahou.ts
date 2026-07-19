@@ -13,6 +13,8 @@ A 12-day student project built with a team of 3 programmers, in raw C++ and SFML
 I built player movement, the system that attaches collected blue ships to the player and has them follow its motion, the pause menu sound toggle, sound design (researched and implemented the music), weapon fire, a player shield feature, and map boundaries. I also contributed to the game design.
 `,
     type: "Arcade Shooter — C++/SFML",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["C++", "SFML"],
     links: {
         live: "https://unrealitygames.itch.io/space-wahou"

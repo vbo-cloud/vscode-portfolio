@@ -13,6 +13,8 @@ Internship at Reality Academy, Bagnolet, within a VR e-learning content team.
 The core deliverable was a visual graph system letting non-developers author VR training scenarios without touching code, alongside internal tools that sped up QA and Unity workflows for the team. I also contributed directly to QA and to improvements of the VR e-learning content and its companion website, and set up a test/acceptance plan (cahier de recette) to keep production releases smooth.
 `,
     type: "VR / Tooling",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {},
     image: withBasePath("/projects/companies/reality-academy/cover.jpg"),
