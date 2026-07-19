@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import {
     Zap, ExternalLink, Terminal, GitBranch, Filter, LayoutGrid, List,
     FileText, Github, Globe, FileCode, Linkedin, Code2, ArrowLeft,
-    Bot, ShieldCheck, Users, GitPullRequest
+    Bot, ShieldCheck, Users, GitPullRequest, Cloud, Building2, Gamepad2, Cpu
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
-import { getYouTubeEmbedId } from '../../utils/helpers';
+import { getYouTubeEmbedId, getTechColor } from '../../utils/helpers';
 // @ts-ignore
 import FONT_5x7 from '../../data/font5x7';
 import { Breadcrumbs } from '../UI/Breadcrumbs';
@@ -14,10 +14,58 @@ import { RealMinimap } from './Minimap';
 import { CanvasContributionMap } from '../Widgets/ContributionMap';
 import { TypingEffect } from '../UI/TypingEffect';
 import { TypewriterWords } from '../UI/TypewriterWords';
+import { TechTag } from '../UI/TechTag';
 
 const TRANSITION_TEXT = "Transitioning from VR/game development into cloud architecture and AI-assisted automation.";
 
 const WORK_ON_TEXT = 'I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.';
+
+/**
+ * Mirrors the sidebar's `projects/` folder structure (cloud, companies, video games
+ * -> games / technical) so the "All Projects" page groups cards the same way the
+ * file tree does, with Cloud surfaced first and visually featured.
+ */
+type ProjectSection = {
+    key: string;
+    title: string;
+    description?: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    categories: string[];
+    featured?: boolean;
+};
+
+type ProjectSectionGroup = {
+    key: string;
+    title: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    sections: ProjectSection[];
+};
+
+const PROJECT_SECTIONS: (ProjectSection | ProjectSectionGroup)[] = [
+    {
+        key: 'cloud',
+        title: 'Cloud Engineering',
+        description: 'Flagship cloud & AI systems — Azure infrastructure, multi-agent pipelines, and end-to-end platform work.',
+        icon: Cloud,
+        categories: ['cloud'],
+        featured: true,
+    },
+    {
+        key: 'companies',
+        title: 'Companies',
+        icon: Building2,
+        categories: ['companies'],
+    },
+    {
+        key: 'videogames',
+        title: 'Video Games',
+        icon: Gamepad2,
+        sections: [
+            { key: 'technical', title: 'Technical Projects', icon: Cpu, categories: ['technical'] },
+            { key: 'games', title: 'Games', icon: Gamepad2, categories: ['games'] },
+        ],
+    },
+];
 
 /**
  * Renders a self-contained HTML embed (e.g. an exported architecture diagram)
@@ -449,9 +497,9 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                                 <div className="absolute top-4 left-4 flex gap-1">
-                                                    {p.languages?.slice(0, 2).map((lang: any) => (
-                                                        <span key={lang.name} className="px-2 py-0.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-sm text-[9px] font-bold text-white uppercase tracking-wider">
-                                                            {lang.name}
+                                                    {p.tech?.slice(0, 2).map((t: string) => (
+                                                        <span key={t} className="px-2 py-0.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-sm text-[9px] font-bold uppercase tracking-wider" style={{ color: getTechColor(t) }}>
+                                                            {t}
                                                         </span>
                                                     ))}
                                                 </div>
@@ -823,6 +871,26 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             setFn(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
         };
 
+        const getCategoryProjects = (categories: string[]) =>
+            filteredProjects.filter(p => categories.includes(p.category));
+
+        const sectionHasResults = (section: ProjectSection | ProjectSectionGroup): boolean =>
+            'sections' in section
+                ? section.sections.some(sectionHasResults)
+                : getCategoryProjects(section.categories).length > 0;
+
+        const SectionHeading = ({ icon: Icon, title, description, featured }: { icon: React.ComponentType<{ size?: number; className?: string }>; title: string; description?: string; featured?: boolean }) => (
+            <div className={`flex items-start gap-4 ${featured ? 'pb-6 border-b-2 border-[var(--accent)]/40' : ''}`}>
+                <div className={`shrink-0 rounded-sm p-2.5 ${featured ? 'bg-[var(--accent)] text-white' : 'bg-[var(--bg-activity)] text-[var(--accent)] border border-[var(--border)]'}`}>
+                    <Icon size={featured ? 20 : 16} />
+                </div>
+                <div>
+                    <h2 className={`font-bold text-[var(--text-primary)] tracking-tight ${featured ? 'text-2xl md:text-3xl' : 'text-lg'}`}>{title}</h2>
+                    {description && <p className="text-[var(--text-secondary)] opacity-70 text-sm mt-1 max-w-2xl">{description}</p>}
+                </div>
+            </div>
+        );
+
         if (easyMode) {
             return (
                 <div className="h-full flex flex-col bg-[var(--bg-main)]">
@@ -878,41 +946,81 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {filteredProjects.map(p => (
+                            {(() => {
+                                const renderEasyCard = (p: any, featured?: boolean) => (
                                     <div
                                         key={p.id}
                                         onClick={() => onOpenFile({ id: p.id, title: `${p.title}.tsx`, type: "detail", data: p })}
-                                        className="group relative bg-[var(--bg-activity)]/20 border border-[var(--border)] rounded-sm overflow-hidden cursor-pointer hover:border-[var(--accent)] transition-all flex flex-col h-full"
+                                        className={featured
+                                            ? "group relative md:col-span-2 lg:col-span-3 bg-gradient-to-br from-[var(--accent)]/15 via-[var(--bg-activity)]/20 to-transparent border-2 border-[var(--accent)]/50 rounded-sm overflow-hidden cursor-pointer hover:border-[var(--accent)] transition-all flex flex-col md:flex-row"
+                                            : "group relative bg-[var(--bg-activity)]/20 border border-[var(--border)] rounded-sm overflow-hidden cursor-pointer hover:border-[var(--accent)] transition-all flex flex-col h-full"
+                                        }
                                     >
-                                        <div className="aspect-video relative overflow-hidden bg-[var(--bg-activity)]">
+                                        <div className={featured ? "md:w-2/5 aspect-video md:aspect-auto relative overflow-hidden bg-[var(--bg-activity)]" : "aspect-video relative overflow-hidden bg-[var(--bg-activity)]"}>
                                             <img src={p.image} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                                                <span className="text-white text-xs font-bold flex items-center gap-2">
-                                                    View Case Study <ExternalLink size={14} />
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="p-6 flex-1 flex flex-col">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                {p.languages?.slice(0, 2).map((lang: any) => (
-                                                    <span key={lang.name} className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-tighter border border-[var(--border)] rounded-sm flex items-center gap-1.5 text-[var(--text-secondary)]">
-                                                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: lang.color }} />
-                                                        {lang.name}
+                                            {featured ? (
+                                                <div className="absolute top-4 left-4 px-3 py-1 bg-[var(--accent)] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm flex items-center gap-1.5 shadow-lg">
+                                                    <Cloud size={12} /> Flagship
+                                                </div>
+                                            ) : (
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                                                    <span className="text-white text-xs font-bold flex items-center gap-2">
+                                                        View Case Study <ExternalLink size={14} />
                                                     </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className={featured ? "md:w-3/5 p-8 flex flex-col justify-center" : "p-6 flex-1 flex flex-col"}>
+                                            <div className="flex items-center gap-1.5 flex-wrap mb-3">
+                                                {p.tech?.slice(0, featured ? 6 : 3).map((t: string) => (
+                                                    <TechTag key={t} label={t} />
                                                 ))}
                                             </div>
-                                            <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent)] transition-colors">{p.title}</h3>
-                                            <p className="text-sm text-[var(--text-secondary)] line-clamp-2 md:line-clamp-3 leading-relaxed mb-6 opacity-80">{p.description}</p>
+                                            <h3 className={featured ? "text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent)] transition-colors" : "text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent)] transition-colors"}>{p.title}</h3>
+                                            <p className={featured ? "text-base text-[var(--text-secondary)] leading-relaxed mb-6 opacity-80" : "text-sm text-[var(--text-secondary)] line-clamp-2 md:line-clamp-3 leading-relaxed mb-6 opacity-80"}>{p.description}</p>
 
-                                            <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between">
-                                                {/* Tech stack icons removed for cleaner easy mode */}
-                                                <span className="text-[10px] font-mono text-[var(--text-secondary)] opacity-40">v1.0.0</span>
-                                            </div>
+                                            {featured && (
+                                                <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between">
+                                                    <span className="inline-flex items-center gap-2 text-[var(--accent)] font-bold text-sm">
+                                                        View Case Study <ExternalLink size={14} />
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+                                );
+
+                                return (
+                                    <div className="space-y-16">
+                                        {PROJECT_SECTIONS.filter(sectionHasResults).map(section => (
+                                            'sections' in section ? (
+                                                <div key={section.key}>
+                                                    <SectionHeading icon={section.icon} title={section.title} />
+                                                    <div className="space-y-12 mt-8">
+                                                        {section.sections.filter(sub => getCategoryProjects(sub.categories).length > 0).map(sub => (
+                                                            <div key={sub.key}>
+                                                                <h3 className="flex items-center gap-2 text-sm font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-5 opacity-70">
+                                                                    <sub.icon size={14} className="text-[var(--accent)]" /> {sub.title}
+                                                                </h3>
+                                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                                                    {getCategoryProjects(sub.categories).map(p => renderEasyCard(p))}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div key={section.key}>
+                                                    <SectionHeading icon={section.icon} title={section.title} description={section.description} featured={section.featured} />
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                                                        {getCategoryProjects(section.categories).map(p => renderEasyCard(p, section.featured))}
+                                                    </div>
+                                                </div>
+                                            )
+                                        ))}
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -997,74 +1105,113 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="max-w-6xl mx-auto w-full pt-1 md:pt-2 pb-4">
                             {filteredProjects.length === 0 ? (
                                 <div className="text-center text-[var(--text-secondary)] mt-20 font-mono text-sm">No extensions found matching your criteria.</div>
-                            ) : (
-                                <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "flex flex-col gap-1"}>
-                                    {filteredProjects.map(p => (
-                                        <div
-                                            key={p.id}
-                                            onClick={() => onOpenFile({ id: p.id, title: `${p.title}.tsx`, type: "detail", data: p })}
-                                            className={`
-                                            group border border-transparent hover:bg-[var(--bg-activity)] cursor-pointer transition-all
-                                            ${viewMode === 'grid'
-                                                    ? 'bg-[var(--bg-panel)] border-[var(--border)] flex flex-col h-full rounded-sm hover:border-[var(--accent)]'
-                                                    : 'flex flex-row items-start gap-4 p-2 rounded-sm hover:bg-[var(--bg-activity)]'
-                                                }
-                                        `}
-                                        >
-                                            {/* IMAGE / ICON */}
-                                            <div className={viewMode === 'grid' ? "h-48 w-full bg-[var(--bg-activity)] relative overflow-hidden shrink-0" : "w-16 h-16 md:w-24 md:h-24 bg-[var(--bg-activity)] shrink-0 border border-[var(--border)]"}>
-                                                <img
-                                                    src={p.image}
-                                                    alt={p.title}
-                                                    className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                                                />
-                                            </div>
+                            ) : (() => {
+                                const renderIdeCard = (p: any, featured?: boolean) => (
+                                    <div
+                                        key={p.id}
+                                        onClick={() => onOpenFile({ id: p.id, title: `${p.title}.tsx`, type: "detail", data: p })}
+                                        className={`
+                                        group border cursor-pointer transition-all
+                                        ${viewMode === 'grid'
+                                                ? (featured
+                                                    ? 'md:col-span-2 xl:col-span-3 bg-gradient-to-br from-[var(--accent)]/10 to-[var(--bg-panel)] border-[var(--accent)]/50 hover:border-[var(--accent)] flex flex-col md:flex-row rounded-sm'
+                                                    : 'bg-[var(--bg-panel)] border-[var(--border)] flex flex-col h-full rounded-sm hover:border-[var(--accent)]')
+                                                : (featured
+                                                    ? 'flex flex-row items-stretch gap-4 p-3 rounded-sm border-[var(--accent)]/50 bg-[var(--accent)]/5 hover:bg-[var(--accent)]/10'
+                                                    : 'flex flex-row items-stretch gap-4 p-2 rounded-sm border-transparent hover:bg-[var(--bg-activity)]')
+                                            }
+                                    `}
+                                    >
+                                        {/* IMAGE / ICON */}
+                                        <div className={
+                                            viewMode === 'grid'
+                                                ? (featured ? "md:w-2/5 h-48 md:h-auto bg-[var(--bg-activity)] relative overflow-hidden shrink-0" : "h-48 w-full bg-[var(--bg-activity)] relative overflow-hidden shrink-0")
+                                                : (featured ? "w-16 h-16 md:w-28 md:h-28 bg-[var(--bg-activity)] shrink-0 border border-[var(--accent)]/40" : "w-16 h-16 md:w-24 md:h-24 bg-[var(--bg-activity)] shrink-0 border border-[var(--border)]")
+                                        }>
+                                            <img
+                                                src={p.image}
+                                                alt={p.title}
+                                                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                                            />
+                                            {featured && viewMode === 'grid' && (
+                                                <div className="absolute top-3 left-3 px-2 py-0.5 bg-[var(--accent)] text-white text-[9px] font-bold uppercase tracking-widest rounded-sm flex items-center gap-1">
+                                                    <Cloud size={10} /> Flagship
+                                                </div>
+                                            )}
+                                        </div>
 
-                                            {/* CONTENT */}
-                                            <div className={`flex-1 min-w-0 ${viewMode === 'grid' ? 'p-3' : 'py-1 flex flex-col justify-between'}`}>
-                                                <div>
-                                                    <div className="flex items-center justify-between mb-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <h3 className="font-bold text-[var(--text-primary)] text-sm md:text-base font-sans group-hover:text-[var(--accent)] transition-colors">
-                                                                {p.title}
-                                                            </h3>
-                                                            {viewMode === 'list' && (
-                                                                <span className="hidden md:inline-flex px-1.5 py-0.5 rounded-sm bg-[var(--bg-main)] text-[10px] text-[var(--text-secondary)] border border-[var(--border)] font-mono">
-                                                                    v1.{p.id.length}.0
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        {viewMode === 'grid' && p.links && 'live' in p.links && <Globe size={12} className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]" />}
+                                        {/* CONTENT */}
+                                        <div className={`flex-1 min-w-0 ${viewMode === 'grid' ? (featured ? 'p-6 flex flex-col justify-center' : 'p-3') : 'flex flex-col justify-between'}`}>
+                                            <div>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <h3 className={featured && viewMode === 'grid' ? "font-bold text-[var(--text-primary)] text-xl font-sans group-hover:text-[var(--accent)] transition-colors" : "font-bold text-[var(--text-primary)] text-sm md:text-base font-sans group-hover:text-[var(--accent)] transition-colors"}>
+                                                            {p.title}
+                                                        </h3>
+                                                        {featured && viewMode === 'list' && (
+                                                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-[var(--accent)] text-white text-[9px] font-bold uppercase tracking-widest">
+                                                                <Cloud size={10} /> Flagship
+                                                            </span>
+                                                        )}
                                                     </div>
-
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        {p.languages?.slice(0, 2).map((lang: any) => (
-                                                            <div key={lang.name} className="flex items-center gap-1 text-[10px] text-[var(--text-secondary)] bg-[var(--bg-activity)] px-1.5 py-0.5 rounded-sm border border-[var(--border)]">
-                                                                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: lang.color }} />
-                                                                {lang.name}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-
-                                                    <p className="text-xs text-[var(--text-secondary)] line-clamp-2 md:line-clamp-1 mb-2 font-sans opacity-80">
-                                                        {p.description}
-                                                    </p>
+                                                    {viewMode === 'grid' && p.links && 'live' in p.links && <Globe size={12} className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]" />}
                                                 </div>
 
-                                                {viewMode === 'list' && (
-                                                    <div className="flex gap-1 mt-1 flex-wrap">
-                                                        {p.tech?.map((t: string) => (
-                                                            <span key={t} className="text-[10px] px-1.5 py-0.5 bg-[var(--bg-main)] text-[var(--text-secondary)] rounded-sm border border-[var(--border)]">
-                                                                {t}
-                                                            </span>
+                                                {viewMode === 'grid' && (
+                                                    <div className="flex items-center gap-1.5 flex-wrap mb-2">
+                                                        {p.tech?.slice(0, 3).map((t: string) => (
+                                                            <TechTag key={t} label={t} />
                                                         ))}
                                                     </div>
                                                 )}
+
+                                                <p className={featured && viewMode === 'grid' ? "text-sm text-[var(--text-secondary)] mb-2 font-sans opacity-80" : "text-xs text-[var(--text-secondary)] line-clamp-2 md:line-clamp-1 mb-2 font-sans opacity-80"}>
+                                                    {p.description}
+                                                </p>
                                             </div>
+
+                                            {viewMode === 'list' && (
+                                                <div className="flex gap-1.5 mt-1 flex-wrap">
+                                                    {p.tech?.map((t: string) => (
+                                                        <TechTag key={t} label={t} />
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    </div>
+                                );
+
+                                return (
+                                    <div className="space-y-14">
+                                        {PROJECT_SECTIONS.filter(sectionHasResults).map(section => (
+                                            'sections' in section ? (
+                                                <div key={section.key}>
+                                                    <SectionHeading icon={section.icon} title={section.title} />
+                                                    <div className="space-y-10 mt-6">
+                                                        {section.sections.filter(sub => getCategoryProjects(sub.categories).length > 0).map(sub => (
+                                                            <div key={sub.key}>
+                                                                <h3 className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-3 opacity-70">
+                                                                    <sub.icon size={13} className="text-[var(--accent)]" /> {sub.title}
+                                                                </h3>
+                                                                <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "flex flex-col gap-1"}>
+                                                                    {getCategoryProjects(sub.categories).map(p => renderIdeCard(p))}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div key={section.key}>
+                                                    <SectionHeading icon={section.icon} title={section.title} description={section.description} featured={section.featured} />
+                                                    <div className={`mt-6 ${viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "flex flex-col gap-1"}`}>
+                                                        {getCategoryProjects(section.categories).map(p => renderIdeCard(p, section.featured))}
+                                                    </div>
+                                                </div>
+                                            )
+                                        ))}
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -1083,10 +1230,10 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-main)] via-[var(--bg-main)]/60 to-transparent" />
                             <div className="absolute bottom-0 left-0 w-full p-8 md:p-16">
                                 <div className="max-w-5xl mx-auto">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        {data.languages?.map((lang: any) => (
-                                            <span key={lang.name} className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-sm text-[10px] font-bold text-white uppercase tracking-widest">
-                                                {lang.name}
+                                    <div className="flex flex-wrap items-center gap-2 mb-6">
+                                        {data.tech?.slice(0, 6).map((t: string) => (
+                                            <span key={t} className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-sm text-[10px] font-bold uppercase tracking-widest" style={{ color: getTechColor(t) }}>
+                                                {t}
                                             </span>
                                         ))}
                                     </div>
@@ -1222,7 +1369,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Technologies</h3>
                                             <div className="flex flex-wrap gap-2">
                                                 {data.tech?.map((t: string) => (
-                                                    <span key={t} className="px-2 py-1 bg-[var(--bg-main)] text-[var(--text-primary)] text-[11px] rounded-sm border border-[var(--border)] font-sans">{t}</span>
+                                                    <TechTag key={t} label={t} />
                                                 ))}
                                             </div>
                                         </div>
@@ -1230,10 +1377,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         <div>
                                             <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Resources</h3>
                                             <div className="text-xs space-y-3 text-[var(--text-primary)] font-sans">
-                                                <div className="flex justify-between py-1.5 border-b border-[var(--border)] border-dashed">
-                                                    <span>Version</span>
-                                                    <span className="text-[var(--text-secondary)] font-mono">{data.deployHistory?.[0]?.version || 'v1.0.0'}</span>
-                                                </div>
                                                 <div className="flex justify-between py-1.5 border-b border-[var(--border)] border-dashed">
                                                     <span>Last Update</span>
                                                     <span className="text-[var(--text-secondary)]">Recently</span>
@@ -1282,15 +1425,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 <h1 className="text-3xl font-sans font-bold text-[var(--text-primary)] mb-2 flex items-center gap-3">
                                     {data.title}
                                 </h1>
-                                <div className="flex flex-wrap gap-2 mb-4">
-                                    {data.languages?.map((lang: any) => (
-                                        <div key={lang.name} className="flex items-center gap-2 px-2.5 py-1 rounded-sm bg-[var(--bg-activity)] border border-[var(--border)] text-xs text-[var(--text-primary)]">
-                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: lang.color }} />
-                                            {lang.name}
-                                            <span className="text-[var(--text-secondary)] scale-90">{lang.percent}%</span>
-                                        </div>
-                                    ))}
-                                </div>
                                 <p className="text-base text-[var(--text-primary)] mb-4 font-sans max-w-2xl leading-relaxed">
                                     {data.description}
                                 </p>
@@ -1322,7 +1456,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Technologies</h3>
                             <div className="flex flex-wrap gap-2">
                                 {data.tech?.map((t: string) => (
-                                    <span key={t} className="px-2 py-1 bg-[var(--bg-activity)] text-[var(--text-primary)] text-[11px] rounded-sm border border-[var(--border)] font-sans">{t}</span>
+                                    <TechTag key={t} label={t} />
                                 ))}
                             </div>
                         </div>

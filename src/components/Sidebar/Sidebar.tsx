@@ -661,19 +661,19 @@ export const Sidebar = ({
                                                     })}
                                                     {expandedFolders['projects_videogames'] && (
                                                         <>
-                                                            {/* Games subfolder */}
-                                                            {renderFileTreeItem({
-                                                                id: 'projects_games', name: 'games', icon: expandedFolders['projects_games'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
-                                                                type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_games'], onToggle: () => toggleFolder('projects_games')
-                                                            })}
-                                                            {expandedFolders['projects_games'] && PROJECTS_DATA.filter(p => p.category === 'games').map(p => renderProjectFileItem(p, 4))}
-
                                                             {/* Technical projects subfolder */}
                                                             {renderFileTreeItem({
                                                                 id: 'projects_technical', name: 'technical projects', icon: expandedFolders['projects_technical'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
                                                                 type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_technical'], onToggle: () => toggleFolder('projects_technical')
                                                             })}
                                                             {expandedFolders['projects_technical'] && PROJECTS_DATA.filter(p => p.category === 'technical').map(p => renderProjectFileItem(p, 4))}
+
+                                                            {/* Games subfolder */}
+                                                            {renderFileTreeItem({
+                                                                id: 'projects_games', name: 'games', icon: expandedFolders['projects_games'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                                type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_games'], onToggle: () => toggleFolder('projects_games')
+                                                            })}
+                                                            {expandedFolders['projects_games'] && PROJECTS_DATA.filter(p => p.category === 'games').map(p => renderProjectFileItem(p, 4))}
                                                         </>
                                                     )}
                                                 </>

@@ -13,7 +13,7 @@ A 3-week, 2-programmer project exploring low-level networked multiplayer: a full
 I set up the entire network architecture: Enet integration, binary packet serialization/deserialization, client-side prediction and server reconciliation for player movement, and prediction for shots. On the server, I extracted collider data from Unity and reconstructed it with PhysX to run authoritative physics server-side. I also used Avaturn to generate 3D avatars of our classmates and Mixamo to animate them, and added a text chat system.
 `,
     type: "Networked Multiplayer FPS",
-    tech: ["C++", "Enet", "Unity", "C#", "PhysX"],
+    tech: ["C++", "Enet", "Unity", "C#"],
     links: {
         live: "https://antxn.itch.io/pescalera"
     },
