@@ -19,9 +19,10 @@ As Lead Programmer, I built player/camera movement, input handling, weapon and a
     links: {
         live: "https://antxn.itch.io/pescalera"
     },
-    image: withBasePath("/projects/games/pescalera/gallery-1.png"),
+    image: withBasePath("/projects/games/pescalera/cover-keyart.png"),
     video: { title: "Pescalera", url: "https://www.youtube.com/watch?v=FQ1w2VKe7F8" },
     gallery: [
+        withBasePath("/projects/games/pescalera/gallery-1.png"),
         withBasePath("/projects/games/pescalera/gallery-2.png"),
         withBasePath("/projects/games/pescalera/gallery-3.png")
     ],

@@ -19,8 +19,9 @@ I was Lead Programmer on a large cross-discipline team (2 programmers, 3 artists
     links: {
         live: "https://dwarfsdelight.itch.io/dwarfs-delight"
     },
-    image: withBasePath("/projects/games/dwarfs-delight/gallery-1-home.png"),
+    image: withBasePath("/projects/games/dwarfs-delight/cover-logo.png"),
     gallery: [
+        withBasePath("/projects/games/dwarfs-delight/gallery-1-home.png"),
         withBasePath("/projects/games/dwarfs-delight/gallery-2-gameplay.png"),
         withBasePath("/projects/games/dwarfs-delight/gallery-3-leaderboard.png")
     ],
