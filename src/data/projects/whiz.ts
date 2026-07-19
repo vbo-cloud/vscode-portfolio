@@ -20,6 +20,7 @@ I built player and camera movement (boost, brake, grappling-hook swings, a super
         live: "https://unrealitygames.itch.io/whiz"
     },
     image: withBasePath("/projects/games/whiz/cover.png"),
+    video: { title: "Whiz", url: "https://www.youtube.com/watch?v=s1sdixXM5aU" },
     gallery: [
         withBasePath("/projects/games/whiz/gallery-1.png"),
         withBasePath("/projects/games/whiz/gallery-2.png"),

@@ -20,6 +20,7 @@ The pitch: Big Corporations have come to enslave Santa's elves the day before Ch
         live: "https://unrealitygames.itch.io/raid-bezos"
     },
     image: withBasePath("/projects/games/raid-bezos/cover.png"),
+    video: { title: "Raid Bezos", url: "https://www.youtube.com/watch?v=5hqurTxFarU" },
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

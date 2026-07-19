@@ -18,6 +18,7 @@ My work covered directional jump preview and physics (stickiness/slipping, colli
     tech: ["Unity", "C#", "Git"],
     links: {},
     image: withBasePath("/projects/games/stick-it/cover.png"),
+    video: { title: "Stick It - Official Launch Trailer", url: "https://www.youtube.com/watch?v=imdtWzWj024" },
     gallery: [
         withBasePath("/projects/games/stick-it/gallery-1.gif"),
         withBasePath("/projects/games/stick-it/gallery-2.gif"),

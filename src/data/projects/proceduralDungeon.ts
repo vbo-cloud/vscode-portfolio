@@ -18,6 +18,7 @@ Rather than starting from scratch, we adapted "Dwarfs Delight" to the constraint
     tech: ["Unity", "C#", "Git"],
     links: {},
     image: withBasePath("/projects/technical/procedural-dungeon-generation/cover.png"),
+    video: { title: "Procedural Dungeon Generation", url: "https://www.youtube.com/watch?v=GX7QeRUCo6g" },
     pdfs: [
         { label: "Report (FR)", path: withBasePath("/projects/technical/procedural-dungeon-generation/report-fr.pdf") }
     ],

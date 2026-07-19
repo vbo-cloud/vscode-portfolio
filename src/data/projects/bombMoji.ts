@@ -20,6 +20,7 @@ I built the controls (ground/ice movement, dash, weapon recoil), the interface (
         live: "https://unrealitygames.itch.io/bombmoji"
     },
     image: withBasePath("/projects/games/bomb-moji/cover.png"),
+    video: { title: "Bomb'Moji", url: "https://www.youtube.com/watch?v=dVJFuEFkYZU" },
     gallery: [
         withBasePath("/projects/games/bomb-moji/gallery-1.png"),
         withBasePath("/projects/games/bomb-moji/gallery-2.png"),

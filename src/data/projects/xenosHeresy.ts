@@ -20,6 +20,7 @@ I owned the project's architecture: tile-selection tooling for movement and atta
         live: "https://play.google.com/store/apps/details?id=com.iimjv24T1.xenosHeresy"
     },
     image: withBasePath("/projects/games/xenos-heresy/cover.png"),
+    video: { title: "Xenos Heresy", url: "https://www.youtube.com/watch?v=G8lwmCb1II8" },
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

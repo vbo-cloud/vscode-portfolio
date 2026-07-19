@@ -18,6 +18,7 @@ A solo personal project built at IIM: a small puzzle game where you guide captur
         live: "https://unrealitygames.itch.io/save-them"
     },
     image: withBasePath("/projects/games/save-them/cover.png"),
+    video: { title: "Save Them", url: "https://www.youtube.com/watch?v=d-7r1DhlkYA" },
     gallery: [
         withBasePath("/projects/games/save-them/gallery-1.png"),
         withBasePath("/projects/games/save-them/gallery-2.png")

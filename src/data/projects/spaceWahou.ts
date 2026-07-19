@@ -20,6 +20,7 @@ I built player movement, the system that attaches collected blue ships to the pl
         live: "https://unrealitygames.itch.io/space-wahou"
     },
     image: withBasePath("/projects/games/space-wahou/cover.png"),
+    video: { title: "Space Wahou", url: "https://www.youtube.com/watch?v=Xz0Q9cr38qE" },
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",

@@ -18,6 +18,7 @@ Bombers is my first-year final project at IIM, developed entirely solo: every fe
         live: "https://unrealitygames.itch.io/bombers"
     },
     image: withBasePath("/projects/games/bombers/cover.png"),
+    video: { title: "Bombers", url: "https://www.youtube.com/watch?v=oIfwBok9Bec" },
     gallery: [
         withBasePath("/projects/games/bombers/gallery-1-menu.png"),
         withBasePath("/projects/games/bombers/gallery-2.png"),
