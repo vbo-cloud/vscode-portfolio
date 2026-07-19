@@ -209,6 +209,59 @@ const WorkflowPanel = ({ sections }: { sections: WorkflowSection[] }) => (
     </div>
 );
 
+interface DescriptionSection {
+    title: string;
+    text: string;
+    images?: string[];
+    heading?: string;
+}
+
+const DescriptionSectionsPanel = ({ sections, projectTitle, easy }: { sections: DescriptionSection[]; projectTitle: string; easy?: boolean }) => (
+    <div className="space-y-10">
+        {sections.map((section, i) => (
+            <div key={section.title}>
+                {section.heading && (
+                    <h2 className={easy
+                        ? `text-2xl font-bold text-[var(--accent)] mb-6 font-sans ${i > 0 ? 'pt-6 border-t border-[var(--border)]' : ''}`
+                        : `text-lg font-bold text-[var(--accent)] mb-4 font-sans ${i > 0 ? 'pt-6 border-t border-[var(--border)]' : ''}`
+                    }>
+                        {section.heading}
+                    </h2>
+                )}
+                <h3 className={easy ? "text-xl font-bold text-[var(--text-primary)] mb-3 font-sans" : "text-base font-bold text-[var(--text-primary)] mb-3 font-sans"}>
+                    {section.title}
+                </h3>
+                <p className={easy
+                    ? "text-lg text-[var(--text-secondary)] leading-loose opacity-90 font-medium whitespace-pre-wrap mb-4"
+                    : "text-[15px] text-[var(--text-primary)] opacity-90 leading-relaxed whitespace-pre-wrap mb-4"
+                }>
+                    {section.text.trim()}
+                </p>
+                {section.images && section.images.length > 0 && (
+                    section.images.length > 1 ? (
+                        <div className="grid grid-cols-2 gap-3">
+                            {section.images.map((src) => (
+                                <img
+                                    key={src}
+                                    src={src}
+                                    alt={`${projectTitle} — ${section.title}`}
+                                    className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <img
+                            src={section.images[0]}
+                            alt={`${projectTitle} — ${section.title}`}
+                            className="rounded-sm border border-[var(--border)] w-full h-auto mx-auto"
+                        />
+                    )
+                )}
+            </div>
+        ))}
+    </div>
+);
+
 interface JourneyStep {
     title: string;
     description: string;
@@ -1268,9 +1321,13 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
                                         <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Narrative
                                     </h2>
-                                    <p className="text-lg text-[var(--text-secondary)] leading-loose opacity-90 font-medium">
-                                        {data.longDescription || data.description}
-                                    </p>
+                                    {data.descriptionSections ? (
+                                        <DescriptionSectionsPanel sections={data.descriptionSections} projectTitle={data.title} easy />
+                                    ) : (
+                                        <p className="text-lg text-[var(--text-secondary)] leading-loose opacity-90 font-medium">
+                                            {data.longDescription || data.description}
+                                        </p>
+                                    )}
                                 </section>
 
                                 {data.htmlEmbed && (
@@ -1296,7 +1353,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </section>
                                 )}
 
-                                {data.gallery && data.gallery.length > 0 && (
+                                {!data.descriptionSections && data.gallery && data.gallery.length > 0 && (
                                     <section>
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
                                             <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Gallery
@@ -1461,6 +1518,18 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             </div>
                         </div>
 
+                        {data.video && (
+                            <div className="mb-6 aspect-video max-w-2xl w-full mx-auto rounded-sm overflow-hidden border border-[var(--border)] shadow-xl">
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
+                                    title={data.video.title}
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            </div>
+                        )}
+
                         {/* TABS */}
                         <div className="flex items-center gap-6 border-b border-[var(--border)] mt-1">
                             <button
@@ -1493,26 +1562,20 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 {/* DETAILS TAB */}
                                 {activeTab === 'details' && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                        <div className="text-[var(--text-primary)] opacity-90 font-sans leading-7 mb-6">
-                                            <p className="whitespace-pre-wrap text-[15px] leading-relaxed mt-0 pt-0">
-                                                {data.longDescription?.trim()}
-                                            </p>
-                                        </div>
-
-                                        {data.video && (
-                                            <div className="mb-6 aspect-video max-w-2xl w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-xl">
-                                                <iframe
-                                                    src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
-                                                    title={data.video.title}
-                                                    className="w-full h-full"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                    allowFullScreen
-                                                />
+                                        {data.descriptionSections ? (
+                                            <div className="mb-6">
+                                                <DescriptionSectionsPanel sections={data.descriptionSections} projectTitle={data.title} />
+                                            </div>
+                                        ) : (
+                                            <div className="text-[var(--text-primary)] opacity-90 font-sans leading-7 mb-6">
+                                                <p className="whitespace-pre-wrap text-[15px] leading-relaxed mt-0 pt-0">
+                                                    {data.longDescription?.trim()}
+                                                </p>
                                             </div>
                                         )}
 
                                         {/* Fixed Size Screenshot */}
-                                        {!data.userJourney && (
+                                        {!data.userJourney && !data.descriptionSections && !(data.gallery && data.gallery.length > 0) && (
                                             <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl max-w-2xl w-full">
                                                 <img
                                                     src={data.image}
@@ -1522,7 +1585,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             </div>
                                         )}
 
-                                        {data.gallery && data.gallery.length > 0 && (
+                                        {!data.descriptionSections && data.gallery && data.gallery.length > 0 && (
                                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 max-w-2xl w-full">
                                                 {data.gallery.map((src: string, i: number) => (
                                                     <img
