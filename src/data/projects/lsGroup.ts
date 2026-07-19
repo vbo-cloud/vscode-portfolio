@@ -13,6 +13,8 @@ Two-year work-study program (alternance) at LS Group, Suresnes, working on XRTwi
 The work centered on improving UX and performance while following an MVC-inspired architecture, inside an Agile team running Scrum/Kanban and using GitFlow with CI/CD for delivery.
 `,
     type: "VR / Industrial Software",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git", "CI/CD", "Agile Methods"],
     links: {},
     image: withBasePath("/projects/companies/ls-group/cover.png"),

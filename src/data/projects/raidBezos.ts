@@ -13,6 +13,8 @@ Built in 5 days for a Christmas-themed game jam with a team of 3 designers, 2 ar
 The pitch: Big Corporations have come to enslave Santa's elves the day before Christmas, and you're the Security General of the North Pole tasked with stopping them — using "special gifts" whose contents stay hidden until unwrapped.
 `,
     type: "Game Jam — Unreal",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unreal", "C++", "Git"],
     links: {
         live: "https://unrealitygames.itch.io/raid-bezos"

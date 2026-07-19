@@ -1323,7 +1323,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </section>
                                 )}
 
-                                {data.architecture && (
+                                {data.showArchitectureTab && data.architecture && (
                                     <section>
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">System Architecture</h2>
                                         <div className="bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm p-8 overflow-hidden relative">
@@ -1337,7 +1337,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </section>
                                 )}
 
-                                {(data.workflow || data.snippet) && (
+                                {data.showWorkflowTab && (data.workflow || data.snippet) && (
                                     <section>
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">{data.workflow ? 'Workflow' : 'Core Implementation'}</h2>
                                         {data.workflow ? (
@@ -1469,7 +1469,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             >
                                 Description
                             </button>
-                            {(data.architecture || data.htmlEmbed) && (
+                            {data.showArchitectureTab && (data.architecture || data.htmlEmbed) && (
                                 <button
                                     onClick={() => setActiveTab('architecture')}
                                     className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'architecture' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
@@ -1477,7 +1477,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     Architecture
                                 </button>
                             )}
-                            {(data.workflow || data.snippet) && (
+                            {data.showWorkflowTab && (data.workflow || data.snippet) && (
                                 <button
                                     onClick={() => setActiveTab('implementation')}
                                     className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'implementation' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
@@ -1545,7 +1545,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 )}
 
                                 {/* ARCHITECTURE TAB */}
-                                {activeTab === 'architecture' && (data.htmlEmbed || data.architecture) && (
+                                {activeTab === 'architecture' && data.showArchitectureTab && (data.htmlEmbed || data.architecture) && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                                         {data.htmlEmbed ? (
                                             <div className="w-full mx-auto">
@@ -1560,7 +1560,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 )}
 
                                 {/* WORKFLOW TAB */}
-                                {activeTab === 'implementation' && (data.workflow || data.snippet) && (
+                                {activeTab === 'implementation' && data.showWorkflowTab && (data.workflow || data.snippet) && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                                         {data.workflow ? (
                                             <WorkflowPanel sections={data.workflow} />

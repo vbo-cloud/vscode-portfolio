@@ -11,6 +11,8 @@ export const saveThem = {
 A solo personal project built at IIM: a small puzzle game where you guide captured humans to the exit of a detention center, relying on the help of their dead friends to solve the way out.
 `,
     type: "Personal Project — Puzzle",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#"],
     links: {
         live: "https://unrealitygames.itch.io/save-them"

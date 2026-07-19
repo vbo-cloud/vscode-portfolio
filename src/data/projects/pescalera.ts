@@ -13,6 +13,8 @@ Pescalera is a two-month student project built with a large team at IIM (5 progr
 As Lead Programmer, I built player/camera movement, input handling, weapon and ammunition management, the boid-based enemy flocking and spawning, the wave system, gamefeel tuning, UI animations (dash-ready, next-wave), and VFX. I was also the team's Git referent and took an active role in game and level design and in shaping the overall architecture.
 `,
     type: "First-Person Shooter",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {
         live: "https://antxn.itch.io/pescalera"

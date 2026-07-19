@@ -13,6 +13,8 @@ Whiz is a 10-day speedrunning game built with a small team (1 designer, 1 artist
 I built player and camera movement (boost, brake, grappling-hook swings, a supersonic state), player death, and the UI: timer, end-of-race screen, a high-score system saving both time and ghost replay, a retry button, and cursor feedback showing whether a hook can be thrown. On the art/feel side, I researched and implemented speed-adaptive sound design, the player/ghost shader and its animation, particle systems for speed sensation, dynamic field-of-view during reel-in, the ghost trail, fog, and a scale-safe shader material. I also designed supersonic walls/zones, "grappable" surface states, and the end zone — and heavily contributed to the game design, building level 4 (the one featured in the trailer) and its minimalist visual style.
 `,
     type: "Speedrunning Platformer",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unreal", "C++", "Git"],
     links: {
         live: "https://unrealitygames.itch.io/whiz"

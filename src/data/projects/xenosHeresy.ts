@@ -13,6 +13,8 @@ Xenos Heresy is a turn-based tactics game built over one month with a small team
 I owned the project's architecture: tile-selection tooling for movement and attacks (and iterated on it until it fit the design), the full turn-based system, gameplay UI, enemy AI, two distinct dialogue systems, and a scripted tutorial. I also contributed to the menu and sound systems, and — perhaps most usefully — built tools that let the game designers create heroes, enemies and attacks, and iterate on level design, without touching code.
 `,
     type: "Mobile Tactics Game",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {
         live: "https://play.google.com/store/apps/details?id=com.iimjv24T1.xenosHeresy"
