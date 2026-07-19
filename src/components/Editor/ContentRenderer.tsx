@@ -1358,7 +1358,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
                                             <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Gallery
                                         </h2>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             {data.gallery.map((src: string, i: number) => (
                                                 <img
                                                     key={src}
@@ -1574,19 +1574,8 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             </div>
                                         )}
 
-                                        {/* Fixed Size Screenshot */}
-                                        {!data.userJourney && !data.descriptionSections && !(data.gallery && data.gallery.length > 0) && (
-                                            <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl max-w-2xl w-full">
-                                                <img
-                                                    src={data.image}
-                                                    alt={`${data.title} Screenshot`}
-                                                    className="w-full h-auto object-cover"
-                                                />
-                                            </div>
-                                        )}
-
                                         {!data.descriptionSections && data.gallery && data.gallery.length > 0 && (
-                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 max-w-2xl w-full">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 w-full">
                                                 {data.gallery.map((src: string, i: number) => (
                                                     <img
                                                         key={src}
