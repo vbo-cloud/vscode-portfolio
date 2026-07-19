@@ -1117,8 +1117,8 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                     ? 'md:col-span-2 xl:col-span-3 bg-gradient-to-br from-[var(--accent)]/10 to-[var(--bg-panel)] border-[var(--accent)]/50 hover:border-[var(--accent)] flex flex-col md:flex-row rounded-sm'
                                                     : 'bg-[var(--bg-panel)] border-[var(--border)] flex flex-col h-full rounded-sm hover:border-[var(--accent)]')
                                                 : (featured
-                                                    ? 'flex flex-row items-start gap-4 p-3 rounded-sm border-[var(--accent)]/50 bg-[var(--accent)]/5 hover:bg-[var(--accent)]/10'
-                                                    : 'flex flex-row items-start gap-4 p-2 rounded-sm border-transparent hover:bg-[var(--bg-activity)]')
+                                                    ? 'flex flex-row items-stretch gap-4 p-3 rounded-sm border-[var(--accent)]/50 bg-[var(--accent)]/5 hover:bg-[var(--accent)]/10'
+                                                    : 'flex flex-row items-stretch gap-4 p-2 rounded-sm border-transparent hover:bg-[var(--bg-activity)]')
                                             }
                                     `}
                                     >
@@ -1141,7 +1141,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         </div>
 
                                         {/* CONTENT */}
-                                        <div className={`flex-1 min-w-0 ${viewMode === 'grid' ? (featured ? 'p-6 flex flex-col justify-center' : 'p-3') : 'py-1 flex flex-col justify-between'}`}>
+                                        <div className={`flex-1 min-w-0 ${viewMode === 'grid' ? (featured ? 'p-6 flex flex-col justify-center' : 'p-3') : 'flex flex-col justify-between'}`}>
                                             <div>
                                                 <div className="flex items-center justify-between mb-1">
                                                     <div className="flex items-center gap-2">
