@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import {
     Zap, ExternalLink, Terminal, GitBranch, Filter, LayoutGrid, List,
     FileText, Github, Globe, FileCode, Linkedin, Code2, ArrowLeft,
-    Bot, ShieldCheck, Users, GitPullRequest, Cloud, Building2, Gamepad2, Cpu
+    Bot, ShieldCheck, Users, GitPullRequest, Cloud, Building2, Gamepad2, Cpu,
+    Mail, Send, User as UserIcon, MessageSquare, CheckCircle2
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
@@ -344,11 +345,13 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             if (type === 'projects') return 'Projects';
             if (type === 'detail' && data) return data.title;
             if (type === 'pdf') return 'Resume';
+            if (type === 'contact') return 'Contact';
             return title || '';
         }
 
         if (type === 'home') return 'README.md';
         if (type === 'projects') return 'Portfolio/pages/all_projects.tsx';
+        if (type === 'contact') return 'Portfolio/pages/contact.tsx';
 
         if (type === 'detail' && data)
             return `Portfolio/projects/${data.title}.tsx`;
@@ -1661,6 +1664,138 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             style={{ minHeight: 'calc(100vh - 120px)' }}
                             title="Vincent Boutin — Interactive Resume"
                         />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (type === 'contact') {
+        const [form, setForm] = useState({ name: '', email: '', message: '' });
+        const [sent, setSent] = useState(false);
+
+        const updateField = (key: 'name' | 'email' | 'message') => (
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => setForm(prev => ({ ...prev, [key]: e.target.value }));
+
+        const handleSubmit = (e: React.FormEvent) => {
+            e.preventDefault();
+            const subject = `Portfolio contact from ${form.name || 'a visitor'}`;
+            const body = `${form.message}\n\n—\n${form.name} (${form.email})`;
+            const mailto = `mailto:contact@vincentboutin.dev?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailto;
+            setSent(true);
+        };
+
+        const directChannels = [
+            { icon: Mail, label: 'contact@vincentboutin.dev', href: 'mailto:contact@vincentboutin.dev' },
+            { icon: Linkedin, label: 'linkedin.com/in/vincent-boutin', href: 'https://www.linkedin.com/in/vincent-boutin/' },
+            { icon: Github, label: 'github.com/vbo-cloud', href: 'https://github.com/vbo-cloud' },
+        ];
+
+        return (
+            <div className="h-full flex flex-col bg-[var(--bg-main)] relative">
+                {!easyMode && (
+                    <div className={`absolute md:relative top-9 md:top-0 left-0 w-full z-30 transition-all duration-300 ease-in-out md:translate-y-0 ${!isNavBarVisible ? '-translate-y-[71px] opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`}>
+                        <Breadcrumbs path={path} />
+                    </div>
+                )}
+                <div className="flex-1 flex flex-col min-h-0 pt-[71px] md:pt-0">
+                    {!easyMode && (
+                        <div className="flex items-center gap-2 px-4 py-1.5 border-b border-[var(--border)] bg-[var(--bg-panel)] text-[var(--accent)] font-mono font-bold text-[11px]">
+                            <Mail size={14} />
+                            <span>CONTACT_FORM</span>
+                        </div>
+                    )}
+
+                    <div className="flex-1 overflow-y-auto custom-scrollbar px-6 md:px-12 py-10" onScroll={onScroll}>
+                        <div className="max-w-3xl mx-auto">
+                            <h1 className={`font-bold text-[var(--text-primary)] tracking-tight mb-3 ${easyMode ? 'text-4xl md:text-5xl' : 'text-2xl'}`}>
+                                Let's talk
+                            </h1>
+                            <p className="text-[var(--text-secondary)] opacity-80 mb-10 max-w-xl">
+                                A question, an opportunity, or just want to say hi — drop a message and I'll get back to you.
+                            </p>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <form onSubmit={handleSubmit} className="md:col-span-2 space-y-4">
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Name</label>
+                                        <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
+                                            <UserIcon size={14} className="text-[var(--text-secondary)] shrink-0" />
+                                            <input
+                                                required
+                                                value={form.name}
+                                                onChange={updateField('name')}
+                                                placeholder="Your name"
+                                                className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Email</label>
+                                        <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
+                                            <Mail size={14} className="text-[var(--text-secondary)] shrink-0" />
+                                            <input
+                                                required
+                                                type="email"
+                                                value={form.email}
+                                                onChange={updateField('email')}
+                                                placeholder="you@example.com"
+                                                className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Message</label>
+                                        <div className="flex items-start gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
+                                            <MessageSquare size={14} className="text-[var(--text-secondary)] shrink-0 mt-3" />
+                                            <textarea
+                                                required
+                                                rows={6}
+                                                value={form.message}
+                                                onChange={updateField('message')}
+                                                placeholder="What's on your mind?"
+                                                className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans resize-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] text-[var(--accent-fg)] rounded-sm text-sm font-bold hover:bg-[var(--accent)]/90 transition-colors"
+                                    >
+                                        <Send size={14} />
+                                        Send message
+                                    </button>
+
+                                    {sent && (
+                                        <div className="flex items-center gap-2 text-[var(--success)] text-xs pt-1">
+                                            <CheckCircle2 size={14} />
+                                            <span>Opening your email client with this message pre-filled...</span>
+                                        </div>
+                                    )}
+                                </form>
+
+                                <div className="space-y-3">
+                                    <h3 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest opacity-60 mb-1">Direct channels</h3>
+                                    {directChannels.map(c => (
+                                        <a
+                                            key={c.href}
+                                            href={c.href}
+                                            target={c.href.startsWith('http') ? '_blank' : undefined}
+                                            rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                                            className="flex items-center gap-2.5 px-3 py-2.5 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)]/40 transition-all text-xs"
+                                        >
+                                            <c.icon size={14} className="shrink-0" />
+                                            <span className="truncate">{c.label}</span>
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
