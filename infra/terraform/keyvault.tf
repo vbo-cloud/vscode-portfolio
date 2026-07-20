@@ -22,20 +22,30 @@ resource "azurerm_key_vault" "this" {
 }
 
 # RBAC-mode Key Vault grants no implicit data-plane access, not even to the
-# deploying identity (Owner/Contributor cover the management plane only) —
-# without this, the secret write below 403s on a first-ever `terraform apply`.
+# deploying identity (Owner/Contributor cover the management plane only).
 # `data.azurerm_client_config.current.object_id` is whoever is authenticated
 # via `az login` when applying, i.e. Vincent himself (see providers.tf: no
-# OIDC/service principal here).
+# OIDC/service principal here) — this is also what lets him add the secret
+# below through the Azure Portal, not just through Terraform.
 resource "azurerm_role_assignment" "deployer_secrets_officer" {
   scope                = azurerm_key_vault.this.id
   role_definition_name = "Key Vault Secrets Officer"
   principal_id         = data.azurerm_client_config.current.object_id
 }
 
-resource "azurerm_key_vault_secret" "zoho_smtp_password" {
+# The secret's VALUE is intentionally not managed here — Vincent sets it by
+# hand in the Key Vault (Portal or `az keyvault secret set`) once
+# azurerm_key_vault.this + the role assignment above exist, so the SMTP
+# password never has to pass through a terraform.tfvars file on disk. This
+# data source just reads whatever he put there. First-ever apply MUST
+# therefore run in two passes:
+#   1. terraform apply -target=azurerm_role_assignment.deployer_secrets_officer
+#      (pulls in the resource group + Key Vault as dependencies)
+#   2. Vincent creates the "zoho-smtp-password" secret in kv-vbo-frc
+#   3. terraform apply (everything else, including the Function App below,
+#      which reads this data source)
+data "azurerm_key_vault_secret" "zoho_smtp_password" {
   name         = "zoho-smtp-password"
-  value        = var.zoho_smtp_password
   key_vault_id = azurerm_key_vault.this.id
 
   depends_on = [azurerm_role_assignment.deployer_secrets_officer]

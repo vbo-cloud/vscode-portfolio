@@ -60,7 +60,7 @@ resource "azurerm_linux_function_app" "contact" {
     # platform at runtime from the Function App's own managed identity.
     # versionless_id (vs. .id) means secret rotations don't require a
     # Terraform change to pick up.
-    ZOHO_PASS = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.zoho_smtp_password.versionless_id})"
+    ZOHO_PASS = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.zoho_smtp_password.versionless_id})"
   }
 
   tags = local.common_tags
