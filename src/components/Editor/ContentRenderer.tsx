@@ -352,7 +352,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
         if (type === 'home') return 'README.md';
         if (type === 'projects') return 'Portfolio/pages/all_projects.tsx';
-        if (type === 'contact') return 'Portfolio/pages/contact.tsx';
+        if (type === 'contact') return 'Portfolio/pages/contact.dev';
 
         if (type === 'detail' && data)
             return `Portfolio/projects/${data.title}.tsx`;

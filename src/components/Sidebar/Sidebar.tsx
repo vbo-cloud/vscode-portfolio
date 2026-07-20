@@ -526,9 +526,9 @@ export const Sidebar = ({
                                     </button>
 
                                     <button
-                                        onClick={() => onOpenFile({ id: 'contact.tsx', title: 'contact.tsx', type: 'contact' })}
+                                        onClick={() => onOpenFile({ id: 'contact.dev', title: 'contact.dev', type: 'contact' })}
                                         className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-all text-xs font-medium border
-                                            ${activeTabId === 'contact.tsx'
+                                            ${activeTabId === 'contact.dev'
                                                 ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30 shadow-sm'
                                                 : 'text-[var(--text-primary)] hover:bg-[var(--bg-activity)] border-transparent'}
                                         `}
@@ -623,7 +623,8 @@ export const Sidebar = ({
                                                 <>
                                                     {[
                                                         { id: "projects.tsx", name: "all_projects.tsx", type: "projects" },
-                                                        { id: "contact.tsx", name: "contact.tsx", type: "contact" },
+                                                        { id: "contact.dev", name: "contact.dev", type: "contact" },
+                                                        { id: "resume.pdf", name: "resume.pdf", type: "pdf" },
                                                     ].map(f => {
                                                         const meta = getFileIcon(f.name);
                                                         return renderFileTreeItem({
