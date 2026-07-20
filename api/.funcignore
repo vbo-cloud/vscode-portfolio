@@ -1,0 +1,7 @@
+*.js.map
+.git*
+.vscode
+local.settings.json
+local.settings.json.example
+test
+node_modules

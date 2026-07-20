@@ -8,6 +8,7 @@ import {
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
 import { getYouTubeEmbedId, getTechColor } from '../../utils/helpers';
+import { sendContactEmail } from '../../services/contact';
 // @ts-ignore
 import FONT_5x7 from '../../data/font5x7';
 import { Breadcrumbs } from '../UI/Breadcrumbs';
@@ -1671,20 +1672,26 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
     }
 
     if (type === 'contact') {
-        const [form, setForm] = useState({ name: '', email: '', message: '' });
-        const [sent, setSent] = useState(false);
+        const [form, setForm] = useState({ name: '', email: '', message: '', website: '' });
+        const [status, setStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>('idle');
+        const [errorMsg, setErrorMsg] = useState('');
 
-        const updateField = (key: 'name' | 'email' | 'message') => (
+        const updateField = (key: 'name' | 'email' | 'message' | 'website') => (
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         ) => setForm(prev => ({ ...prev, [key]: e.target.value }));
 
-        const handleSubmit = (e: React.FormEvent) => {
+        const handleSubmit = async (e: React.FormEvent) => {
             e.preventDefault();
-            const subject = `Portfolio contact from ${form.name || 'a visitor'}`;
-            const body = `${form.message}\n\n—\n${form.name} (${form.email})`;
-            const mailto = `mailto:contact@vincentboutin.dev?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            window.location.href = mailto;
-            setSent(true);
+            setStatus('loading');
+            setErrorMsg('');
+            const result = await sendContactEmail(form);
+            if (result.ok) {
+                setStatus('sent');
+                setForm({ name: '', email: '', message: '', website: '' });
+            } else {
+                setStatus('error');
+                setErrorMsg(result.error);
+            }
         };
 
         const directChannels = [
@@ -1718,7 +1725,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             </p>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                <form onSubmit={handleSubmit} className="md:col-span-2 space-y-4">
+                                <form onSubmit={handleSubmit} className="relative md:col-span-2 space-y-4">
                                     <div>
                                         <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Name</label>
                                         <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
@@ -1763,18 +1770,44 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         </div>
                                     </div>
 
+                                    {/* Honeypot — hidden from real visitors, left in the a11y/DOM tree so basic bots that auto-fill every field still catch it. The API silently drops submissions that fill this in. */}
+                                    <div className="absolute -left-[9999px]" aria-hidden="true">
+                                        <label htmlFor="website">Leave this field empty</label>
+                                        <input
+                                            id="website"
+                                            name="website"
+                                            tabIndex={-1}
+                                            autoComplete="off"
+                                            value={form.website}
+                                            onChange={updateField('website')}
+                                        />
+                                    </div>
+
                                     <button
                                         type="submit"
-                                        className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] text-[var(--accent-fg)] rounded-sm text-sm font-bold hover:bg-[var(--accent)]/90 transition-colors"
+                                        disabled={status === 'loading'}
+                                        className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] text-[var(--accent-fg)] rounded-sm text-sm font-bold hover:bg-[var(--accent)]/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                                     >
                                         <Send size={14} />
-                                        Send message
+                                        {status === 'loading' ? 'Sending…' : 'Send message'}
                                     </button>
 
-                                    {sent && (
+                                    {status === 'loading' && (
+                                        <div className="text-[var(--text-secondary)] text-xs pt-1 opacity-70">
+                                            First message after a while can take a couple seconds to wake up the backend.
+                                        </div>
+                                    )}
+
+                                    {status === 'sent' && (
                                         <div className="flex items-center gap-2 text-[var(--success)] text-xs pt-1">
                                             <CheckCircle2 size={14} />
-                                            <span>Opening your email client with this message pre-filled...</span>
+                                            <span>Message sent — I'll get back to you soon.</span>
+                                        </div>
+                                    )}
+
+                                    {status === 'error' && (
+                                        <div className="text-red-400 text-xs pt-1">
+                                            {errorMsg || 'Something went wrong — please try again.'}
                                         </div>
                                     )}
                                 </form>
