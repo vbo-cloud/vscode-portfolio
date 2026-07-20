@@ -702,7 +702,6 @@ export const Sidebar = ({
                                         { name: ".gitignore", type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash' },
                                         { name: "package.json", type: "code", content: FILE_CONTENTS.package_json, lang: "json" },
                                         { id: "home.tsx", name: "README.md", type: "home" },
-                                        { name: "resume.pdf", type: 'pdf' }
                                     ].map(f => {
                                         const fileMeta = getFileIcon(f.name);
                                         const fileId = f.id ?? f.name;
