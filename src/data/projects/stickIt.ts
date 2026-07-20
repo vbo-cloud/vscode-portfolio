@@ -13,9 +13,12 @@ Stick It is a 2-month student project (3 designers, 2 artists, 4 programmers, 2 
 My work covered directional jump preview and physics (stickiness/slipping, collisions between players, a mass system that reshapes the rules of collision, jump and stickiness), the multiplayer hub and a player manager handling respawn, map transitions, scoring and mass, plus FX work: an appear/disappear shader for walls and mushrooms, and a particle behavior for the "musical chairs" maps (particles turn red and eliminate all remaining players when the countdown ends). I also heavily contributed to the game design.
 `,
     type: "Local Multiplayer Brawler",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {},
     image: withBasePath("/projects/games/stick-it/cover.png"),
+    video: { title: "Stick It - Official Launch Trailer", url: "https://www.youtube.com/watch?v=imdtWzWj024" },
     gallery: [
         withBasePath("/projects/games/stick-it/gallery-1.gif"),
         withBasePath("/projects/games/stick-it/gallery-2.gif"),
@@ -48,20 +51,5 @@ My work covered directional jump preview and physics (stickiness/slipping, colli
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Mass system reshaping collision/jump/stickiness rules
-float StickinessFor(SlimeMass mass) => Mathf.Clamp01(1f - (mass.Value / MaxMass) * 0.5f);
-`,
-    architecture: `
-[ Player Manager ] -- respawn, transitions, score, mass
-          |
-          v
-[ Slime Physics ]
-  - Directional jump
-  - Stickiness / slipping
-  - Mass-based collision rules
-          |
-          v
-[ FX Layer ] -- appear/disappear shader, elimination particles
-`
+    ]
 };

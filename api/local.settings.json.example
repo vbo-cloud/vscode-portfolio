@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "ZOHO_USER": "contact@vincentboutin.dev",
+    "ZOHO_PASS": "<Zoho app-specific password — never the account password>"
+  },
+  "Host": {
+    "CORS": "http://localhost:5173"
+  }
+}

@@ -1,4 +1,4 @@
-import { placeholderImage, withBasePath } from "../../utils/helpers";
+import { withBasePath } from "../../utils/helpers";
 
 export const jobFinder = {
     id: "job-finder",
@@ -19,6 +19,8 @@ The backend is FastAPI with JWT auth via Microsoft Entra External ID, paired wit
 Development itself leans on an AI-assisted workflow: up to 4 Claude Code agents running implementation in parallel, Claude for architecture/planning discussions, and an autonomous Claude-based reviewer agent wired into CI/CD to review every PR automatically.
 `,
     type: "Cloud / AI Engineering",
+    showArchitectureTab: true,
+    showWorkflowTab: true,
     tech: [
         "Azure",
         "Terraform",
@@ -34,7 +36,7 @@ Development itself leans on an AI-assisted workflow: up to 4 Claude Code agents 
     links: {
         github: "https://github.com/vbo-cloud/job-finder"
     },
-    image: placeholderImage("Job Finder", "#38bdf8"),
+    image: withBasePath("/projects/cloud/job-finder/logo/logo.jpg"),
     htmlEmbed: {
         title: "Job Finder — Architecture Diagram",
         path: withBasePath("/projects/cloud/job-finder/architecture-diagram.html")
@@ -82,6 +84,126 @@ Development itself leans on an AI-assisted workflow: up to 4 Claude Code agents 
             msg: "FastAPI + Next.js frontend shipped with Entra External ID auth and full observability",
             time: "Latest",
             status: "success"
+        }
+    ],
+    userJourney: [
+        {
+            title: "Drop a CV, no sign-up wall",
+            description:
+                "The journey starts on a plain map of France. There's no form to fill in first — you just drop your CV (or click to browse for it) and the app takes it from there.",
+            image: withBasePath("/projects/cloud/job-finder/journey/01-home.jpg")
+        },
+        {
+            title: "Narrow the search to specific areas",
+            description:
+                "The map doubles as a filter: draw over any region, city, or cluster of towns to restrict matches to exactly those areas — no postcode list to type in, just a shape drawn by hand.",
+            image: withBasePath("/projects/cloud/job-finder/journey/02-zone-selection.jpg")
+        },
+        {
+            title: "Your CV, scored and reviewed",
+            description:
+                "The CV lands in a personal library with a compatibility score, a short written summary of the profile, what's working well, what's holding it back, and concrete suggestions to improve it.",
+            image: withBasePath("/projects/cloud/job-finder/journey/03-library.jpg")
+        },
+        {
+            title: "Matches, ranked and explained",
+            description:
+                "Every job offer in the pool gets compared against the CV and comes back as a ranked list with a match percentage and the specific skills that pushed the score up or down for that offer.",
+            image: withBasePath("/projects/cloud/job-finder/journey/04-matches.jpg")
+        },
+        {
+            title: "See exactly why an offer fits — or doesn't",
+            description:
+                "Opening an offer surfaces a full breakdown: the mission in plain language, why it matches from both sides, the strengths it rewards, the gaps to work on, and even likely interview questions for that specific role.",
+            image: withBasePath("/projects/cloud/job-finder/journey/05-offer-detail.jpg")
+        },
+        {
+            title: "Fine-tune the profile anytime",
+            description:
+                "Experience level and a few free-text notes can be adjusted at any time to steer future matches, alongside a simple view of remaining analysis credits.",
+            image: withBasePath("/projects/cloud/job-finder/journey/06-profile.jpg")
+        }
+    ],
+    workflow: [
+        {
+            icon: "Bot",
+            title: "Two Claude roles, one CLAUDE.md",
+            description:
+                "A single CLAUDE.md governs two Claude instances with distinct permissions: Claude Cowork handles design and pedagogy — explaining trade-offs and turning decisions into detailed task prompts — while Claude Code owns the full feature lifecycle (branch, implement, PR) with exclusive write access to Terraform, Python, and PowerShell.",
+            items: [
+                "Claude Cowork — read-only elsewhere, writes only docs/, memory/, CLAUDE.md, and docs/prompts/*.md task briefs",
+                "Claude Code — owns Terraform/Python/PowerShell end-to-end and opens the PR",
+                "The role boundary is instruction-only — no reliable signal lets a hook tell the two sessions apart"
+            ]
+        },
+        {
+            icon: "ShieldCheck",
+            title: "Hooks as hard guardrails, not just docs",
+            description:
+                "Two hooks wired in .claude/settings.json turn the git flow from documentation into mechanical enforcement, locally and inside CI.",
+            items: [
+                "PreToolUse on Bash (pre_bash_guard.py) — blocks direct push to main/dev, force-push without --force-with-lease, merge instead of rebase, local terraform apply/destroy, and mutating az / New-Az* commands",
+                "Same hook gates gh pr create — blocked until docs/JOURNAL.md is updated, commits follow Conventional Commits with no WIP markers, doc-writer has run, and every touched layer has an APPROUVÉ verdict from its reviewer subagent",
+                "PostToolUse on Edit/Write (post_edit_format.py) — best-effort terraform fmt / eslint --fix after every edit, never blocking"
+            ]
+        },
+        {
+            icon: "Code2",
+            title: "Skills: one convention file per stack",
+            description:
+                "Domain conventions live in .claude/skills/ instead of being duplicated in CLAUDE.md — consulted before any edit in that domain, by Claude Code locally and by the CI reviewer bot alike.",
+            items: [
+                "conventions-terraform, conventions-python, conventions-sql, conventions-frontend",
+                "The CI reviewer bot loads the same skill file server-side, picked by which files a given PR actually touches"
+            ]
+        },
+        {
+            icon: "Users",
+            title: "Subagents: one job each, mostly read-only",
+            description:
+                "Four subagents, each scoped to a single responsibility and read-only apart from one exception, live in .claude/agents/.",
+            items: [
+                "explorer — Read/Grep/Glob only, scouts relevant files and existing patterns before a non-trivial feature starts, so the main session's context doesn't fill up with exploratory reads",
+                "doc-writer — the only one with Edit/Write, fixes docstrings/WHY-comments and writes the docs/JOURNAL.md entry before review",
+                "reviewer-frontend / reviewer-backend / reviewer-infra — one per layer, checked against the matching skill, report a verdict + file:line and never fix anything themselves",
+                "reviewer-infra's Bash access is scoped by instruction to terraform plan/validate/fmt -check — apply stays blocked by the hook regardless"
+            ]
+        },
+        {
+            icon: "Terminal",
+            title: "Parallel terminals, one worktree each",
+            description:
+                "Independent features are worked in parallel: up to 4 Claude Code instances run in separate terminals, each checked out in its own git worktree/branch, so they never collide on the same working copy.",
+            items: [
+                "/new (a custom slash command) turns a feature idea into a docs/prompts/prompt-<slug>.md brief — checks the relevant skills and docs/, proposes a plan, discusses it, then writes the file",
+                "That prompt file is the handoff artifact from a planning session to a fresh Claude Code terminal picking up the task",
+                "Disposable worktrees also double as a sandbox for one-off checks — e.g. confirming a terraform provider upgrade drift on a clean origin/dev checkout without touching the main clone"
+            ]
+        },
+        {
+            icon: "GitBranch",
+            title: "Git flow, rebased and gated",
+            description:
+                "Gitflow with feature/* and hotfix/* branches, dev as the integration branch, and main as the tagged, production-representing branch.",
+            items: [
+                "PR-only merges into dev/main, Conventional Commits, rebase (never merge) to catch up with the base branch, force-push only with --force-with-lease",
+                "A PR never mixes platform (lz_dev) and app (dev) Terraform changes — split into two PRs, platform first",
+                "Mechanically enforced by pre_bash_guard.py above, not just written down"
+            ]
+        },
+        {
+            icon: "GitPullRequest",
+            title: "CI/CD: five workflows, one review bot",
+            description:
+                "Five GitHub Actions workflows cover the pipeline end-to-end, from plan to a live Container App rollout.",
+            items: [
+                "terraformPlan.yml — path-filtered per layer (platform lz_dev / app dev), runs fmt -check + validate + plan on every PR behind a single gate check",
+                "unitTests.yml — same path-filter/gate pattern for pytest (backend) and tsc + Jest (frontend)",
+                "terraformApply.yml — applies lz_dev then dev sequentially on push to dev",
+                "buildAgents.yml — builds & pushes Docker images for all 5 agents + frontend to ACR, smoke-tests the webapp image, then rolls it out to each Container App / Container App Job",
+                "reviewerAgent.yml — fires once Terraform Plan completes, feeds Claude the PR diff, CLAUDE.md, the relevant skill(s), and the plan logs, then posts a real GitHub review (APPROVE / REQUEST_CHANGES)",
+                "claudeCodeAction.yml — manual-only, triggered by a human typing @claude on a PR; the same pre_bash_guard.py hook still applies inside the action, so it can't be talked into running terraform apply either"
+            ]
         }
     ],
     snippet: `# Multi-agent pipeline step, triggered by a Service Bus message

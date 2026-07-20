@@ -13,11 +13,14 @@ Xenos Heresy is a turn-based tactics game built over one month with a small team
 I owned the project's architecture: tile-selection tooling for movement and attacks (and iterated on it until it fit the design), the full turn-based system, gameplay UI, enemy AI, two distinct dialogue systems, and a scripted tutorial. I also contributed to the menu and sound systems, and — perhaps most usefully — built tools that let the game designers create heroes, enemies and attacks, and iterate on level design, without touching code.
 `,
     type: "Mobile Tactics Game",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {
         live: "https://play.google.com/store/apps/details?id=com.iimjv24T1.xenosHeresy"
     },
     image: withBasePath("/projects/games/xenos-heresy/cover.png"),
+    video: { title: "Xenos Heresy", url: "https://www.youtube.com/watch?v=G8lwmCb1II8" },
     imageStyle: {
         maxWidth: "1000px",
         maxHeight: "800px",
@@ -46,30 +49,5 @@ I owned the project's architecture: tile-selection tooling for movement and atta
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Turn-based tile selection tooling
-public IEnumerable<Tile> GetReachableTiles(Unit unit, int range)
-{
-    return grid.Tiles
-        .Where(t => Pathfinder.Distance(unit.Tile, t) <= range)
-        .Where(t => !t.IsOccupied);
-}
-`,
-    architecture: `
-[ Turn Manager ]
-          |
-          v
-[ Tile Selection Tooling ] -- movement / attack ranges
-          |
-          v
-[ Unit / AI Layer ]
-  - Player units
-  - Enemy AI
-          |
-          v
-[ Dialogue & Tutorial Systems ]
-          |
-          v
-[ Designer Tools ] -- heroes, enemies, attacks, levels
-`
+    ]
 };

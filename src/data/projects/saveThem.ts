@@ -11,11 +11,14 @@ export const saveThem = {
 A solo personal project built at IIM: a small puzzle game where you guide captured humans to the exit of a detention center, relying on the help of their dead friends to solve the way out.
 `,
     type: "Personal Project — Puzzle",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#"],
     links: {
         live: "https://unrealitygames.itch.io/save-them"
     },
     image: withBasePath("/projects/games/save-them/cover.png"),
+    video: { title: "Save Them", url: "https://www.youtube.com/watch?v=d-7r1DhlkYA" },
     gallery: [
         withBasePath("/projects/games/save-them/gallery-1.png"),
         withBasePath("/projects/games/save-them/gallery-2.png")
@@ -43,20 +46,5 @@ A solo personal project built at IIM: a small puzzle game where you guide captur
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Ghost-assisted puzzle interaction
-public void UseGhostHelper(Ghost ghost, Interactable target)
-{
-    if (ghost.CanInteractWith(target)) target.Trigger(ghost);
-}
-`,
-    architecture: `
-[ Player-controlled group ]
-          |
-          v
-[ Ghost Helper System ] -- dead friends assist puzzle solving
-          |
-          v
-[ Detention Center Levels ] -- exit-focused puzzles
-`
+    ]
 };

@@ -13,7 +13,9 @@ A 3-week, 2-programmer project exploring low-level networked multiplayer: a full
 I set up the entire network architecture: Enet integration, binary packet serialization/deserialization, client-side prediction and server reconciliation for player movement, and prediction for shots. On the server, I extracted collider data from Unity and reconstructed it with PhysX to run authoritative physics server-side. I also used Avaturn to generate 3D avatars of our classmates and Mixamo to animate them, and added a text chat system.
 `,
     type: "Networked Multiplayer FPS",
-    tech: ["C++", "Enet", "Unity", "C#", "PhysX"],
+    showArchitectureTab: false,
+    showWorkflowTab: false,
+    tech: ["C++", "Enet", "Unity", "C#"],
     links: {
         live: "https://antxn.itch.io/pescalera"
     },
@@ -47,25 +49,5 @@ I set up the entire network architecture: Enet integration, binary packet serial
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Client-side prediction + server reconciliation (simplified)
-void ApplyServerState(const PlayerState& authoritative) {
-    localState.position = authoritative.position;
-    for (auto& input : pendingInputs.since(authoritative.lastProcessedInput)) {
-        localState = Simulate(localState, input);
-    }
-}
-`,
-    architecture: `
-[ Unity Client ]
-  - Local gameplay
-  - Prediction (movement, shots)
-          |
-          v  Enet (binary packets)
-          |
-[ C++ Server ]
-  - Reconciliation
-  - Physics via PhysX (colliders extracted from Unity)
-  - Text chat
-`
+    ]
 };

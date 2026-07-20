@@ -30,3 +30,17 @@ src/AppBackup.tsx
 
 # Claude Code
 .claude/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+.terraform.tfstate.lock.info
+
+# Azure Functions
+api/local.settings.json
+api/node_modules

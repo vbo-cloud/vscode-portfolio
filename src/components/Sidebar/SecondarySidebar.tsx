@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import {
-    Activity, Code2, Globe, Github, Mail, Linkedin, FileText, X,
+    Activity, Globe, Github, Mail, Linkedin, FileText, X,
     ChevronDown, History, ListTree, Link as LinkIcon, Info, UserCircle
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
@@ -219,15 +219,6 @@ export const SecondarySidebar = ({ isOpen, activeTabId, onClose }: SecondarySide
                                         <div className="bg-[var(--bg-activity)]/20 border border-[var(--border)] p-3 rounded-lg space-y-3">
                                             <div className="flex items-center justify-between group">
                                                 <div className="flex items-center gap-2">
-                                                    <Code2 size={13} className="text-[var(--text-secondary)] opacity-60" />
-                                                    <span className="text-[11px] font-sans text-[var(--text-secondary)]">Version</span>
-                                                </div>
-                                                <span className="text-[11px] font-sans text-[var(--text-primary)] font-mono opacity-80">
-                                                    {currentProject?.deployHistory?.[0]?.version || 'v1.4.2'}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center justify-between group">
-                                                <div className="flex items-center gap-2">
                                                     <Globe size={13} className="text-[var(--text-secondary)] opacity-60" />
                                                     <span className="text-[11px] font-sans text-[var(--text-secondary)]">Status</span>
                                                 </div>
@@ -354,15 +345,6 @@ export const SecondarySidebar = ({ isOpen, activeTabId, onClose }: SecondarySide
                                 {/* 3. TIMELINE / METADATA */}
                                 <CollapsibleSection title="Deployment History" icon={History} defaultOpen={false}>
                                     <div className="space-y-3">
-                                        <div className="flex items-center justify-between group">
-                                            <div className="flex items-center gap-2">
-                                                <Code2 size={13} className="text-[var(--text-secondary)] opacity-60" />
-                                                <span className="text-[11px] font-sans text-[var(--text-secondary)]">Version</span>
-                                            </div>
-                                            <span className="text-[11px] font-sans text-[var(--text-primary)] font-mono opacity-80">
-                                                {currentProject?.deployHistory?.[0]?.version || 'v1.4.2'}
-                                            </span>
-                                        </div>
                                         <div className="flex items-center justify-between group">
                                             <div className="flex items-center gap-2">
                                                 <Globe size={13} className="text-[var(--text-secondary)] opacity-60" />

@@ -1,0 +1,17 @@
+{
+  "name": "vbo-contact-function",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generic {name, email, message} -> Zoho SMTP relay. Not portfolio-specific — see docs/prompts/prompt-09-contact-form-azure-function.md.",
+  "main": "src/functions/*.js",
+  "scripts": {
+    "start": "func start"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.16.2",
+    "nodemailer": "^9.0.3"
+  }
+}

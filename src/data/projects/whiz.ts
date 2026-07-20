@@ -13,11 +13,14 @@ Whiz is a 10-day speedrunning game built with a small team (1 designer, 1 artist
 I built player and camera movement (boost, brake, grappling-hook swings, a supersonic state), player death, and the UI: timer, end-of-race screen, a high-score system saving both time and ghost replay, a retry button, and cursor feedback showing whether a hook can be thrown. On the art/feel side, I researched and implemented speed-adaptive sound design, the player/ghost shader and its animation, particle systems for speed sensation, dynamic field-of-view during reel-in, the ghost trail, fog, and a scale-safe shader material. I also designed supersonic walls/zones, "grappable" surface states, and the end zone — and heavily contributed to the game design, building level 4 (the one featured in the trailer) and its minimalist visual style.
 `,
     type: "Speedrunning Platformer",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unreal", "C++", "Git"],
     links: {
         live: "https://unrealitygames.itch.io/whiz"
     },
     image: withBasePath("/projects/games/whiz/cover.png"),
+    video: { title: "Whiz", url: "https://www.youtube.com/watch?v=s1sdixXM5aU" },
     gallery: [
         withBasePath("/projects/games/whiz/gallery-1.png"),
         withBasePath("/projects/games/whiz/gallery-2.png"),
@@ -50,29 +53,5 @@ I built player and camera movement (boost, brake, grappling-hook swings, a super
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Ghost trail + high-score save (time + replay)
-void ASpeedrunGameMode::OnRaceFinished(float time, const TArray<FGhostFrame>& replay)
-{
-    if (time < BestTime)
-    {
-        BestTime = time;
-        SaveGame->GhostReplay = replay;
-        UGameplayStatics::SaveGameToSlot(SaveGame, TEXT("Whiz"), 0);
-    }
-}
-`,
-    architecture: `
-[ Player Controller ]
-  - Boost / Brake / Grapple / Supersonic
-          |
-          v
-[ Timer & Ghost System ] -- records + replays best run
-          |
-          v
-[ Shader & VFX Layer ] -- player/ghost shader, speed particles, FOV
-          |
-          v
-[ Level Geometry ] -- supersonic walls/zones, grappable surfaces
-`
+    ]
 };

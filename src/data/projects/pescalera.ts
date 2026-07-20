@@ -13,12 +13,16 @@ Pescalera is a two-month student project built with a large team at IIM (5 progr
 As Lead Programmer, I built player/camera movement, input handling, weapon and ammunition management, the boid-based enemy flocking and spawning, the wave system, gamefeel tuning, UI animations (dash-ready, next-wave), and VFX. I was also the team's Git referent and took an active role in game and level design and in shaping the overall architecture.
 `,
     type: "First-Person Shooter",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {
         live: "https://antxn.itch.io/pescalera"
     },
-    image: withBasePath("/projects/games/pescalera/gallery-1.png"),
+    image: withBasePath("/projects/games/pescalera/cover-keyart.png"),
+    video: { title: "Pescalera", url: "https://www.youtube.com/watch?v=FQ1w2VKe7F8" },
     gallery: [
+        withBasePath("/projects/games/pescalera/gallery-1.png"),
         withBasePath("/projects/games/pescalera/gallery-2.png"),
         withBasePath("/projects/games/pescalera/gallery-3.png")
     ],
@@ -49,28 +53,5 @@ As Lead Programmer, I built player/camera movement, input handling, weapon and a
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Boid-based seagull flocking
-Vector3 Flock(Boid self, List<Boid> neighbors)
-{
-    var separation = Separation(self, neighbors);
-    var alignment = Alignment(neighbors);
-    var cohesion = Cohesion(self, neighbors);
-    return (separation * 1.5f + alignment + cohesion).normalized;
-}
-`,
-    architecture: `
-[ Wave Spawner ]
-          |
-          v
-[ Boid Flocking System ] -- seagull enemies
-          |
-          v
-[ Player Controller ]
-  - Camera / Movement
-  - Harpoon weapon + ammo (captured fish)
-          |
-          v
-[ Gamefeel & UI Layer ] -- dash-ready, next-wave
-`
+    ]
 };

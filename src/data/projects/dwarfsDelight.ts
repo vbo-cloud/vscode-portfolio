@@ -13,12 +13,15 @@ Dwarfs Delight is my final year project at IIM: a local multiplayer couch game f
 I was Lead Programmer on a large cross-discipline team (2 programmers, 3 artists, 2 designers, 3 producers, 2 sound designers, 1 compositor). My work spanned player/camera movement, the bomb-throw and explosion feature, physical interactions (punch, bump between players, stun), UI animations for scoring and the leaderboard, a full sound implementation pass (plus a custom tool to import and sort sounds faster), VFX, and a scale-safe shader material. I also acted as the team's Git referent and took an active role in game/level design and the overall game architecture.
 `,
     type: "Local Multiplayer Game",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {
         live: "https://dwarfsdelight.itch.io/dwarfs-delight"
     },
-    image: withBasePath("/projects/games/dwarfs-delight/gallery-1-home.png"),
+    image: withBasePath("/projects/games/dwarfs-delight/cover-logo.png"),
     gallery: [
+        withBasePath("/projects/games/dwarfs-delight/gallery-1-home.png"),
         withBasePath("/projects/games/dwarfs-delight/gallery-2-gameplay.png"),
         withBasePath("/projects/games/dwarfs-delight/gallery-3-leaderboard.png")
     ],
@@ -51,35 +54,5 @@ I was Lead Programmer on a large cross-discipline team (2 programmers, 3 artists
             time: "IIM final year",
             status: "success"
         }
-    ],
-    snippet: `// Bomb throw + explosion feature
-public class BombThrow : MonoBehaviour
-{
-    [SerializeField] private float force;
-
-    public void Throw(Vector3 direction)
-    {
-        var bomb = Instantiate(bombPrefab, transform.position, Quaternion.identity);
-        bomb.GetComponent<Rigidbody>().AddForce(direction * force, ForceMode.Impulse);
-        bomb.GetComponent<Bomb>().OnExplode += HandleExplosion;
-    }
-}
-`,
-    architecture: `
-[ Local Input (2-4 players) ]
-          |
-          v
-[ Player Controller ]
-  - Movement / Camera
-  - Punch / Bump / Stun
-          |
-          v
-[ Bomb System ] -- throw, physics, explosion
-          |
-          v
-[ Scoring & Leaderboard UI ]
-          |
-          v
-[ Sound Manager ] -- custom import/sort tooling
-`
+    ]
 };

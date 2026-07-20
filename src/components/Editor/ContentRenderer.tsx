@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import {
     Zap, ExternalLink, Terminal, GitBranch, Filter, LayoutGrid, List,
-    FileText, Github, Globe, FileCode, Linkedin, Code2, ArrowLeft
+    FileText, Github, Globe, FileCode, Linkedin, Code2, ArrowLeft,
+    Bot, ShieldCheck, Users, GitPullRequest, Cloud, Building2, Gamepad2, Cpu,
+    Mail, Send, User as UserIcon, MessageSquare, CheckCircle2, Tag
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
-import { getYouTubeEmbedId } from '../../utils/helpers';
+import { getYouTubeEmbedId, getTechColor } from '../../utils/helpers';
+import { sendContactEmail } from '../../services/contact';
 // @ts-ignore
 import FONT_5x7 from '../../data/font5x7';
 import { Breadcrumbs } from '../UI/Breadcrumbs';
@@ -13,10 +16,58 @@ import { RealMinimap } from './Minimap';
 import { CanvasContributionMap } from '../Widgets/ContributionMap';
 import { TypingEffect } from '../UI/TypingEffect';
 import { TypewriterWords } from '../UI/TypewriterWords';
+import { TechTag } from '../UI/TechTag';
 
 const TRANSITION_TEXT = "Transitioning from VR/game development into cloud architecture and AI-assisted automation.";
 
 const WORK_ON_TEXT = 'I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.';
+
+/**
+ * Mirrors the sidebar's `projects/` folder structure (cloud, companies, video games
+ * -> games / technical) so the "All Projects" page groups cards the same way the
+ * file tree does, with Cloud surfaced first and visually featured.
+ */
+type ProjectSection = {
+    key: string;
+    title: string;
+    description?: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    categories: string[];
+    featured?: boolean;
+};
+
+type ProjectSectionGroup = {
+    key: string;
+    title: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    sections: ProjectSection[];
+};
+
+const PROJECT_SECTIONS: (ProjectSection | ProjectSectionGroup)[] = [
+    {
+        key: 'cloud',
+        title: 'Cloud Engineering',
+        description: 'Flagship cloud & AI systems — Azure infrastructure, multi-agent pipelines, and end-to-end platform work.',
+        icon: Cloud,
+        categories: ['cloud'],
+        featured: true,
+    },
+    {
+        key: 'companies',
+        title: 'Companies',
+        icon: Building2,
+        categories: ['companies'],
+    },
+    {
+        key: 'videogames',
+        title: 'Video Games',
+        icon: Gamepad2,
+        sections: [
+            { key: 'technical', title: 'Technical Projects', icon: Cpu, categories: ['technical'] },
+            { key: 'games', title: 'Games', icon: Gamepad2, categories: ['games'] },
+        ],
+    },
+];
 
 /**
  * Renders a self-contained HTML embed (e.g. an exported architecture diagram)
@@ -55,17 +106,32 @@ const HtmlEmbedFrame = ({ embed, section }: { embed: { title: string; path: stri
 
     const handleLoad = () => {
         const doc = iframeRef.current?.contentDocument;
-        if (doc?.documentElement) {
-            setContentSize({
-                width: doc.documentElement.scrollWidth,
-                height: doc.documentElement.scrollHeight
-            });
-        }
+        if (!doc?.documentElement) return;
+
+        // Artifact bundles wrap the real content in a shadow-host div that's
+        // sized independently of it (often to the parent page's viewport),
+        // leaving empty space beside the actual content. Descend through
+        // single-child wrappers to find the real content root instead of
+        // trusting documentElement.scrollWidth, which measures the host.
+        let el: Element | null = doc.body.firstElementChild;
+        while (el && el.children.length === 1) el = el.firstElementChild;
+        const contentRoot = (el ? [...el.children] : [])
+            .find((c): c is HTMLElement => c.tagName !== 'TEMPLATE' && c.getBoundingClientRect().width > 0)
+            || doc.documentElement;
+
+        setContentSize({
+            width: contentRoot.scrollWidth,
+            height: contentRoot.scrollHeight
+        });
     };
 
     const displayWidth = Math.max(section?.width || 0, localRect.width);
     const scale = contentSize && displayWidth ? displayWidth / contentSize.width : 1;
-    const offsetLeft = section ? section.left - localRect.left : 0;
+    // Centers the box within `section` (rather than aligning left edges) so it stays
+    // centered even when displayWidth ends up narrower than the full section width.
+    const offsetLeft = section
+        ? (section.left + section.width / 2) - (localRect.left + displayWidth / 2)
+        : 0;
 
     return (
         <div ref={measureRef} className="w-full">
@@ -94,6 +160,136 @@ const HtmlEmbedFrame = ({ embed, section }: { embed: { title: string; path: stri
         </div>
     );
 };
+
+interface WorkflowSection {
+    icon: string;
+    title: string;
+    description: string;
+    items?: string[];
+}
+
+const WORKFLOW_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+    Bot, ShieldCheck, Code2, Users, Terminal, GitBranch, GitPullRequest
+};
+
+const WORKFLOW_COLORS: Record<string, { icon: string; iconBg: string; title: string; border: string; bullet: string }> = {
+    Bot: { icon: 'text-orange-400', iconBg: 'bg-orange-500/10', title: 'text-orange-400', border: 'border-orange-400/30', bullet: 'before:text-orange-400' },
+    ShieldCheck: { icon: 'text-rose-400', iconBg: 'bg-rose-500/10', title: 'text-rose-400', border: 'border-rose-400/30', bullet: 'before:text-rose-400' },
+    Code2: { icon: 'text-blue-400', iconBg: 'bg-blue-500/10', title: 'text-blue-400', border: 'border-blue-400/30', bullet: 'before:text-blue-400' },
+    Users: { icon: 'text-violet-400', iconBg: 'bg-violet-500/10', title: 'text-violet-400', border: 'border-violet-400/30', bullet: 'before:text-violet-400' },
+    Terminal: { icon: 'text-cyan-400', iconBg: 'bg-cyan-500/10', title: 'text-cyan-400', border: 'border-cyan-400/30', bullet: 'before:text-cyan-400' },
+    GitBranch: { icon: 'text-emerald-400', iconBg: 'bg-emerald-500/10', title: 'text-emerald-400', border: 'border-emerald-400/30', bullet: 'before:text-emerald-400' },
+    GitPullRequest: { icon: 'text-pink-400', iconBg: 'bg-pink-500/10', title: 'text-pink-400', border: 'border-pink-400/30', bullet: 'before:text-pink-400' }
+};
+
+const WorkflowPanel = ({ sections }: { sections: WorkflowSection[] }) => (
+    <div className="space-y-4">
+        {sections.map((section) => {
+            const Icon = WORKFLOW_ICONS[section.icon] || Code2;
+            const colors = WORKFLOW_COLORS[section.icon] || WORKFLOW_COLORS.Code2;
+            return (
+                <div key={section.title} className={`bg-[var(--bg-activity)]/30 border ${colors.border} rounded-sm p-5`}>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className={`w-8 h-8 rounded-sm ${colors.iconBg} flex items-center justify-center shrink-0`}>
+                            <Icon size={16} className={colors.icon} />
+                        </div>
+                        <h4 className={`text-sm font-sans font-bold ${colors.title}`}>{section.title}</h4>
+                    </div>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed mb-3">{section.description}</p>
+                    {section.items && section.items.length > 0 && (
+                        <ul className="space-y-1.5">
+                            {section.items.map((item, i) => (
+                                <li key={i} className={`text-xs font-mono text-[var(--text-secondary)] leading-relaxed pl-4 relative before:content-['›'] before:absolute before:left-0 ${colors.bullet}`}>
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            );
+        })}
+    </div>
+);
+
+interface DescriptionSection {
+    title: string;
+    text: string;
+    images?: string[];
+    heading?: string;
+}
+
+const DescriptionSectionsPanel = ({ sections, projectTitle, easy }: { sections: DescriptionSection[]; projectTitle: string; easy?: boolean }) => (
+    <div className="space-y-10">
+        {sections.map((section, i) => (
+            <div key={section.title}>
+                {section.heading && (
+                    <h2 className={easy
+                        ? `text-2xl font-bold text-[var(--accent)] mb-6 font-sans ${i > 0 ? 'pt-6 border-t border-[var(--border)]' : ''}`
+                        : `text-lg font-bold text-[var(--accent)] mb-4 font-sans ${i > 0 ? 'pt-6 border-t border-[var(--border)]' : ''}`
+                    }>
+                        {section.heading}
+                    </h2>
+                )}
+                <h3 className={easy ? "text-xl font-bold text-[var(--text-primary)] mb-3 font-sans" : "text-base font-bold text-[var(--text-primary)] mb-3 font-sans"}>
+                    {section.title}
+                </h3>
+                <p className={easy
+                    ? "text-lg text-[var(--text-secondary)] leading-loose opacity-90 font-medium whitespace-pre-wrap mb-4"
+                    : "text-[15px] text-[var(--text-primary)] opacity-90 leading-relaxed whitespace-pre-wrap mb-4"
+                }>
+                    {section.text.trim()}
+                </p>
+                {section.images && section.images.length > 0 && (
+                    section.images.length > 1 ? (
+                        <div className="grid grid-cols-2 gap-3">
+                            {section.images.map((src) => (
+                                <img
+                                    key={src}
+                                    src={src}
+                                    alt={`${projectTitle} — ${section.title}`}
+                                    className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <img
+                            src={section.images[0]}
+                            alt={`${projectTitle} — ${section.title}`}
+                            className="rounded-sm border border-[var(--border)] w-full h-auto mx-auto"
+                        />
+                    )
+                )}
+            </div>
+        ))}
+    </div>
+);
+
+interface JourneyStep {
+    title: string;
+    description: string;
+    image: string;
+}
+
+const UserJourneyPanel = ({ steps }: { steps: JourneyStep[] }) => (
+    <div className="space-y-12 w-full">
+        {steps.map((step, i) => (
+            <div key={step.title} className="flex flex-col items-start">
+                <div className="flex items-start gap-3 mb-4 text-left">
+                    <div className="w-6 h-6 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-xs font-mono font-bold flex items-center justify-center shrink-0 mt-0.5">
+                        {i + 1}
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-sans font-bold text-[var(--text-primary)] mb-1">{step.title}</h4>
+                        <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed">{step.description}</p>
+                    </div>
+                </div>
+                <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl w-full">
+                    <img src={step.image} alt={step.title} className="w-full h-auto object-cover" />
+                </div>
+            </div>
+        ))}
+    </div>
+);
 
 const CORE_STACK_ITEMS = [
     { emoji: '☁️', color: 'text-sky-400', label: 'Azure / Terraform / Bicep' },
@@ -150,11 +346,13 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             if (type === 'projects') return 'Projects';
             if (type === 'detail' && data) return data.title;
             if (type === 'pdf') return 'Resume';
+            if (type === 'contact') return 'Contact';
             return title || '';
         }
 
         if (type === 'home') return 'README.md';
         if (type === 'projects') return 'Portfolio/pages/all_projects.tsx';
+        if (type === 'contact') return 'Portfolio/pages/contact.tsx';
 
         if (type === 'detail' && data)
             return `Portfolio/projects/${data.title}.tsx`;
@@ -356,9 +554,9 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                                 <div className="absolute top-4 left-4 flex gap-1">
-                                                    {p.languages?.slice(0, 2).map((lang: any) => (
-                                                        <span key={lang.name} className="px-2 py-0.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-sm text-[9px] font-bold text-white uppercase tracking-wider">
-                                                            {lang.name}
+                                                    {p.tech?.slice(0, 2).map((t: string) => (
+                                                        <span key={t} className="px-2 py-0.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-sm text-[9px] font-bold uppercase tracking-wider" style={{ color: getTechColor(t) }}>
+                                                            {t}
                                                         </span>
                                                     ))}
                                                 </div>
@@ -730,6 +928,26 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             setFn(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
         };
 
+        const getCategoryProjects = (categories: string[]) =>
+            filteredProjects.filter(p => categories.includes(p.category));
+
+        const sectionHasResults = (section: ProjectSection | ProjectSectionGroup): boolean =>
+            'sections' in section
+                ? section.sections.some(sectionHasResults)
+                : getCategoryProjects(section.categories).length > 0;
+
+        const SectionHeading = ({ icon: Icon, title, description, featured }: { icon: React.ComponentType<{ size?: number; className?: string }>; title: string; description?: string; featured?: boolean }) => (
+            <div className={`flex items-start gap-4 ${featured ? 'pb-6 border-b-2 border-[var(--accent)]/40' : ''}`}>
+                <div className={`shrink-0 rounded-sm p-2.5 ${featured ? 'bg-[var(--accent)] text-white' : 'bg-[var(--bg-activity)] text-[var(--accent)] border border-[var(--border)]'}`}>
+                    <Icon size={featured ? 20 : 16} />
+                </div>
+                <div>
+                    <h2 className={`font-bold text-[var(--text-primary)] tracking-tight ${featured ? 'text-2xl md:text-3xl' : 'text-lg'}`}>{title}</h2>
+                    {description && <p className="text-[var(--text-secondary)] opacity-70 text-sm mt-1 max-w-2xl">{description}</p>}
+                </div>
+            </div>
+        );
+
         if (easyMode) {
             return (
                 <div className="h-full flex flex-col bg-[var(--bg-main)]">
@@ -785,41 +1003,81 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {filteredProjects.map(p => (
+                            {(() => {
+                                const renderEasyCard = (p: any, featured?: boolean) => (
                                     <div
                                         key={p.id}
                                         onClick={() => onOpenFile({ id: p.id, title: `${p.title}.tsx`, type: "detail", data: p })}
-                                        className="group relative bg-[var(--bg-activity)]/20 border border-[var(--border)] rounded-sm overflow-hidden cursor-pointer hover:border-[var(--accent)] transition-all flex flex-col h-full"
+                                        className={featured
+                                            ? "group relative md:col-span-2 lg:col-span-3 bg-gradient-to-br from-[var(--accent)]/15 via-[var(--bg-activity)]/20 to-transparent border-2 border-[var(--accent)]/50 rounded-sm overflow-hidden cursor-pointer hover:border-[var(--accent)] transition-all flex flex-col md:flex-row"
+                                            : "group relative bg-[var(--bg-activity)]/20 border border-[var(--border)] rounded-sm overflow-hidden cursor-pointer hover:border-[var(--accent)] transition-all flex flex-col h-full"
+                                        }
                                     >
-                                        <div className="aspect-video relative overflow-hidden bg-[var(--bg-activity)]">
+                                        <div className={featured ? "md:w-2/5 aspect-video md:aspect-auto relative overflow-hidden bg-[var(--bg-activity)]" : "aspect-video relative overflow-hidden bg-[var(--bg-activity)]"}>
                                             <img src={p.image} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                                                <span className="text-white text-xs font-bold flex items-center gap-2">
-                                                    View Case Study <ExternalLink size={14} />
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="p-6 flex-1 flex flex-col">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                {p.languages?.slice(0, 2).map((lang: any) => (
-                                                    <span key={lang.name} className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-tighter border border-[var(--border)] rounded-sm flex items-center gap-1.5 text-[var(--text-secondary)]">
-                                                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: lang.color }} />
-                                                        {lang.name}
+                                            {featured ? (
+                                                <div className="absolute top-4 left-4 px-3 py-1 bg-[var(--accent)] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm flex items-center gap-1.5 shadow-lg">
+                                                    <Cloud size={12} /> Flagship
+                                                </div>
+                                            ) : (
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                                                    <span className="text-white text-xs font-bold flex items-center gap-2">
+                                                        View Case Study <ExternalLink size={14} />
                                                     </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className={featured ? "md:w-3/5 p-8 flex flex-col justify-center" : "p-6 flex-1 flex flex-col"}>
+                                            <div className="flex items-center gap-1.5 flex-wrap mb-3">
+                                                {p.tech?.slice(0, featured ? 6 : 3).map((t: string) => (
+                                                    <TechTag key={t} label={t} />
                                                 ))}
                                             </div>
-                                            <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent)] transition-colors">{p.title}</h3>
-                                            <p className="text-sm text-[var(--text-secondary)] line-clamp-2 md:line-clamp-3 leading-relaxed mb-6 opacity-80">{p.description}</p>
+                                            <h3 className={featured ? "text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent)] transition-colors" : "text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent)] transition-colors"}>{p.title}</h3>
+                                            <p className={featured ? "text-base text-[var(--text-secondary)] leading-relaxed mb-6 opacity-80" : "text-sm text-[var(--text-secondary)] line-clamp-2 md:line-clamp-3 leading-relaxed mb-6 opacity-80"}>{p.description}</p>
 
-                                            <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between">
-                                                {/* Tech stack icons removed for cleaner easy mode */}
-                                                <span className="text-[10px] font-mono text-[var(--text-secondary)] opacity-40">v1.0.0</span>
-                                            </div>
+                                            {featured && (
+                                                <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between">
+                                                    <span className="inline-flex items-center gap-2 text-[var(--accent)] font-bold text-sm">
+                                                        View Case Study <ExternalLink size={14} />
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+                                );
+
+                                return (
+                                    <div className="space-y-16">
+                                        {PROJECT_SECTIONS.filter(sectionHasResults).map(section => (
+                                            'sections' in section ? (
+                                                <div key={section.key}>
+                                                    <SectionHeading icon={section.icon} title={section.title} />
+                                                    <div className="space-y-12 mt-8">
+                                                        {section.sections.filter(sub => getCategoryProjects(sub.categories).length > 0).map(sub => (
+                                                            <div key={sub.key}>
+                                                                <h3 className="flex items-center gap-2 text-sm font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-5 opacity-70">
+                                                                    <sub.icon size={14} className="text-[var(--accent)]" /> {sub.title}
+                                                                </h3>
+                                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                                                    {getCategoryProjects(sub.categories).map(p => renderEasyCard(p))}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div key={section.key}>
+                                                    <SectionHeading icon={section.icon} title={section.title} description={section.description} featured={section.featured} />
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                                                        {getCategoryProjects(section.categories).map(p => renderEasyCard(p, section.featured))}
+                                                    </div>
+                                                </div>
+                                            )
+                                        ))}
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -904,74 +1162,113 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="max-w-6xl mx-auto w-full pt-1 md:pt-2 pb-4">
                             {filteredProjects.length === 0 ? (
                                 <div className="text-center text-[var(--text-secondary)] mt-20 font-mono text-sm">No extensions found matching your criteria.</div>
-                            ) : (
-                                <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "flex flex-col gap-1"}>
-                                    {filteredProjects.map(p => (
-                                        <div
-                                            key={p.id}
-                                            onClick={() => onOpenFile({ id: p.id, title: `${p.title}.tsx`, type: "detail", data: p })}
-                                            className={`
-                                            group border border-transparent hover:bg-[var(--bg-activity)] cursor-pointer transition-all
-                                            ${viewMode === 'grid'
-                                                    ? 'bg-[var(--bg-panel)] border-[var(--border)] flex flex-col h-full rounded-sm hover:border-[var(--accent)]'
-                                                    : 'flex flex-row items-start gap-4 p-2 rounded-sm hover:bg-[var(--bg-activity)]'
-                                                }
-                                        `}
-                                        >
-                                            {/* IMAGE / ICON */}
-                                            <div className={viewMode === 'grid' ? "h-32 w-full bg-[var(--bg-activity)] relative overflow-hidden shrink-0" : "w-16 h-16 md:w-24 md:h-24 bg-[var(--bg-activity)] shrink-0 border border-[var(--border)]"}>
-                                                <img
-                                                    src={p.image}
-                                                    alt={p.title}
-                                                    className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                                                />
-                                            </div>
+                            ) : (() => {
+                                const renderIdeCard = (p: any, featured?: boolean) => (
+                                    <div
+                                        key={p.id}
+                                        onClick={() => onOpenFile({ id: p.id, title: `${p.title}.tsx`, type: "detail", data: p })}
+                                        className={`
+                                        group border cursor-pointer transition-all
+                                        ${viewMode === 'grid'
+                                                ? (featured
+                                                    ? 'md:col-span-2 xl:col-span-3 bg-gradient-to-br from-[var(--accent)]/10 to-[var(--bg-panel)] border-[var(--accent)]/50 hover:border-[var(--accent)] flex flex-col md:flex-row rounded-sm'
+                                                    : 'bg-[var(--bg-panel)] border-[var(--border)] flex flex-col h-full rounded-sm hover:border-[var(--accent)]')
+                                                : (featured
+                                                    ? 'flex flex-row items-stretch gap-4 p-3 rounded-sm border-[var(--accent)]/50 bg-[var(--accent)]/5 hover:bg-[var(--accent)]/10'
+                                                    : 'flex flex-row items-stretch gap-4 p-2 rounded-sm border-transparent hover:bg-[var(--bg-activity)]')
+                                            }
+                                    `}
+                                    >
+                                        {/* IMAGE / ICON */}
+                                        <div className={
+                                            viewMode === 'grid'
+                                                ? (featured ? "md:w-2/5 h-48 md:h-auto bg-[var(--bg-activity)] relative overflow-hidden shrink-0" : "h-48 w-full bg-[var(--bg-activity)] relative overflow-hidden shrink-0")
+                                                : (featured ? "w-16 h-16 md:w-28 md:h-28 bg-[var(--bg-activity)] shrink-0 border border-[var(--accent)]/40" : "w-16 h-16 md:w-24 md:h-24 bg-[var(--bg-activity)] shrink-0 border border-[var(--border)]")
+                                        }>
+                                            <img
+                                                src={p.image}
+                                                alt={p.title}
+                                                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                                            />
+                                            {featured && viewMode === 'grid' && (
+                                                <div className="absolute top-3 left-3 px-2 py-0.5 bg-[var(--accent)] text-white text-[9px] font-bold uppercase tracking-widest rounded-sm flex items-center gap-1">
+                                                    <Cloud size={10} /> Flagship
+                                                </div>
+                                            )}
+                                        </div>
 
-                                            {/* CONTENT */}
-                                            <div className={`flex-1 min-w-0 ${viewMode === 'grid' ? 'p-3' : 'py-1 flex flex-col justify-between'}`}>
-                                                <div>
-                                                    <div className="flex items-center justify-between mb-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <h3 className="font-bold text-[var(--text-primary)] text-sm md:text-base font-sans group-hover:text-[var(--accent)] transition-colors">
-                                                                {p.title}
-                                                            </h3>
-                                                            {viewMode === 'list' && (
-                                                                <span className="hidden md:inline-flex px-1.5 py-0.5 rounded-sm bg-[var(--bg-main)] text-[10px] text-[var(--text-secondary)] border border-[var(--border)] font-mono">
-                                                                    v1.{p.id.length}.0
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        {viewMode === 'grid' && p.links && 'live' in p.links && <Globe size={12} className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]" />}
+                                        {/* CONTENT */}
+                                        <div className={`flex-1 min-w-0 ${viewMode === 'grid' ? (featured ? 'p-6 flex flex-col justify-center' : 'p-3') : 'flex flex-col justify-between'}`}>
+                                            <div>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <h3 className={featured && viewMode === 'grid' ? "font-bold text-[var(--text-primary)] text-xl font-sans group-hover:text-[var(--accent)] transition-colors" : "font-bold text-[var(--text-primary)] text-sm md:text-base font-sans group-hover:text-[var(--accent)] transition-colors"}>
+                                                            {p.title}
+                                                        </h3>
+                                                        {featured && viewMode === 'list' && (
+                                                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-[var(--accent)] text-white text-[9px] font-bold uppercase tracking-widest">
+                                                                <Cloud size={10} /> Flagship
+                                                            </span>
+                                                        )}
                                                     </div>
-
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        {p.languages?.slice(0, 2).map((lang: any) => (
-                                                            <div key={lang.name} className="flex items-center gap-1 text-[10px] text-[var(--text-secondary)] bg-[var(--bg-activity)] px-1.5 py-0.5 rounded-sm border border-[var(--border)]">
-                                                                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: lang.color }} />
-                                                                {lang.name}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-
-                                                    <p className="text-xs text-[var(--text-secondary)] line-clamp-2 md:line-clamp-1 mb-2 font-sans opacity-80">
-                                                        {p.description}
-                                                    </p>
+                                                    {viewMode === 'grid' && p.links && 'live' in p.links && <Globe size={12} className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]" />}
                                                 </div>
 
-                                                {viewMode === 'list' && (
-                                                    <div className="flex gap-1 mt-1 flex-wrap">
-                                                        {p.tech?.map((t: string) => (
-                                                            <span key={t} className="text-[10px] px-1.5 py-0.5 bg-[var(--bg-main)] text-[var(--text-secondary)] rounded-sm border border-[var(--border)]">
-                                                                {t}
-                                                            </span>
+                                                {viewMode === 'grid' && (
+                                                    <div className="flex items-center gap-1.5 flex-wrap mb-2">
+                                                        {p.tech?.slice(0, 3).map((t: string) => (
+                                                            <TechTag key={t} label={t} />
                                                         ))}
                                                     </div>
                                                 )}
+
+                                                <p className={featured && viewMode === 'grid' ? "text-sm text-[var(--text-secondary)] mb-2 font-sans opacity-80" : "text-xs text-[var(--text-secondary)] line-clamp-2 md:line-clamp-1 mb-2 font-sans opacity-80"}>
+                                                    {p.description}
+                                                </p>
                                             </div>
+
+                                            {viewMode === 'list' && (
+                                                <div className="flex gap-1.5 mt-1 flex-wrap">
+                                                    {p.tech?.map((t: string) => (
+                                                        <TechTag key={t} label={t} />
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    </div>
+                                );
+
+                                return (
+                                    <div className="space-y-14">
+                                        {PROJECT_SECTIONS.filter(sectionHasResults).map(section => (
+                                            'sections' in section ? (
+                                                <div key={section.key}>
+                                                    <SectionHeading icon={section.icon} title={section.title} />
+                                                    <div className="space-y-10 mt-6">
+                                                        {section.sections.filter(sub => getCategoryProjects(sub.categories).length > 0).map(sub => (
+                                                            <div key={sub.key}>
+                                                                <h3 className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-3 opacity-70">
+                                                                    <sub.icon size={13} className="text-[var(--accent)]" /> {sub.title}
+                                                                </h3>
+                                                                <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "flex flex-col gap-1"}>
+                                                                    {getCategoryProjects(sub.categories).map(p => renderIdeCard(p))}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div key={section.key}>
+                                                    <SectionHeading icon={section.icon} title={section.title} description={section.description} featured={section.featured} />
+                                                    <div className={`mt-6 ${viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "flex flex-col gap-1"}`}>
+                                                        {getCategoryProjects(section.categories).map(p => renderIdeCard(p, section.featured))}
+                                                    </div>
+                                                </div>
+                                            )
+                                        ))}
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -990,10 +1287,10 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-main)] via-[var(--bg-main)]/60 to-transparent" />
                             <div className="absolute bottom-0 left-0 w-full p-8 md:p-16">
                                 <div className="max-w-5xl mx-auto">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        {data.languages?.map((lang: any) => (
-                                            <span key={lang.name} className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-sm text-[10px] font-bold text-white uppercase tracking-widest">
-                                                {lang.name}
+                                    <div className="flex flex-wrap items-center gap-2 mb-6">
+                                        {data.tech?.slice(0, 6).map((t: string) => (
+                                            <span key={t} className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-sm text-[10px] font-bold uppercase tracking-widest" style={{ color: getTechColor(t) }}>
+                                                {t}
                                             </span>
                                         ))}
                                     </div>
@@ -1028,9 +1325,13 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
                                         <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Narrative
                                     </h2>
-                                    <p className="text-lg text-[var(--text-secondary)] leading-loose opacity-90 font-medium">
-                                        {data.longDescription || data.description}
-                                    </p>
+                                    {data.descriptionSections ? (
+                                        <DescriptionSectionsPanel sections={data.descriptionSections} projectTitle={data.title} easy />
+                                    ) : (
+                                        <p className="text-lg text-[var(--text-secondary)] leading-loose opacity-90 font-medium">
+                                            {data.longDescription || data.description}
+                                        </p>
+                                    )}
                                 </section>
 
                                 {data.htmlEmbed && (
@@ -1056,12 +1357,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </section>
                                 )}
 
-                                {data.gallery && data.gallery.length > 0 && (
+                                {!data.descriptionSections && data.gallery && data.gallery.length > 0 && (
                                     <section>
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
                                             <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Gallery
                                         </h2>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             {data.gallery.map((src: string, i: number) => (
                                                 <img
                                                     key={src}
@@ -1074,7 +1375,16 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </section>
                                 )}
 
-                                {data.architecture && (
+                                {data.userJourney && (
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> User Journey
+                                        </h2>
+                                        <UserJourneyPanel steps={data.userJourney} />
+                                    </section>
+                                )}
+
+                                {data.showArchitectureTab && data.architecture && (
                                     <section>
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">System Architecture</h2>
                                         <div className="bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm p-8 overflow-hidden relative">
@@ -1088,22 +1398,26 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </section>
                                 )}
 
-                                {data.snippet && (
+                                {data.showWorkflowTab && (data.workflow || data.snippet) && (
                                     <section>
-                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">Core Implementation</h2>
-                                        <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-sm overflow-hidden shadow-lg">
-                                            <div className="bg-[var(--bg-activity)] px-4 py-2 border-b border-[var(--border)] flex justify-between items-center">
-                                                <span className="text-xs font-mono text-[var(--text-secondary)]">implementation.ts</span>
-                                                <div className="flex gap-1.5">
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">{data.workflow ? 'Workflow' : 'Core Implementation'}</h2>
+                                        {data.workflow ? (
+                                            <WorkflowPanel sections={data.workflow} />
+                                        ) : (
+                                            <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-sm overflow-hidden shadow-lg">
+                                                <div className="bg-[var(--bg-activity)] px-4 py-2 border-b border-[var(--border)] flex justify-between items-center">
+                                                    <span className="text-xs font-mono text-[var(--text-secondary)]">implementation.ts</span>
+                                                    <div className="flex gap-1.5">
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
+                                                    </div>
+                                                </div>
+                                                <div className="p-6 overflow-x-auto custom-scrollbar">
+                                                    <pre className="font-mono text-xs text-[var(--success)] leading-relaxed">{data.snippet}</pre>
                                                 </div>
                                             </div>
-                                            <div className="p-6 overflow-x-auto custom-scrollbar">
-                                                <pre className="font-mono text-xs text-[var(--success)] leading-relaxed">{data.snippet}</pre>
-                                            </div>
-                                        </div>
+                                        )}
                                     </section>
                                 )}
                             </div>
@@ -1116,7 +1430,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Technologies</h3>
                                             <div className="flex flex-wrap gap-2">
                                                 {data.tech?.map((t: string) => (
-                                                    <span key={t} className="px-2 py-1 bg-[var(--bg-main)] text-[var(--text-primary)] text-[11px] rounded-sm border border-[var(--border)] font-sans">{t}</span>
+                                                    <TechTag key={t} label={t} />
                                                 ))}
                                             </div>
                                         </div>
@@ -1124,10 +1438,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         <div>
                                             <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Resources</h3>
                                             <div className="text-xs space-y-3 text-[var(--text-primary)] font-sans">
-                                                <div className="flex justify-between py-1.5 border-b border-[var(--border)] border-dashed">
-                                                    <span>Version</span>
-                                                    <span className="text-[var(--text-secondary)] font-mono">{data.deployHistory?.[0]?.version || 'v1.0.0'}</span>
-                                                </div>
                                                 <div className="flex justify-between py-1.5 border-b border-[var(--border)] border-dashed">
                                                     <span>Last Update</span>
                                                     <span className="text-[var(--text-secondary)]">Recently</span>
@@ -1163,7 +1473,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                 )}
                 <div ref={sectionRef} className="flex-1 overflow-y-auto custom-scrollbar pt-[71px] md:pt-0" onScroll={onScroll}>
                     {/* EXTENSION HEADER */}
-                    <div className="px-4 md:px-12 max-w-5xl mx-auto w-full py-8">
+                    <div className={`px-4 md:px-12 mx-auto w-full py-8 ${data.userJourney ? 'max-w-[88rem]' : 'max-w-5xl'}`}>
                         <div className="flex flex-col md:flex-row gap-6 mb-6">
                             <div className="w-32 h-32 bg-[var(--bg-activity)] border border-[var(--border)] shrink-0 shadow-sm relative overflow-hidden">
                                 <img
@@ -1176,15 +1486,6 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 <h1 className="text-3xl font-sans font-bold text-[var(--text-primary)] mb-2 flex items-center gap-3">
                                     {data.title}
                                 </h1>
-                                <div className="flex flex-wrap gap-2 mb-4">
-                                    {data.languages?.map((lang: any) => (
-                                        <div key={lang.name} className="flex items-center gap-2 px-2.5 py-1 rounded-sm bg-[var(--bg-activity)] border border-[var(--border)] text-xs text-[var(--text-primary)]">
-                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: lang.color }} />
-                                            {lang.name}
-                                            <span className="text-[var(--text-secondary)] scale-90">{lang.percent}%</span>
-                                        </div>
-                                    ))}
-                                </div>
                                 <p className="text-base text-[var(--text-primary)] mb-4 font-sans max-w-2xl leading-relaxed">
                                     {data.description}
                                 </p>
@@ -1211,15 +1512,37 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             </div>
                         </div>
 
+                        {/* TECHNOLOGIES */}
+                        <div className="mb-6">
+                            <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Technologies</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {data.tech?.map((t: string) => (
+                                    <TechTag key={t} label={t} />
+                                ))}
+                            </div>
+                        </div>
+
+                        {data.video && (
+                            <div className="mb-6 aspect-video max-w-2xl w-full mx-auto rounded-sm overflow-hidden border border-[var(--border)] shadow-xl">
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
+                                    title={data.video.title}
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            </div>
+                        )}
+
                         {/* TABS */}
                         <div className="flex items-center gap-6 border-b border-[var(--border)] mt-1">
                             <button
                                 onClick={() => setActiveTab('details')}
                                 className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'details' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                             >
-                                Details
+                                Description
                             </button>
-                            {data.architecture && (
+                            {data.showArchitectureTab && (data.architecture || data.htmlEmbed) && (
                                 <button
                                     onClick={() => setActiveTab('architecture')}
                                     className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'architecture' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
@@ -1227,57 +1550,36 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     Architecture
                                 </button>
                             )}
-                            {data.snippet && (
+                            {data.showWorkflowTab && (data.workflow || data.snippet) && (
                                 <button
                                     onClick={() => setActiveTab('implementation')}
                                     className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'implementation' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                                 >
-                                    Core Implementation
+                                    Workflow
                                 </button>
                             )}
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-8 mt-6">
+                        <div className="mt-6">
                             {/* MAIN CONTENT AREA */}
                             <div className="min-w-0">
                                 {/* DETAILS TAB */}
                                 {activeTab === 'details' && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                        <div className="text-[var(--text-primary)] opacity-90 font-sans leading-7 mb-6">
-                                            <p className="whitespace-pre-wrap text-[15px] leading-relaxed mt-0 pt-0">
-                                                {data.longDescription?.trim()}
-                                            </p>
-                                        </div>
-
-                                        {data.htmlEmbed && (
-                                            <div className="mb-6 max-w-2xl w-full">
-                                                <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
+                                        {data.descriptionSections ? (
+                                            <div className="mb-6">
+                                                <DescriptionSectionsPanel sections={data.descriptionSections} projectTitle={data.title} />
+                                            </div>
+                                        ) : (
+                                            <div className="text-[var(--text-primary)] opacity-90 font-sans leading-7 mb-6">
+                                                <p className="whitespace-pre-wrap text-[15px] leading-relaxed mt-0 pt-0">
+                                                    {data.longDescription?.trim()}
+                                                </p>
                                             </div>
                                         )}
 
-                                        {data.video && (
-                                            <div className="mb-6 aspect-video max-w-2xl w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-xl">
-                                                <iframe
-                                                    src={`https://www.youtube.com/embed/${getYouTubeEmbedId(data.video.url)}`}
-                                                    title={data.video.title}
-                                                    className="w-full h-full"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                    allowFullScreen
-                                                />
-                                            </div>
-                                        )}
-
-                                        {/* Fixed Size Screenshot */}
-                                        <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl max-w-2xl w-full">
-                                            <img
-                                                src={data.image}
-                                                alt={`${data.title} Screenshot`}
-                                                className="w-full h-auto object-cover"
-                                            />
-                                        </div>
-
-                                        {data.gallery && data.gallery.length > 0 && (
-                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 max-w-2xl w-full">
+                                        {!data.descriptionSections && data.gallery && data.gallery.length > 0 && (
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 w-full">
                                                 {data.gallery.map((src: string, i: number) => (
                                                     <img
                                                         key={src}
@@ -1288,68 +1590,53 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 ))}
                                             </div>
                                         )}
+
+                                        {data.userJourney && (
+                                            <div className="mt-20 w-full">
+                                                <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans text-center">User Journey</h3>
+                                                <UserJourneyPanel steps={data.userJourney} />
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 
                                 {/* ARCHITECTURE TAB */}
-                                {activeTab === 'architecture' && data.architecture && (
+                                {activeTab === 'architecture' && data.showArchitectureTab && (data.htmlEmbed || data.architecture) && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                        <div className="bg-[var(--bg-activity)]/30 border border-[var(--border)] rounded-sm p-6 overflow-x-auto custom-scrollbar">
-                                            <pre className="font-mono text-xs text-[var(--text-secondary)] leading-relaxed">{data.architecture}</pre>
-                                        </div>
+                                        {data.htmlEmbed ? (
+                                            <div className="w-full mx-auto">
+                                                <HtmlEmbedFrame embed={data.htmlEmbed} section={sectionRect} />
+                                            </div>
+                                        ) : (
+                                            <div className="bg-[var(--bg-activity)]/30 border border-[var(--border)] rounded-sm p-6 overflow-x-auto custom-scrollbar">
+                                                <pre className="font-mono text-xs text-[var(--text-secondary)] leading-relaxed">{data.architecture}</pre>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 
-                                {/* CORE IMPLEMENTATION TAB */}
-                                {activeTab === 'implementation' && data.snippet && (
+                                {/* WORKFLOW TAB */}
+                                {activeTab === 'implementation' && data.showWorkflowTab && (data.workflow || data.snippet) && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                        <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-sm overflow-hidden shadow-lg">
-                                            <div className="bg-[var(--bg-activity)] px-4 py-2 border-b border-[var(--border)] flex justify-between items-center">
-                                                <span className="text-xs font-mono text-[var(--text-secondary)]">implementation.ts</span>
-                                                <div className="flex gap-1.5">
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
+                                        {data.workflow ? (
+                                            <WorkflowPanel sections={data.workflow} />
+                                        ) : (
+                                            <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-sm overflow-hidden shadow-lg">
+                                                <div className="bg-[var(--bg-activity)] px-4 py-2 border-b border-[var(--border)] flex justify-between items-center">
+                                                    <span className="text-xs font-mono text-[var(--text-secondary)]">implementation.ts</span>
+                                                    <div className="flex gap-1.5">
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
+                                                    </div>
+                                                </div>
+                                                <div className="p-6 overflow-x-auto custom-scrollbar">
+                                                    <pre className="font-mono text-xs text-[var(--success)] leading-relaxed">{data.snippet}</pre>
                                                 </div>
                                             </div>
-                                            <div className="p-6 overflow-x-auto custom-scrollbar">
-                                                <pre className="font-mono text-xs text-[var(--success)] leading-relaxed">{data.snippet}</pre>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 )}
-                            </div>
-
-                            {/* SIDEBAR */}
-                            <div className="space-y-8 lg:border-l lg:border-[var(--border)] lg:pl-8 mt-8 lg:mt-0 pt-8 lg:pt-0 border-t lg:border-t-0 border-[var(--border)]">
-                                <div>
-                                    <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Technologies</h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {data.tech?.map((t: string) => (
-                                            <span key={t} className="px-2 py-1 bg-[var(--bg-activity)] text-[var(--text-primary)] text-[11px] rounded-sm border border-[var(--border)] font-sans">{t}</span>
-                                        ))}
-                                    </div>
-                                </div>
-
-
-
-                                <div>
-                                    <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Resources</h3>
-                                    <div className="text-xs space-y-3 text-[var(--text-primary)] font-sans">
-                                        <div className="flex justify-between py-1.5 border-b border-[var(--border)] border-dashed">
-                                            <span>Version</span>
-                                            <span className="text-[var(--text-secondary)] font-mono">{data.deployHistory?.[0]?.version || 'v2.5'}</span>
-                                        </div>
-                                        <div className="flex justify-between py-1.5 border-b border-[var(--border)] border-dashed">
-                                            <span>Last Update</span>
-                                            <span className="text-[var(--text-secondary)]">2 days ago</span>
-                                        </div>
-                                        <div className="flex justify-between py-1.5">
-                                            <span>License</span>
-                                            <span className="text-[var(--text-secondary)] font-mono">MIT</span>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1378,6 +1665,184 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             style={{ minHeight: 'calc(100vh - 120px)' }}
                             title="Vincent Boutin — Interactive Resume"
                         />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (type === 'contact') {
+        const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', website: '' });
+        const [status, setStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>('idle');
+        const [errorMsg, setErrorMsg] = useState('');
+
+        const updateField = (key: 'name' | 'email' | 'subject' | 'message' | 'website') => (
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => setForm(prev => ({ ...prev, [key]: e.target.value }));
+
+        const handleSubmit = async (e: React.FormEvent) => {
+            e.preventDefault();
+            setStatus('loading');
+            setErrorMsg('');
+            const result = await sendContactEmail(form);
+            if (result.ok) {
+                setStatus('sent');
+                setForm({ name: '', email: '', subject: '', message: '', website: '' });
+            } else {
+                setStatus('error');
+                setErrorMsg(result.error);
+            }
+        };
+
+        const directChannels = [
+            { icon: Mail, label: 'contact@vincentboutin.dev', href: 'mailto:contact@vincentboutin.dev' },
+            { icon: Linkedin, label: 'linkedin.com/in/vincent-boutin', href: 'https://www.linkedin.com/in/vincent-boutin/' },
+            { icon: Github, label: 'github.com/vbo-cloud', href: 'https://github.com/vbo-cloud' },
+        ];
+
+        return (
+            <div className="h-full flex flex-col bg-[var(--bg-main)] relative">
+                {!easyMode && (
+                    <div className={`absolute md:relative top-9 md:top-0 left-0 w-full z-30 transition-all duration-300 ease-in-out md:translate-y-0 ${!isNavBarVisible ? '-translate-y-[71px] opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`}>
+                        <Breadcrumbs path={path} />
+                    </div>
+                )}
+                <div className="flex-1 flex flex-col min-h-0 pt-[71px] md:pt-0">
+                    {!easyMode && (
+                        <div className="flex items-center gap-2 px-4 py-1.5 border-b border-[var(--border)] bg-[var(--bg-panel)] text-[var(--accent)] font-mono font-bold text-[11px]">
+                            <Mail size={14} />
+                            <span>CONTACT_FORM</span>
+                        </div>
+                    )}
+
+                    <div className="flex-1 overflow-y-auto custom-scrollbar px-6 md:px-12 py-10" onScroll={onScroll}>
+                        <div className="max-w-3xl mx-auto">
+                            <h1 className={`font-bold text-[var(--text-primary)] tracking-tight mb-3 ${easyMode ? 'text-4xl md:text-5xl' : 'text-2xl'}`}>
+                                Let's talk
+                            </h1>
+                            <p className="text-[var(--text-secondary)] opacity-80 mb-10 max-w-xl">
+                                A question, an opportunity, or just want to say hi — drop a message and I'll get back to you.
+                            </p>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <form onSubmit={handleSubmit} className="relative md:col-span-2 space-y-4">
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Name</label>
+                                        <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
+                                            <UserIcon size={14} className="text-[var(--text-secondary)] shrink-0" />
+                                            <input
+                                                required
+                                                value={form.name}
+                                                onChange={updateField('name')}
+                                                placeholder="Your name"
+                                                className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Email</label>
+                                        <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
+                                            <Mail size={14} className="text-[var(--text-secondary)] shrink-0" />
+                                            <input
+                                                required
+                                                type="email"
+                                                value={form.email}
+                                                onChange={updateField('email')}
+                                                placeholder="you@example.com"
+                                                className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Subject</label>
+                                        <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
+                                            <Tag size={14} className="text-[var(--text-secondary)] shrink-0" />
+                                            <input
+                                                required
+                                                value={form.subject}
+                                                onChange={updateField('subject')}
+                                                placeholder="What's this about?"
+                                                className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Message</label>
+                                        <div className="flex items-start gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
+                                            <MessageSquare size={14} className="text-[var(--text-secondary)] shrink-0 mt-3" />
+                                            <textarea
+                                                required
+                                                rows={6}
+                                                value={form.message}
+                                                onChange={updateField('message')}
+                                                placeholder="What's on your mind?"
+                                                className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans resize-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Honeypot — hidden from real visitors, left in the a11y/DOM tree so basic bots that auto-fill every field still catch it. The API silently drops submissions that fill this in. */}
+                                    <div className="absolute -left-[9999px]" aria-hidden="true">
+                                        <label htmlFor="website">Leave this field empty</label>
+                                        <input
+                                            id="website"
+                                            name="website"
+                                            tabIndex={-1}
+                                            autoComplete="off"
+                                            value={form.website}
+                                            onChange={updateField('website')}
+                                        />
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={status === 'loading'}
+                                        className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] text-[var(--accent-fg)] rounded-sm text-sm font-bold hover:bg-[var(--accent)]/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                    >
+                                        <Send size={14} />
+                                        {status === 'loading' ? 'Sending…' : 'Send message'}
+                                    </button>
+
+                                    {status === 'loading' && (
+                                        <div className="text-[var(--text-secondary)] text-xs pt-1 opacity-70">
+                                            First message after a while can take a couple seconds to wake up the backend.
+                                        </div>
+                                    )}
+
+                                    {status === 'sent' && (
+                                        <div className="flex items-center gap-2 text-[var(--success)] text-xs pt-1">
+                                            <CheckCircle2 size={14} />
+                                            <span>Message sent — I'll get back to you soon.</span>
+                                        </div>
+                                    )}
+
+                                    {status === 'error' && (
+                                        <div className="text-red-400 text-xs pt-1">
+                                            {errorMsg || 'Something went wrong — please try again.'}
+                                        </div>
+                                    )}
+                                </form>
+
+                                <div className="space-y-3">
+                                    <h3 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest opacity-60 mb-1">Direct channels</h3>
+                                    {directChannels.map(c => (
+                                        <a
+                                            key={c.href}
+                                            href={c.href}
+                                            target={c.href.startsWith('http') ? '_blank' : undefined}
+                                            rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                                            className="flex items-center gap-2.5 px-3 py-2.5 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)]/40 transition-all text-xs"
+                                        >
+                                            <c.icon size={14} className="shrink-0" />
+                                            <span className="truncate">{c.label}</span>
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

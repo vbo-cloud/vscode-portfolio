@@ -13,9 +13,12 @@ A focused 2-week, 2-programmer exploration of procedural generation: a dungeon c
 Rather than starting from scratch, we adapted "Dwarfs Delight" to the constraints of a dungeon: I stripped out numerous dependencies (the lobby, the "Crown" game mode), reworked the player spawn system, and made abilities acquirable mid-run. I completed the dungeon-generation algorithm my colleague had started, built the room prefabs and their content (everything except enemies and the Wave Function Collapse logic), and wrote the transition logic between rooms based on the algorithm's output.
 `,
     type: "Procedural Generation",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#", "Git"],
     links: {},
     image: withBasePath("/projects/technical/procedural-dungeon-generation/cover.png"),
+    video: { title: "Procedural Dungeon Generation", url: "https://www.youtube.com/watch?v=GX7QeRUCo6g" },
     pdfs: [
         { label: "Report (FR)", path: withBasePath("/projects/technical/procedural-dungeon-generation/report-fr.pdf") }
     ],
@@ -46,25 +49,5 @@ Rather than starting from scratch, we adapted "Dwarfs Delight" to the constraint
             time: "IIM",
             status: "success"
         }
-    ],
-    snippet: `// Room-to-room transition driven by generated dungeon data
-public void EnterRoom(RoomNode node)
-{
-    currentRoom.Unload();
-    currentRoom = RoomFactory.Instantiate(node.RoomType, node.Position);
-    currentRoom.SetLocked(node.RequiresKey && !player.HasKey(node.KeyId));
-}
-`,
-    architecture: `
-[ Dungeon Generation Algorithm ]
-          |
-          v
-[ Dungeon Graph ] -- floors, rooms, secret room, key/door gate
-          |
-          v
-[ Room Prefabs ] -- content, layout
-          |
-          v
-[ Room Transition Logic ] -- reads graph, loads/unloads rooms
-`
+    ]
 };

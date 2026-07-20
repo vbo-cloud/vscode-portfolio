@@ -11,11 +11,14 @@ export const bombers = {
 Bombers is my first-year final project at IIM, developed entirely solo: every feature was built by me, using Mixamo for models and some animations, while I modeled the robots and the boss animations myself with 3DS Max.
 `,
     type: "Personal Project — Action",
+    showArchitectureTab: false,
+    showWorkflowTab: false,
     tech: ["Unity", "C#"],
     links: {
         live: "https://unrealitygames.itch.io/bombers"
     },
     image: withBasePath("/projects/games/bombers/cover.png"),
+    video: { title: "Bombers", url: "https://www.youtube.com/watch?v=oIfwBok9Bec" },
     gallery: [
         withBasePath("/projects/games/bombers/gallery-1-menu.png"),
         withBasePath("/projects/games/bombers/gallery-2.png"),
@@ -45,20 +48,5 @@ Bombers is my first-year final project at IIM, developed entirely solo: every fe
             time: "IIM first year",
             status: "success"
         }
-    ],
-    snippet: `// Robot expansion controller
-public class RobotExpansionController : MonoBehaviour
-{
-    public void ClaimSector(Sector sector) => sector.SetOwner(RobotFaction.Instance);
-}
-`,
-    architecture: `
-[ Machine City Simulation ]
-          |
-          v
-[ Robot AI ] -- expansion & defense
-          |
-          v
-[ Player Controller ] -- find humans, stop expansion
-`
+    ]
 };

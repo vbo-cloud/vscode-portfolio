@@ -3,7 +3,7 @@ import {
     Files, Search, UserCircle, Settings2,
     MoreHorizontal as MoreHorizontalIcon, ChevronDown, Folder, FolderOpen,
     RefreshCw, Plus, CheckCircle, ToggleRight, ToggleLeft, FileJson, Zap,
-    Cloud, ShieldCheck, LogOut, User, ChevronRight, CaseSensitive, WholeWord, Regex, RotateCcw, Globe, Trophy, Award, LayoutGrid, Filter, ExternalLink, Palette, Trash2
+    Cloud, ShieldCheck, LogOut, User, ChevronRight, CaseSensitive, WholeWord, Regex, RotateCcw, Globe, Trophy, Award, LayoutGrid, Filter, ExternalLink, Palette, Trash2, Mail
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
@@ -524,6 +524,18 @@ export const Sidebar = ({
                                         <LayoutGrid className="w-3.5 h-3.5 opacity-70" />
                                         <span>Featured Projects</span>
                                     </button>
+
+                                    <button
+                                        onClick={() => onOpenFile({ id: 'contact.tsx', title: 'contact.tsx', type: 'contact' })}
+                                        className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-all text-xs font-medium border
+                                            ${activeTabId === 'contact.tsx'
+                                                ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30 shadow-sm'
+                                                : 'text-[var(--text-primary)] hover:bg-[var(--bg-activity)] border-transparent'}
+                                        `}
+                                    >
+                                        <Mail className="w-3.5 h-3.5 opacity-70" />
+                                        <span>Get in Touch</span>
+                                    </button>
                                 </div>
                             )}
 
@@ -611,6 +623,7 @@ export const Sidebar = ({
                                                 <>
                                                     {[
                                                         { id: "projects.tsx", name: "all_projects.tsx", type: "projects" },
+                                                        { id: "contact.tsx", name: "contact.tsx", type: "contact" },
                                                     ].map(f => {
                                                         const meta = getFileIcon(f.name);
                                                         return renderFileTreeItem({
@@ -661,19 +674,19 @@ export const Sidebar = ({
                                                     })}
                                                     {expandedFolders['projects_videogames'] && (
                                                         <>
-                                                            {/* Games subfolder */}
-                                                            {renderFileTreeItem({
-                                                                id: 'projects_games', name: 'games', icon: expandedFolders['projects_games'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
-                                                                type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_games'], onToggle: () => toggleFolder('projects_games')
-                                                            })}
-                                                            {expandedFolders['projects_games'] && PROJECTS_DATA.filter(p => p.category === 'games').map(p => renderProjectFileItem(p, 4))}
-
                                                             {/* Technical projects subfolder */}
                                                             {renderFileTreeItem({
                                                                 id: 'projects_technical', name: 'technical projects', icon: expandedFolders['projects_technical'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
                                                                 type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_technical'], onToggle: () => toggleFolder('projects_technical')
                                                             })}
                                                             {expandedFolders['projects_technical'] && PROJECTS_DATA.filter(p => p.category === 'technical').map(p => renderProjectFileItem(p, 4))}
+
+                                                            {/* Games subfolder */}
+                                                            {renderFileTreeItem({
+                                                                id: 'projects_games', name: 'games', icon: expandedFolders['projects_games'] ? FolderOpen : Folder, color: "text-[var(--text-secondary)]",
+                                                                type: 'folder', depth: 3, hasChildren: true, isOpen: expandedFolders['projects_games'], onToggle: () => toggleFolder('projects_games')
+                                                            })}
+                                                            {expandedFolders['projects_games'] && PROJECTS_DATA.filter(p => p.category === 'games').map(p => renderProjectFileItem(p, 4))}
                                                         </>
                                                     )}
                                                 </>
