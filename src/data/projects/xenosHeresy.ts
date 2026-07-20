@@ -5,13 +5,22 @@ export const xenosHeresy = {
     category: "games",
     title: "Xenos Heresy",
     subtitle: "Turn-based tactics mobile game, published on the Play Store",
-    description:
-        "A mercenary and an elite trooper take revenge on an alien race that has invaded their planets, in a turn-based tactics game built for mobile and published on the Play Store.",
-    longDescription: `
+    description: {
+        en: "A mercenary and an elite trooper take revenge on an alien race that has invaded their planets, in a turn-based tactics game built for mobile and published on the Play Store.",
+        fr: "Un mercenaire et un soldat d'élite se vengent d'une race extraterrestre qui a envahi leurs planètes, dans un jeu de tactique au tour par tour développé pour mobile et publié sur le Play Store."
+    },
+    longDescription: {
+        en: `
 Xenos Heresy is a turn-based tactics game built over one month with a small team (2 designers, 1 artist, 3 programmers) at IIM, later published on the Google Play Store.
 
 I owned the project's architecture: tile-selection tooling for movement and attacks (and iterated on it until it fit the design), the full turn-based system, gameplay UI, enemy AI, two distinct dialogue systems, and a scripted tutorial. I also contributed to the menu and sound systems, and — perhaps most usefully — built tools that let the game designers create heroes, enemies and attacks, and iterate on level design, without touching code.
 `,
+        fr: `
+Xenos Heresy est un jeu de tactique au tour par tour développé en un mois avec une petite équipe (2 designers, 1 artiste, 3 programmeurs) à l'IIM, plus tard publié sur le Google Play Store.
+
+J'ai porté l'architecture du projet : les outils de sélection de tuiles pour le déplacement et les attaques (et j'ai itéré dessus jusqu'à ce qu'ils correspondent au design), l'ensemble du système au tour par tour, l'UI de gameplay, l'IA ennemie, deux systèmes de dialogue distincts, et un tutoriel scripté. J'ai aussi contribué aux systèmes de menu et de son, et — peut-être le plus utile — construit des outils permettant aux game designers de créer des héros, des ennemis et des attaques, et d'itérer sur le level design, sans toucher au code.
+`
+    },
     type: "Mobile Tactics Game",
     showArchitectureTab: false,
     showWorkflowTab: false,

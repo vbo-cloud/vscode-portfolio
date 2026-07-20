@@ -6,6 +6,8 @@ import {
     Mail, Send, User as UserIcon, MessageSquare, CheckCircle2, Tag
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n/useTranslation';
+import type { LocalizedString } from '../../i18n/localize';
 import { PROJECTS_DATA } from '../../data/projects';
 import { getYouTubeEmbedId, getTechColor } from '../../utils/helpers';
 import { sendContactEmail } from '../../services/contact';
@@ -18,9 +20,15 @@ import { TypingEffect } from '../UI/TypingEffect';
 import { TypewriterWords } from '../UI/TypewriterWords';
 import { TechTag } from '../UI/TechTag';
 
-const TRANSITION_TEXT = "Transitioning from VR/game development into cloud architecture and AI-assisted automation.";
+const TRANSITION_TEXT = {
+    en: "Transitioning from VR/game development into cloud architecture and AI-assisted automation.",
+    fr: "En transition depuis le développement VR/jeu vidéo vers l'architecture cloud et l'automatisation assistée par IA."
+};
 
-const WORK_ON_TEXT = 'I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.';
+const WORK_ON_TEXT = {
+    en: 'I design Azure landing zones with Terraform, build secretless CI/CD with GitHub Actions and OIDC, and orchestrate Python multi-agent pipelines with Azure OpenAI/Claude. My flagship project, "Job Finder", is a solo, end-to-end cloud + AI system documented PR by PR. Before cloud, I spent years shipping VR and gameplay systems in Unity and Unreal.',
+    fr: "Je conçois des landing zones Azure avec Terraform, je construis des CI/CD sans secrets avec GitHub Actions et OIDC, et j'orchestre des pipelines Python multi-agents avec Azure OpenAI/Claude. Mon projet phare, « Job Finder », est un système cloud + IA de bout en bout, développé en solo et documenté PR par PR. Avant le cloud, j'ai passé plusieurs années à livrer des systèmes VR et gameplay sous Unity et Unreal."
+};
 
 /**
  * Mirrors the sidebar's `projects/` folder structure (cloud, companies, video games
@@ -29,8 +37,8 @@ const WORK_ON_TEXT = 'I design Azure landing zones with Terraform, build secretl
  */
 type ProjectSection = {
     key: string;
-    title: string;
-    description?: string;
+    title: LocalizedString;
+    description?: LocalizedString;
     icon: React.ComponentType<{ size?: number; className?: string }>;
     categories: string[];
     featured?: boolean;
@@ -38,7 +46,7 @@ type ProjectSection = {
 
 type ProjectSectionGroup = {
     key: string;
-    title: string;
+    title: LocalizedString;
     icon: React.ComponentType<{ size?: number; className?: string }>;
     sections: ProjectSection[];
 };
@@ -46,25 +54,25 @@ type ProjectSectionGroup = {
 const PROJECT_SECTIONS: (ProjectSection | ProjectSectionGroup)[] = [
     {
         key: 'cloud',
-        title: 'Cloud Engineering',
-        description: 'Flagship cloud & AI systems — Azure infrastructure, multi-agent pipelines, and end-to-end platform work.',
+        title: { en: 'Cloud Engineering', fr: 'Ingénierie Cloud' },
+        description: { en: 'Flagship cloud & AI systems — Azure infrastructure, multi-agent pipelines, and end-to-end platform work.', fr: 'Systèmes cloud & IA phares — infrastructure Azure, pipelines multi-agents et travail de plateforme de bout en bout.' },
         icon: Cloud,
         categories: ['cloud'],
         featured: true,
     },
     {
         key: 'companies',
-        title: 'Companies',
+        title: { en: 'Companies', fr: 'Entreprises' },
         icon: Building2,
         categories: ['companies'],
     },
     {
         key: 'videogames',
-        title: 'Video Games',
+        title: { en: 'Video Games', fr: 'Jeux vidéo' },
         icon: Gamepad2,
         sections: [
-            { key: 'technical', title: 'Technical Projects', icon: Cpu, categories: ['technical'] },
-            { key: 'games', title: 'Games', icon: Gamepad2, categories: ['games'] },
+            { key: 'technical', title: { en: 'Technical Projects', fr: 'Projets techniques' }, icon: Cpu, categories: ['technical'] },
+            { key: 'games', title: { en: 'Games', fr: 'Jeux' }, icon: Gamepad2, categories: ['games'] },
         ],
     },
 ];
@@ -163,9 +171,9 @@ const HtmlEmbedFrame = ({ embed, section }: { embed: { title: string; path: stri
 
 interface WorkflowSection {
     icon: string;
-    title: string;
-    description: string;
-    items?: string[];
+    title: LocalizedString;
+    description: LocalizedString;
+    items?: string[] | { en: string[]; fr: string[] };
 }
 
 const WORKFLOW_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -182,23 +190,26 @@ const WORKFLOW_COLORS: Record<string, { icon: string; iconBg: string; title: str
     GitPullRequest: { icon: 'text-pink-400', iconBg: 'bg-pink-500/10', title: 'text-pink-400', border: 'border-pink-400/30', bullet: 'before:text-pink-400' }
 };
 
-const WorkflowPanel = ({ sections }: { sections: WorkflowSection[] }) => (
+const WorkflowPanel = ({ sections }: { sections: WorkflowSection[] }) => {
+    const { localize, localizeList } = useTranslation();
+    return (
     <div className="space-y-4">
         {sections.map((section) => {
             const Icon = WORKFLOW_ICONS[section.icon] || Code2;
             const colors = WORKFLOW_COLORS[section.icon] || WORKFLOW_COLORS.Code2;
+            const items = localizeList(section.items);
             return (
-                <div key={section.title} className={`bg-[var(--bg-activity)]/30 border ${colors.border} rounded-sm p-5`}>
+                <div key={localize(section.title)} className={`bg-[var(--bg-activity)]/30 border ${colors.border} rounded-sm p-5`}>
                     <div className="flex items-center gap-3 mb-2">
                         <div className={`w-8 h-8 rounded-sm ${colors.iconBg} flex items-center justify-center shrink-0`}>
                             <Icon size={16} className={colors.icon} />
                         </div>
-                        <h4 className={`text-sm font-sans font-bold ${colors.title}`}>{section.title}</h4>
+                        <h4 className={`text-sm font-sans font-bold ${colors.title}`}>{localize(section.title)}</h4>
                     </div>
-                    <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed mb-3">{section.description}</p>
-                    {section.items && section.items.length > 0 && (
+                    <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed mb-3">{localize(section.description)}</p>
+                    {items.length > 0 && (
                         <ul className="space-y-1.5">
-                            {section.items.map((item, i) => (
+                            {items.map((item, i) => (
                                 <li key={i} className={`text-xs font-mono text-[var(--text-secondary)] leading-relaxed pl-4 relative before:content-['›'] before:absolute before:left-0 ${colors.bullet}`}>
                                     {item}
                                 </li>
@@ -209,35 +220,40 @@ const WorkflowPanel = ({ sections }: { sections: WorkflowSection[] }) => (
             );
         })}
     </div>
-);
+    );
+};
 
 interface DescriptionSection {
-    title: string;
-    text: string;
+    title: LocalizedString;
+    text: LocalizedString;
     images?: string[];
-    heading?: string;
+    heading?: LocalizedString;
 }
 
-const DescriptionSectionsPanel = ({ sections, projectTitle, easy }: { sections: DescriptionSection[]; projectTitle: string; easy?: boolean }) => (
+const DescriptionSectionsPanel = ({ sections, projectTitle, easy }: { sections: DescriptionSection[]; projectTitle: string; easy?: boolean }) => {
+    const { localize } = useTranslation();
+    return (
     <div className="space-y-10">
-        {sections.map((section, i) => (
-            <div key={section.title}>
+        {sections.map((section, i) => {
+            const title = localize(section.title);
+            return (
+            <div key={title}>
                 {section.heading && (
                     <h2 className={easy
                         ? `text-2xl font-bold text-[var(--accent)] mb-6 font-sans ${i > 0 ? 'pt-6 border-t border-[var(--border)]' : ''}`
                         : `text-lg font-bold text-[var(--accent)] mb-4 font-sans ${i > 0 ? 'pt-6 border-t border-[var(--border)]' : ''}`
                     }>
-                        {section.heading}
+                        {localize(section.heading)}
                     </h2>
                 )}
                 <h3 className={easy ? "text-xl font-bold text-[var(--text-primary)] mb-3 font-sans" : "text-base font-bold text-[var(--text-primary)] mb-3 font-sans"}>
-                    {section.title}
+                    {title}
                 </h3>
                 <p className={easy
                     ? "text-lg text-[var(--text-secondary)] leading-loose opacity-90 font-medium whitespace-pre-wrap mb-4"
                     : "text-[15px] text-[var(--text-primary)] opacity-90 leading-relaxed whitespace-pre-wrap mb-4"
                 }>
-                    {section.text.trim()}
+                    {localize(section.text).trim()}
                 </p>
                 {section.images && section.images.length > 0 && (
                     section.images.length > 1 ? (
@@ -246,7 +262,7 @@ const DescriptionSectionsPanel = ({ sections, projectTitle, easy }: { sections: 
                                 <img
                                     key={src}
                                     src={src}
-                                    alt={`${projectTitle} — ${section.title}`}
+                                    alt={`${projectTitle} — ${title}`}
                                     className="rounded-sm border border-[var(--border)] object-cover w-full aspect-video"
                                 />
                             ))}
@@ -254,50 +270,55 @@ const DescriptionSectionsPanel = ({ sections, projectTitle, easy }: { sections: 
                     ) : (
                         <img
                             src={section.images[0]}
-                            alt={`${projectTitle} — ${section.title}`}
+                            alt={`${projectTitle} — ${title}`}
                             className="rounded-sm border border-[var(--border)] w-full h-auto mx-auto"
                         />
                     )
                 )}
             </div>
-        ))}
+            );
+        })}
     </div>
-);
+    );
+};
 
 interface JourneyStep {
-    title: string;
-    description: string;
+    title: LocalizedString;
+    description: LocalizedString;
     image: string;
 }
 
-const UserJourneyPanel = ({ steps }: { steps: JourneyStep[] }) => (
+const UserJourneyPanel = ({ steps }: { steps: JourneyStep[] }) => {
+    const { localize } = useTranslation();
+    return (
     <div className="space-y-12 w-full">
         {steps.map((step, i) => (
-            <div key={step.title} className="flex flex-col items-start">
+            <div key={localize(step.title)} className="flex flex-col items-start">
                 <div className="flex items-start gap-3 mb-4 text-left">
                     <div className="w-6 h-6 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-xs font-mono font-bold flex items-center justify-center shrink-0 mt-0.5">
                         {i + 1}
                     </div>
                     <div>
-                        <h4 className="text-sm font-sans font-bold text-[var(--text-primary)] mb-1">{step.title}</h4>
-                        <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed">{step.description}</p>
+                        <h4 className="text-sm font-sans font-bold text-[var(--text-primary)] mb-1">{localize(step.title)}</h4>
+                        <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed">{localize(step.description)}</p>
                     </div>
                 </div>
                 <div className="rounded-sm overflow-hidden border border-[var(--border)] bg-[var(--bg-activity)]/20 shadow-xl w-full">
-                    <img src={step.image} alt={step.title} className="w-full h-auto object-cover" />
+                    <img src={step.image} alt={localize(step.title)} className="w-full h-auto object-cover" />
                 </div>
             </div>
         ))}
     </div>
-);
+    );
+};
 
-const CORE_STACK_ITEMS = [
+const CORE_STACK_ITEMS: { emoji: string; color: string; label: LocalizedString }[] = [
     { emoji: '☁️', color: 'text-sky-400', label: 'Azure / Terraform / Bicep' },
     { emoji: '🟢', color: 'text-green-500', label: 'FastAPI / PostgreSQL / Service Bus' },
-    { emoji: '🤖', color: 'text-orange-400', label: 'OpenAI / Claude / AI orchestration' },
+    { emoji: '🤖', color: 'text-orange-400', label: { en: 'OpenAI / Claude / AI orchestration', fr: 'OpenAI / Claude / orchestration IA' } },
     { emoji: '🔷', color: 'text-violet-400', label: 'C# / C++ / Python' },
-    { emoji: '⚙️', color: 'text-slate-300', label: 'Git / Agile / CI/CD / Docker' },
-    { emoji: '🎮', color: 'text-cyan-300', label: 'Unity / Unreal (VR & game dev background)' },
+    { emoji: '⚙️', color: 'text-slate-300', label: { en: 'Git / Agile / CI/CD / Docker', fr: 'Git / Agile / CI/CD / Docker' } },
+    { emoji: '🎮', color: 'text-cyan-300', label: { en: 'Unity / Unreal (VR & game dev background)', fr: 'Unity / Unreal (background VR & jeu vidéo)' } },
 ];
 
 interface ContentRendererProps {
@@ -314,6 +335,7 @@ interface ContentRendererProps {
 
 export const ContentRenderer = ({ type, data, title, onOpenFile, content, editorSettings, isNavBarVisible = true, onScroll }: ContentRendererProps) => {
     const { theme, homepageLayout, easyMode } = useContext(ThemeContext);
+    const { t, language, localize } = useTranslation();
     const editorScrollRef = useRef<HTMLDivElement>(null);
 
     const [activeTab, setActiveTab] = useState('details');
@@ -342,11 +364,11 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
     // Logic to get breadcrumb path
     const getPath = () => {
         if (easyMode) {
-            if (type === 'home') return 'Home';
-            if (type === 'projects') return 'Projects';
+            if (type === 'home') return t('breadcrumb.home');
+            if (type === 'projects') return t('breadcrumb.projects');
             if (type === 'detail' && data) return data.title;
-            if (type === 'pdf') return 'Resume';
-            if (type === 'contact') return 'Contact';
+            if (type === 'pdf') return t('breadcrumb.resume');
+            if (type === 'contact') return t('breadcrumb.contact');
             return title || '';
         }
 
@@ -439,12 +461,21 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
     if (type === 'home') {
         const featuredProjects = PROJECTS_DATA.filter(p => p.featured);
-        const recentActivity = [
-            { action: "Automating", target: "Azure infrastructure with Terraform", time: "ongoing" },
-            { action: "Orchestrating", target: "AI agent pipelines", time: "active" },
-            { action: "Hardening", target: "secretless CI/CD with OIDC", time: "constant" },
-            { action: "Documenting", target: "every decision, PR by PR", time: "always" },
-        ];
+        const recentActivityData = {
+            en: [
+                { action: "Automating", target: "Azure infrastructure with Terraform", time: "ongoing" },
+                { action: "Orchestrating", target: "AI agent pipelines", time: "active" },
+                { action: "Hardening", target: "secretless CI/CD with OIDC", time: "constant" },
+                { action: "Documenting", target: "every decision, PR by PR", time: "always" },
+            ],
+            fr: [
+                { action: "Automatisation", target: "de l'infrastructure Azure avec Terraform", time: "en cours" },
+                { action: "Orchestration", target: "des pipelines d'agents IA", time: "active" },
+                { action: "Fiabilisation", target: "du CI/CD sans secrets avec OIDC", time: "constante" },
+                { action: "Documentation", target: "de chaque décision, PR par PR", time: "permanente" },
+            ],
+        };
+        const recentActivity = recentActivityData[language];
 
         if (easyMode) {
             return (
@@ -455,7 +486,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <div className="mb-12 px-6 md:px-0">
                                 <div className="max-w-4xl">
                                     <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold text-[var(--text-primary)] tracking-tight mb-6 leading-[1.1] md:leading-[1.05]">
-                                        Hello, I'm <br />
+                                        {t('home.greeting')} <br />
                                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)]">
                                             <TypingEffect text="Vincent" speed={150} onComplete={() => setVincentTypingDone(true)} />
                                         </span>
@@ -464,14 +495,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         )}
                                     </h1>
                                     <p className="text-base md:text-xl text-[var(--text-secondary)] leading-relaxed mb-10 opacity-90 font-sans max-w-lg">
-                                        A Cloud Engineer (Azure) automating infrastructure and orchestrating AI pipelines — from a background in VR/game development to cloud architecture.
+                                        {t('home.easySubtitle')}
                                     </p>
 
                                     {/* STATUS GRID - INTEGRATED */}
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-8 border-t border-[var(--border)]">
                                         <div className="flex flex-col gap-1">
                                             <span className="font-sans text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-[var(--warning)]">
-                                                Current Role
+                                                {t('home.currentRole')}
                                             </span>
                                             <span className="text-[var(--text-primary)] font-sans text-xs md:text-sm font-medium">
                                                 {vincentTypingDone && (
@@ -481,10 +512,10 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         </div>
                                         <div className="flex flex-col gap-1">
                                             <span className="font-sans text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-[var(--info)]">
-                                                Status
+                                                {t('home.status')}
                                             </span>
                                             <span className="text-[var(--text-primary)] font-sans text-xs md:text-sm font-medium">
-                                                Looking for a new opportunity
+                                                {t('home.statusValue')}
                                             </span>
                                         </div>
                                     </div>
@@ -495,29 +526,29 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <div className="mb-12 flex items-start gap-4 max-w-3xl">
                                 <span className="text-3xl md:text-4xl shrink-0">☁️</span>
                                 <p className="text-base md:text-lg text-[var(--text-secondary)] leading-relaxed font-sans pt-1">
-                                    {TRANSITION_TEXT}
+                                    {localize(TRANSITION_TEXT)}
                                 </p>
                             </div>
 
                             {/* WHAT I WORK ON */}
                             <div className="mb-12">
                                 <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                                    <span>🧠</span> What I Work On
+                                    <span>🧠</span> {t('home.whatIWorkOn')}
                                 </h2>
                                 <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed font-sans max-w-3xl">
-                                    {WORK_ON_TEXT}
+                                    {localize(WORK_ON_TEXT)}
                                 </p>
                             </div>
 
                             {/* CORE STACK */}
                             <div className="mb-12">
                                 <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
-                                    <span>🛠</span> Core Stack
+                                    <span>🛠</span> {t('home.coreStack')}
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
                                     {CORE_STACK_ITEMS.map(item => (
-                                        <div key={item.label} className="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border)] p-3 rounded-sm text-sm text-[var(--text-primary)] font-sans">
-                                            <span className={item.color}>{item.emoji}</span> {item.label}
+                                        <div key={localize(item.label)} className="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border)] p-3 rounded-sm text-sm text-[var(--text-primary)] font-sans">
+                                            <span className={item.color}>{item.emoji}</span> {localize(item.label)}
                                         </div>
                                     ))}
                                 </div>
@@ -528,13 +559,13 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-10 gap-4">
                                     <h2 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] flex items-center gap-3">
                                         <Zap size={22} className="text-[var(--warning)]" />
-                                        Pinned Deployments
+                                        {t('home.pinnedDeployments')}
                                     </h2>
                                     <button
                                         onClick={() => onOpenFile({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects' })}
                                         className="text-[var(--accent)] hover:text-[var(--accent)]/80 text-sm font-bold flex items-center gap-2 group transition-all self-start md:self-auto"
                                     >
-                                        Explore Projects
+                                        {t('home.exploreProjects')}
                                         <ArrowLeft className="rotate-180 group-hover:translate-x-1 transition-transform" size={16} />
                                     </button>
                                 </div>
@@ -567,7 +598,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                     <ExternalLink size={14} className="text-[var(--text-secondary)] group-hover:text-[var(--accent)]" />
                                                 </div>
                                                 <p className="text-sm text-[var(--text-secondary)] opacity-80 line-clamp-2 leading-relaxed h-10 font-sans">
-                                                    {p.description}
+                                                    {localize(p.description)}
                                                 </p>
                                             </div>
                                         </div>
@@ -580,8 +611,8 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 <div className="relative z-10">
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                                         <div>
-                                            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-1">Code Contributions</h2>
-                                            <p className="text-sm text-[var(--text-secondary)] opacity-70">Consistent activity throughout the year across various engineering domains.</p>
+                                            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-1">{t('home.codeContributions')}</h2>
+                                            <p className="text-sm text-[var(--text-secondary)] opacity-70">{t('home.codeContributionsDesc')}</p>
                                         </div>
                                     </div>
                                     <div className="overflow-hidden">
@@ -594,7 +625,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <div className="w-full">
                                 <h2 className="text-sm font-bold text-[var(--text-secondary)] mb-6 flex items-center gap-2 font-sans uppercase tracking-[0.2em] opacity-60">
                                     <GitBranch size={14} className="text-[var(--info)]" />
-                                    Recent Activity
+                                    {t('home.recentActivity')}
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {recentActivity.map((act, i) => (
@@ -628,8 +659,8 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="p-8 md:p-12 max-w-5xl mx-auto animate-in fade-in duration-500">
                             <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                                 <div>
-                                    <h1 className="text-4xl text-[var(--text-primary)] font-light mb-2">Vincent Boutin's Portfolio</h1>
-                                    <p className="text-lg text-[var(--text-secondary)] opacity-70">Cloud Engineer (Azure) — from game dev to cloud engineering</p>
+                                    <h1 className="text-4xl text-[var(--text-primary)] font-light mb-2">{t('home.portfolioTitle')}</h1>
+                                    <p className="text-lg text-[var(--text-secondary)] opacity-70">{t('home.portfolioSubtitle')}</p>
                                 </div>
                                 <div className="flex gap-4">
                                     <a href="https://github.com/vbo-cloud" target="_blank" rel="noopener noreferrer" className="p-2 bg-[var(--bg-activity)] hover:bg-[var(--accent)]/20 border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all">
@@ -644,32 +675,32 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                 {/* LEFT COLUMN: START */}
                                 <div>
-                                    <h2 className="text-sm font-bold text-[var(--text-primary)] mb-4 tracking-wider uppercase opacity-80">Start</h2>
+                                    <h2 className="text-sm font-bold text-[var(--text-primary)] mb-4 tracking-wider uppercase opacity-80">{t('home.start')}</h2>
                                     <div className="space-y-4">
                                         <button
                                             onClick={() => onOpenFile({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects' })}
                                             className="w-full flex items-center gap-3 text-[var(--accent)] hover:underline text-sm group"
                                         >
                                             <LayoutGrid size={18} className="group-hover:scale-110 transition-transform" />
-                                            <span>Explore All Projects</span>
+                                            <span>{t('home.exploreAllProjects')}</span>
                                         </button>
                                         <button
                                             onClick={() => onOpenFile({ id: 'home.tsx', title: 'README.md', type: 'home' })}
                                             className="w-full flex items-center gap-3 text-[var(--accent)] hover:underline text-sm group"
                                         >
                                             <FileText size={18} className="group-hover:scale-110 transition-transform" />
-                                            <span>Read Portfolio Overview</span>
+                                            <span>{t('home.readOverview')}</span>
                                         </button>
                                         <button
                                             onClick={() => window.dispatchEvent(new CustomEvent('open-terminal'))}
                                             className="w-full flex items-center gap-3 text-[var(--accent)] hover:underline text-sm group"
                                         >
                                             <Terminal size={18} className="group-hover:scale-110 transition-transform" />
-                                            <span>Open Integrated Terminal</span>
+                                            <span>{t('home.openTerminal')}</span>
                                         </button>
                                     </div>
 
-                                    <h2 className="text-sm font-bold text-[var(--text-primary)] mt-12 mb-4 tracking-wider uppercase opacity-80">Recent Projects</h2>
+                                    <h2 className="text-sm font-bold text-[var(--text-primary)] mt-12 mb-4 tracking-wider uppercase opacity-80">{t('home.recentProjects')}</h2>
                                     <div className="space-y-1">
                                         {PROJECTS_DATA.slice(0, 5).map(p => (
                                             <div
@@ -689,7 +720,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
                                 {/* RIGHT COLUMN: SKILLS & SPOTLIGHT */}
                                 <div>
-                                    <h2 className="text-sm font-bold text-[var(--text-primary)] mb-4 tracking-wider uppercase opacity-80">Skills & Expertise</h2>
+                                    <h2 className="text-sm font-bold text-[var(--text-primary)] mb-4 tracking-wider uppercase opacity-80">{t('home.skillsExpertise')}</h2>
                                     <div className="flex flex-wrap gap-2 mb-8">
                                         {['React', 'Next.js', 'Typescript', 'Node.js', 'Go', 'Docker', 'AWS', 'PostgreSQL', 'Python'].map(skill => (
                                             <span key={skill} className="px-2 py-1 bg-[var(--bg-panel)] border border-[var(--border)] rounded-sm text-xs text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)] cursor-default transition-all">
@@ -698,7 +729,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         ))}
                                     </div>
 
-                                    <h2 className="text-sm font-bold text-[var(--text-primary)] mb-4 tracking-wider uppercase opacity-80">Featured Walkthrough</h2>
+                                    <h2 className="text-sm font-bold text-[var(--text-primary)] mb-4 tracking-wider uppercase opacity-80">{t('home.featuredWalkthrough')}</h2>
                                     <div className="space-y-4">
                                         <div
                                             onClick={() => {
@@ -712,8 +743,8 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                     <Zap size={20} />
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-sm font-bold text-[var(--text-primary)] mb-1">Spotlight: {PROJECTS_DATA.find(p => p.featured)?.title || 'Flagship Project'}</h3>
-                                                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed">A deep dive into my most sophisticated work. Click to see the architecture and implementation.</p>
+                                                    <h3 className="text-sm font-bold text-[var(--text-primary)] mb-1">{t('home.spotlight')} {PROJECTS_DATA.find(p => p.featured)?.title || t('home.flagshipProject')}</h3>
+                                                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{t('home.spotlightDesc')}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -724,8 +755,8 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                     <GitBranch size={20} />
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-sm font-bold text-[var(--text-primary)] mb-1">Open Source Contributions</h3>
-                                                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed">Check out how I contribute back to the community and collaborate on scalable systems.</p>
+                                                    <h3 className="text-sm font-bold text-[var(--text-primary)] mb-1">{t('home.openSource')}</h3>
+                                                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{t('home.openSourceDesc')}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -733,10 +764,10 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         <div className="mt-8 p-4 border border-[var(--border)] border-dashed rounded-sm">
                                             <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] mb-2">
                                                 <div className="w-2 h-2 rounded-full bg-[var(--info)] animate-pulse" />
-                                                <span>Currently available for projects</span>
+                                                <span>{t('home.availableForProjects')}</span>
                                             </div>
                                             <div className="text-[10px] text-[var(--text-secondary)] font-mono opacity-60">
-                                                Last indexed: {new Date().toLocaleDateString()}
+                                                {t('home.lastIndexed')} {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}
                                             </div>
                                         </div>
                                     </div>
@@ -759,9 +790,9 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         {/* HERO SECTION */}
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
                             <div>
-                                <span className="text-[var(--text-secondary)] font-mono text-sm block mb-2">// Initializing Portfolio System...</span>
+                                <span className="text-[var(--text-secondary)] font-mono text-sm block mb-2">{t('home.initializing')}</span>
                                 <h1 className="text-3xl md:text-6xl font-bold text-[var(--text-primary)] tracking-tight mb-4">
-                                    <span className="mr-3">Hello, I'm</span>
+                                    <span className="mr-3">{t('home.greeting')}</span>
                                     {/* DYNAMIC THEME GRADIENT */}
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--hero-gradient-start)] to-[var(--hero-gradient-end)]">
                                         <TypingEffect text="Vincent" speed={150} onComplete={() => setVincentTypingDone(true)} />
@@ -778,14 +809,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
                             {/* 1. Current Role */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
-                                <span className="text-[var(--warning)] min-w-[80px] md:min-w-[100px]">current_role:</span>
+                                <span className="text-[var(--warning)] min-w-[80px] md:min-w-[100px]">{t('home.currentRoleCode')}</span>
                                 <span className="text-[var(--text-primary)]">"{vincentTypingDone && <TypewriterWords words={["Cloud Engineer", "DevOps", "Orchestrator"]} />}"</span>
                             </div>
 
                             {/* 2. Status */}
                             <div className="flex flex-wrap gap-2 md:gap-4 items-center">
-                                <span className="text-[var(--info)] min-w-[80px] md:min-w-[100px]">status:</span>
-                                <span className="text-[var(--text-primary)]">"Looking for a new opportunity"</span>
+                                <span className="text-[var(--info)] min-w-[80px] md:min-w-[100px]">{t('home.statusCode')}</span>
+                                <span className="text-[var(--text-primary)]">"{t('home.statusValue')}"</span>
                             </div>
 
                         </div>
@@ -794,29 +825,29 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="mb-8 flex items-start gap-3">
                             <span className="text-2xl md:text-3xl shrink-0">☁️</span>
                             <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed font-sans pt-1">
-                                {TRANSITION_TEXT}
+                                {localize(TRANSITION_TEXT)}
                             </p>
                         </div>
 
                         {/* WHAT I WORK ON */}
                         <div className="mb-8">
                             <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2 font-sans">
-                                <span>🧠</span> What I Work On
+                                <span>🧠</span> {t('home.whatIWorkOn')}
                             </h2>
                             <p className="text-sm text-[var(--text-secondary)] leading-relaxed font-sans">
-                                {WORK_ON_TEXT}
+                                {localize(WORK_ON_TEXT)}
                             </p>
                         </div>
 
                         {/* CORE STACK */}
                         <div className="mb-8">
                             <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2 font-sans">
-                                <span>🛠</span> Core Stack
+                                <span>🛠</span> {t('home.coreStack')}
                             </h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {CORE_STACK_ITEMS.map(item => (
-                                    <div key={item.label} className="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border)] p-3 rounded-sm text-sm text-[var(--text-primary)] font-sans">
-                                        <span className={item.color}>{item.emoji}</span> {item.label}
+                                    <div key={localize(item.label)} className="flex items-center gap-2 bg-[var(--bg-panel)] border border-[var(--border)] p-3 rounded-sm text-sm text-[var(--text-primary)] font-sans">
+                                        <span className={item.color}>{item.emoji}</span> {localize(item.label)}
                                     </div>
                                 ))}
                             </div>
@@ -825,7 +856,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         {/* PINNED PROJECTS */}
                         <div className="mb-8">
                             <h2 className="text-lg md:text-xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2 font-sans">
-                                <Zap size={18} className="text-[var(--warning)]" /> Pinned Deployments
+                                <Zap size={18} className="text-[var(--warning)]" /> {t('home.pinnedDeployments')}
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {featuredProjects.map(p => (
@@ -851,7 +882,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             <ExternalLink size={12} className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]" />
                                         </div>
                                         <p className="text-[var(--text-secondary)] text-xs line-clamp-2 mb-4 h-8 font-sans">
-                                            {p.description}
+                                            {localize(p.description)}
                                         </p>
                                     </div>
                                 ))}
@@ -871,7 +902,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 className="group flex items-center gap-3 px-6 py-3 bg-[var(--accent)] text-[var(--accent-fg)] rounded-md hover:bg-[var(--accent)]/90 transition-all font-sans text-sm font-medium shadow-md"
                             >
                                 <Terminal size={16} className="text-[var(--accent-fg)]" />
-                                <span className="tracking-wide">Explore All Projects</span>
+                                <span className="tracking-wide">{t('home.exploreAllProjects')}</span>
                             </button>
                         </div>
 
@@ -880,7 +911,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         {/* RECENT ACTIVITY */}
                         <div className="mb-12">
                             <h2 className="text-sm font-bold text-[var(--text-secondary)] mb-4 flex items-center gap-2 font-sans uppercase tracking-wider">
-                                <GitBranch size={14} className="text-[var(--info)]" /> Recent Activity
+                                <GitBranch size={14} className="text-[var(--info)]" /> {t('home.recentActivity')}
                             </h2>
                             <div className="space-y-2">
                                 {recentActivity.map((act, i) => (
@@ -955,9 +986,9 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="max-w-6xl mx-auto">
                             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                                 <div>
-                                    <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-4 tracking-tight">Project Portfolio</h1>
+                                    <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-4 tracking-tight">{t('projects.title')}</h1>
                                     <p className="text-[var(--text-secondary)] opacity-80 text-lg max-w-2xl">
-                                        A curated collection of my most significant engineering projects, ranging from immersive web experiences to low-level system internal tools.
+                                        {t('projects.subtitle')}
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -967,7 +998,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             ${showFilters ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-[var(--bg-activity)] border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}
                                         `}
                                     >
-                                        <Filter size={16} /> Filters
+                                        <Filter size={16} /> {t('projects.filters')}
                                     </button>
                                 </div>
                             </div>
@@ -976,7 +1007,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 <div className="mb-12 p-8 bg-[var(--bg-activity)]/40 border border-[var(--border)] rounded-sm animate-in fade-in slide-in-from-top-4 duration-300">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div>
-                                            <h3 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-4 opacity-60">Tech Stack</h3>
+                                            <h3 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-4 opacity-60">{t('projects.techStack')}</h3>
                                             <div className="flex flex-wrap gap-2">
                                                 {allTech.map(t => (
                                                     <button key={t} onClick={() => toggleFilter(t, setTechFilters)}
@@ -988,7 +1019,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             </div>
                                         </div>
                                         <div>
-                                            <h3 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-4 opacity-60">Core Languages</h3>
+                                            <h3 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-4 opacity-60">{t('projects.coreLanguages')}</h3>
                                             <div className="flex flex-wrap gap-2">
                                                 {allLanguages.map(l => (
                                                     <button key={l} onClick={() => toggleFilter(l, setLangFilters)}
@@ -1017,12 +1048,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             <img src={p.image} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
                                             {featured ? (
                                                 <div className="absolute top-4 left-4 px-3 py-1 bg-[var(--accent)] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm flex items-center gap-1.5 shadow-lg">
-                                                    <Cloud size={12} /> Flagship
+                                                    <Cloud size={12} /> {t('projects.flagship')}
                                                 </div>
                                             ) : (
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
                                                     <span className="text-white text-xs font-bold flex items-center gap-2">
-                                                        View Case Study <ExternalLink size={14} />
+                                                        {t('projects.viewCaseStudy')} <ExternalLink size={14} />
                                                     </span>
                                                 </div>
                                             )}
@@ -1034,12 +1065,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 ))}
                                             </div>
                                             <h3 className={featured ? "text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent)] transition-colors" : "text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent)] transition-colors"}>{p.title}</h3>
-                                            <p className={featured ? "text-base text-[var(--text-secondary)] leading-relaxed mb-6 opacity-80" : "text-sm text-[var(--text-secondary)] line-clamp-2 md:line-clamp-3 leading-relaxed mb-6 opacity-80"}>{p.description}</p>
+                                            <p className={featured ? "text-base text-[var(--text-secondary)] leading-relaxed mb-6 opacity-80" : "text-sm text-[var(--text-secondary)] line-clamp-2 md:line-clamp-3 leading-relaxed mb-6 opacity-80"}>{localize(p.description)}</p>
 
                                             {featured && (
                                                 <div className="mt-auto pt-4 border-t border-[var(--border)] flex items-center justify-between">
                                                     <span className="inline-flex items-center gap-2 text-[var(--accent)] font-bold text-sm">
-                                                        View Case Study <ExternalLink size={14} />
+                                                        {t('projects.viewCaseStudy')} <ExternalLink size={14} />
                                                     </span>
                                                 </div>
                                             )}
@@ -1052,12 +1083,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         {PROJECT_SECTIONS.filter(sectionHasResults).map(section => (
                                             'sections' in section ? (
                                                 <div key={section.key}>
-                                                    <SectionHeading icon={section.icon} title={section.title} />
+                                                    <SectionHeading icon={section.icon} title={localize(section.title)} />
                                                     <div className="space-y-12 mt-8">
                                                         {section.sections.filter(sub => getCategoryProjects(sub.categories).length > 0).map(sub => (
                                                             <div key={sub.key}>
                                                                 <h3 className="flex items-center gap-2 text-sm font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-5 opacity-70">
-                                                                    <sub.icon size={14} className="text-[var(--accent)]" /> {sub.title}
+                                                                    <sub.icon size={14} className="text-[var(--accent)]" /> {localize(sub.title)}
                                                                 </h3>
                                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                                                     {getCategoryProjects(sub.categories).map(p => renderEasyCard(p))}
@@ -1068,7 +1099,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 </div>
                                             ) : (
                                                 <div key={section.key}>
-                                                    <SectionHeading icon={section.icon} title={section.title} description={section.description} featured={section.featured} />
+                                                    <SectionHeading icon={section.icon} title={localize(section.title)} description={localize(section.description)} featured={section.featured} />
                                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
                                                         {getCategoryProjects(section.categories).map(p => renderEasyCard(p, section.featured))}
                                                     </div>
@@ -1096,8 +1127,8 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="flex items-center gap-3">
                             <div className="text-[var(--text-secondary)] text-[10px] md:text-xs uppercase tracking-widest font-sans font-bold flex items-center gap-2">
                                 <LayoutGrid size={13} className="text-[var(--accent)]" />
-                                <span className="hidden sm:inline">PROJECTS EXPLORER</span>
-                                <span className="sm:hidden">PROJECTS</span>
+                                <span className="hidden sm:inline">{t('projects.explorerTitle')}</span>
+                                <span className="sm:hidden">{t('projects.explorerTitleShort')}</span>
                             </div>
                         </div>
 
@@ -1105,14 +1136,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <button
                                 onClick={() => setViewMode('list')}
                                 className={`p-1.5 rounded-sm transition-all ${viewMode === 'list' ? 'bg-[var(--bg-main)] text-[var(--accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
-                                title="List View"
+                                title={t('projects.listView')}
                             >
                                 <List size={14} />
                             </button>
                             <button
                                 onClick={() => setViewMode('grid')}
                                 className={`p-1.5 rounded-sm transition-all ${viewMode === 'grid' ? 'bg-[var(--bg-main)] text-[var(--accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
-                                title="Grid View"
+                                title={t('projects.gridView')}
                             >
                                 <LayoutGrid size={13} />
                             </button>
@@ -1120,7 +1151,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <button
                                 onClick={() => setShowFilters(!showFilters)}
                                 className={`p-1.5 rounded-sm transition-all ${showFilters ? 'bg-[var(--bg-main)] text-[var(--accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
-                                title="Filter"
+                                title={t('projects.filter')}
                             >
                                 <Filter size={14} />
                             </button>
@@ -1132,7 +1163,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                         <div className="px-4 py-3 border-b border-[var(--border)] bg-[var(--bg-activity)]/20 shrink-0">
                             <div className="flex flex-col gap-4">
                                 <div>
-                                    <div className="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-2 font-mono">Filter by Technology</div>
+                                    <div className="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-2 font-mono">{t('projects.filterByTech')}</div>
                                     <div className="flex gap-2 flex-wrap">
                                         {allTech.map(t => (
                                             <button key={t} onClick={() => toggleFilter(t, setTechFilters)}
@@ -1143,7 +1174,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-2 font-mono">Filter by Language</div>
+                                    <div className="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-2 font-mono">{t('projects.filterByLang')}</div>
                                     <div className="flex gap-2 flex-wrap">
                                         {allLanguages.map(l => (
                                             <button key={l} onClick={() => toggleFilter(l, setLangFilters)}
@@ -1161,7 +1192,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                     <div className="flex-1 overflow-y-auto custom-scrollbar px-4 md:px-8 pt-0 pb-8" onScroll={onScroll}>
                         <div className="max-w-6xl mx-auto w-full pt-1 md:pt-2 pb-4">
                             {filteredProjects.length === 0 ? (
-                                <div className="text-center text-[var(--text-secondary)] mt-20 font-mono text-sm">No extensions found matching your criteria.</div>
+                                <div className="text-center text-[var(--text-secondary)] mt-20 font-mono text-sm">{t('projects.noResults')}</div>
                             ) : (() => {
                                 const renderIdeCard = (p: any, featured?: boolean) => (
                                     <div
@@ -1192,7 +1223,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                             />
                                             {featured && viewMode === 'grid' && (
                                                 <div className="absolute top-3 left-3 px-2 py-0.5 bg-[var(--accent)] text-white text-[9px] font-bold uppercase tracking-widest rounded-sm flex items-center gap-1">
-                                                    <Cloud size={10} /> Flagship
+                                                    <Cloud size={10} /> {t('projects.flagship')}
                                                 </div>
                                             )}
                                         </div>
@@ -1207,7 +1238,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                         </h3>
                                                         {featured && viewMode === 'list' && (
                                                             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-[var(--accent)] text-white text-[9px] font-bold uppercase tracking-widest">
-                                                                <Cloud size={10} /> Flagship
+                                                                <Cloud size={10} /> {t('projects.flagship')}
                                                             </span>
                                                         )}
                                                     </div>
@@ -1223,7 +1254,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 )}
 
                                                 <p className={featured && viewMode === 'grid' ? "text-sm text-[var(--text-secondary)] mb-2 font-sans opacity-80" : "text-xs text-[var(--text-secondary)] line-clamp-2 md:line-clamp-1 mb-2 font-sans opacity-80"}>
-                                                    {p.description}
+                                                    {localize(p.description)}
                                                 </p>
                                             </div>
 
@@ -1243,12 +1274,12 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         {PROJECT_SECTIONS.filter(sectionHasResults).map(section => (
                                             'sections' in section ? (
                                                 <div key={section.key}>
-                                                    <SectionHeading icon={section.icon} title={section.title} />
+                                                    <SectionHeading icon={section.icon} title={localize(section.title)} />
                                                     <div className="space-y-10 mt-6">
                                                         {section.sections.filter(sub => getCategoryProjects(sub.categories).length > 0).map(sub => (
                                                             <div key={sub.key}>
                                                                 <h3 className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-3 opacity-70">
-                                                                    <sub.icon size={13} className="text-[var(--accent)]" /> {sub.title}
+                                                                    <sub.icon size={13} className="text-[var(--accent)]" /> {localize(sub.title)}
                                                                 </h3>
                                                                 <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "flex flex-col gap-1"}>
                                                                     {getCategoryProjects(sub.categories).map(p => renderIdeCard(p))}
@@ -1259,7 +1290,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 </div>
                                             ) : (
                                                 <div key={section.key}>
-                                                    <SectionHeading icon={section.icon} title={section.title} description={section.description} featured={section.featured} />
+                                                    <SectionHeading icon={section.icon} title={localize(section.title)} description={localize(section.description)} featured={section.featured} />
                                                     <div className={`mt-6 ${viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "flex flex-col gap-1"}`}>
                                                         {getCategoryProjects(section.categories).map(p => renderIdeCard(p, section.featured))}
                                                     </div>
@@ -1299,13 +1330,13 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         {data.links?.live && (
                                             <a href={data.links.live} target="_blank" rel="noopener noreferrer"
                                                 className="px-8 py-3 bg-[var(--accent)] text-white text-sm font-bold rounded-sm shadow-xl shadow-[var(--accent)]/30 hover:scale-105 transition-transform flex items-center gap-2">
-                                                Launch Application <Globe size={18} />
+                                                {t('detail.launchApplication')} <Globe size={18} />
                                             </a>
                                         )}
                                         {data.links?.github && (
                                             <a href={data.links.github} target="_blank" rel="noopener noreferrer"
                                                 className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold rounded-sm hover:bg-white/20 transition-all flex items-center gap-2">
-                                                <Github size={18} /> Source Code
+                                                <Github size={18} /> {t('detail.sourceCode')}
                                             </a>
                                         )}
                                         {data.pdfs?.map((pdf: { label: string; path: string }) => (
@@ -1323,13 +1354,13 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                             <div className="lg:col-span-2 space-y-12">
                                 <section>
                                     <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
-                                        <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Narrative
+                                        <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> {t('detail.narrative')}
                                     </h2>
                                     {data.descriptionSections ? (
                                         <DescriptionSectionsPanel sections={data.descriptionSections} projectTitle={data.title} easy />
                                     ) : (
                                         <p className="text-lg text-[var(--text-secondary)] leading-loose opacity-90 font-medium">
-                                            {data.longDescription || data.description}
+                                            {localize(data.longDescription) || localize(data.description)}
                                         </p>
                                     )}
                                 </section>
@@ -1343,7 +1374,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 {data.video && (
                                     <section>
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
-                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Video
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> {t('detail.video')}
                                         </h2>
                                         <div className="aspect-video w-full rounded-sm overflow-hidden border border-[var(--border)] shadow-lg">
                                             <iframe
@@ -1360,7 +1391,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 {!data.descriptionSections && data.gallery && data.gallery.length > 0 && (
                                     <section>
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
-                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> Gallery
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> {t('detail.gallery')}
                                         </h2>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             {data.gallery.map((src: string, i: number) => (
@@ -1378,7 +1409,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 {data.userJourney && (
                                     <section>
                                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-3">
-                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> User Journey
+                                            <div className="w-2 h-8 bg-[var(--accent)] rounded-sm" /> {t('detail.userJourney')}
                                         </h2>
                                         <UserJourneyPanel steps={data.userJourney} />
                                     </section>
@@ -1386,7 +1417,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
                                 {data.showArchitectureTab && data.architecture && (
                                     <section>
-                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">System Architecture</h2>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">{t('detail.systemArchitecture')}</h2>
                                         <div className="bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm p-8 overflow-hidden relative">
                                             <div className="absolute top-0 right-0 p-4 opacity-10">
                                                 <Code2 size={120} />
@@ -1400,7 +1431,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
                                 {data.showWorkflowTab && (data.workflow || data.snippet) && (
                                     <section>
-                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">{data.workflow ? 'Workflow' : 'Core Implementation'}</h2>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">{data.workflow ? t('detail.workflow') : t('detail.coreImplementation')}</h2>
                                         {data.workflow ? (
                                             <WorkflowPanel sections={data.workflow} />
                                         ) : (
@@ -1423,14 +1454,9 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
 
                                 {data.showLogsAnalyticsTab && (
                                     <section>
-                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">Logs Analytics</h2>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">{t('detail.logsAnalytics')}</h2>
                                         <div className="bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm p-16 flex items-center justify-center gap-2 text-[var(--text-secondary)]">
-                                            <span className="text-sm font-sans">Working on it</span>
-                                            <span className="flex gap-1 items-center">
-                                                <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                                <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                                <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce" />
-                                            </span>
+                                            <span className="text-sm font-sans">{t('detail.workingOnIt')}</span>
                                         </div>
                                     </section>
                                 )}
@@ -1441,7 +1467,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     {/* Switched to standard VS Code like Project Details to match authentic look */}
                                     <div className="space-y-8">
                                         <div>
-                                            <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Technologies</h3>
+                                            <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">{t('detail.technologies')}</h3>
                                             <div className="flex flex-wrap gap-2">
                                                 {data.tech?.map((t: string) => (
                                                     <TechTag key={t} label={t} />
@@ -1450,14 +1476,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         </div>
 
                                         <div>
-                                            <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">Resources</h3>
+                                            <h3 className="text-xs uppercase font-bold text-[var(--text-secondary)] mb-4 tracking-wider font-sans">{t('detail.resources')}</h3>
                                             <div className="text-xs space-y-3 text-[var(--text-primary)] font-sans">
                                                 <div className="flex justify-between py-1.5 border-b border-[var(--border)] border-dashed">
-                                                    <span>Last Update</span>
-                                                    <span className="text-[var(--text-secondary)]">Recently</span>
+                                                    <span>{t('detail.lastUpdate')}</span>
+                                                    <span className="text-[var(--text-secondary)]">{t('detail.recently')}</span>
                                                 </div>
                                                 <div className="flex justify-between py-1.5">
-                                                    <span>License</span>
+                                                    <span>{t('detail.license')}</span>
                                                     <span className="text-[var(--text-secondary)] font-mono">MIT</span>
                                                 </div>
                                             </div>
@@ -1468,7 +1494,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         onClick={() => onOpenFile({ id: 'projects.tsx', title: 'all_projects.tsx', type: 'projects' })}
                                         className="w-full mt-12 py-4 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm text-[var(--text-primary)] text-sm font-bold hover:bg-[var(--bg-panel)] transition-all flex items-center justify-center gap-2"
                                     >
-                                        Back to Assignments
+                                        {t('detail.backToAssignments')}
                                     </button>
                                 </div>
                             </div>
@@ -1501,19 +1527,19 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     {data.title}
                                 </h1>
                                 <p className="text-base text-[var(--text-primary)] mb-4 font-sans max-w-2xl leading-relaxed">
-                                    {data.description}
+                                    {localize(data.description)}
                                 </p>
                                 <div className="flex flex-wrap gap-3">
                                     {data.links?.live && (
                                         <a href={data.links.live} target="_blank" rel="noopener noreferrer"
                                             className="px-4 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent)]/90 text-[var(--accent-fg)] text-sm font-medium rounded-sm transition-all shadow-sm flex items-center gap-2">
-                                            Run Project <Globe size={14} />
+                                            {t('detail.runProject')} <Globe size={14} />
                                         </a>
                                     )}
                                     {data.links?.github && (
                                         <a href={data.links.github} target="_blank" rel="noopener noreferrer"
                                             className="px-4 py-1.5 bg-[var(--bg-activity)] hover:bg-[var(--bg-panel)] border border-[var(--border)] text-[var(--text-primary)] text-sm font-medium rounded-sm transition-all flex items-center gap-2">
-                                            <Github size={14} /> Repository
+                                            <Github size={14} /> {t('detail.repository')}
                                         </a>
                                     )}
                                     {data.pdfs?.map((pdf: { label: string; path: string }) => (
@@ -1554,14 +1580,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 onClick={() => setActiveTab('details')}
                                 className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'details' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                             >
-                                Description
+                                {t('detail.tabDescription')}
                             </button>
                             {data.showArchitectureTab && (data.architecture || data.htmlEmbed) && (
                                 <button
                                     onClick={() => setActiveTab('architecture')}
                                     className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'architecture' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                                 >
-                                    Architecture
+                                    {t('detail.tabArchitecture')}
                                 </button>
                             )}
                             {data.showWorkflowTab && (data.workflow || data.snippet) && (
@@ -1569,7 +1595,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     onClick={() => setActiveTab('implementation')}
                                     className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'implementation' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                                 >
-                                    Workflow
+                                    {t('detail.workflow')}
                                 </button>
                             )}
                             {data.showLogsAnalyticsTab && (
@@ -1577,7 +1603,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     onClick={() => setActiveTab('logsAnalytics')}
                                     className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'logsAnalytics' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                                 >
-                                    Logs Analytics
+                                    {t('detail.logsAnalytics')}
                                 </button>
                             )}
                         </div>
@@ -1595,7 +1621,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         ) : (
                                             <div className="text-[var(--text-primary)] opacity-90 font-sans leading-7 mb-6">
                                                 <p className="whitespace-pre-wrap text-[15px] leading-relaxed mt-0 pt-0">
-                                                    {data.longDescription?.trim()}
+                                                    {localize(data.longDescription)?.trim()}
                                                 </p>
                                             </div>
                                         )}
@@ -1663,12 +1689,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 {/* LOGS ANALYTICS TAB */}
                                 {activeTab === 'logsAnalytics' && data.showLogsAnalyticsTab && (
                                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex items-center justify-center gap-2 py-24 text-[var(--text-secondary)]">
-                                        <span className="text-sm font-sans">Working on it</span>
-                                        <span className="flex gap-1 items-center">
-                                            <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                            <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                            <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce" />
-                                        </span>
+                                        <span className="text-sm font-sans">{t('detail.workingOnIt')}</span>
                                     </div>
                                 )}
                             </div>
@@ -1690,14 +1711,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                 <div className="flex-1 flex flex-col min-h-0 pt-[71px] md:pt-0">
                     <div className="flex items-center gap-2 px-4 py-1.5 border-b border-[var(--border)] bg-[var(--bg-panel)] text-[var(--accent)] font-mono font-bold text-[11px]">
                         <FileText size={14} />
-                        <span>RESUME</span>
+                        <span>{t('pdf.resume')}</span>
                     </div>
                     <div className="flex-1 bg-[#1e1e1e] overflow-hidden">
                         <iframe
-                            src="https://cv.vincentboutin.dev/"
+                            src={`https://cv.vincentboutin.dev/?lang=${language}`}
                             className="w-full h-full border-none"
                             style={{ minHeight: 'calc(100vh - 120px)' }}
-                            title="Vincent Boutin — Interactive Resume"
+                            title={t('pdf.iframeTitle')}
                         />
                     </div>
                 </div>
@@ -1745,37 +1766,37 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                     {!easyMode && (
                         <div className="flex items-center gap-2 px-4 py-1.5 border-b border-[var(--border)] bg-[var(--bg-panel)] text-[var(--accent)] font-mono font-bold text-[11px]">
                             <Mail size={14} />
-                            <span>CONTACT_FORM</span>
+                            <span>{t('contact.header')}</span>
                         </div>
                     )}
 
                     <div className="flex-1 overflow-y-auto custom-scrollbar px-6 md:px-12 py-10" onScroll={onScroll}>
                         <div className="max-w-3xl mx-auto">
                             <h1 className={`font-bold text-[var(--text-primary)] tracking-tight mb-3 ${easyMode ? 'text-4xl md:text-5xl' : 'text-2xl'}`}>
-                                Let's talk
+                                {t('contact.letsTalk')}
                             </h1>
                             <p className="text-[var(--text-secondary)] opacity-80 mb-10 max-w-xl">
-                                A question, an opportunity, or just want to say hi — drop a message and I'll get back to you.
+                                {t('contact.subtitle')}
                             </p>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 <form onSubmit={handleSubmit} className="relative md:col-span-2 space-y-4">
                                     <div>
-                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Name</label>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">{t('contact.name')}</label>
                                         <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
                                             <UserIcon size={14} className="text-[var(--text-secondary)] shrink-0" />
                                             <input
                                                 required
                                                 value={form.name}
                                                 onChange={updateField('name')}
-                                                placeholder="Your name"
+                                                placeholder={t('contact.namePlaceholder')}
                                                 className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Email</label>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">{t('contact.email')}</label>
                                         <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
                                             <Mail size={14} className="text-[var(--text-secondary)] shrink-0" />
                                             <input
@@ -1790,21 +1811,21 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     </div>
 
                                     <div>
-                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Subject</label>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">{t('contact.subject')}</label>
                                         <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
                                             <Tag size={14} className="text-[var(--text-secondary)] shrink-0" />
                                             <input
                                                 required
                                                 value={form.subject}
                                                 onChange={updateField('subject')}
-                                                placeholder="What's this about?"
+                                                placeholder={t('contact.subjectPlaceholder')}
                                                 className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Message</label>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">{t('contact.message')}</label>
                                         <div className="flex items-start gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
                                             <MessageSquare size={14} className="text-[var(--text-secondary)] shrink-0 mt-3" />
                                             <textarea
@@ -1812,7 +1833,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 rows={6}
                                                 value={form.message}
                                                 onChange={updateField('message')}
-                                                placeholder="What's on your mind?"
+                                                placeholder={t('contact.messagePlaceholder')}
                                                 className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans resize-none"
                                             />
                                         </div>
@@ -1837,31 +1858,31 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] text-[var(--accent-fg)] rounded-sm text-sm font-bold hover:bg-[var(--accent)]/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                                     >
                                         <Send size={14} />
-                                        {status === 'loading' ? 'Sending…' : 'Send message'}
+                                        {status === 'loading' ? t('contact.sending') : t('contact.sendMessage')}
                                     </button>
 
                                     {status === 'loading' && (
                                         <div className="text-[var(--text-secondary)] text-xs pt-1 opacity-70">
-                                            First message after a while can take a couple seconds to wake up the backend.
+                                            {t('contact.wakingBackend')}
                                         </div>
                                     )}
 
                                     {status === 'sent' && (
                                         <div className="flex items-center gap-2 text-[var(--success)] text-xs pt-1">
                                             <CheckCircle2 size={14} />
-                                            <span>Message sent — I'll get back to you soon.</span>
+                                            <span>{t('contact.sent')}</span>
                                         </div>
                                     )}
 
                                     {status === 'error' && (
                                         <div className="text-red-400 text-xs pt-1">
-                                            {errorMsg || 'Something went wrong — please try again.'}
+                                            {errorMsg || t('contact.error')}
                                         </div>
                                     )}
                                 </form>
 
                                 <div className="space-y-3">
-                                    <h3 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest opacity-60 mb-1">Direct channels</h3>
+                                    <h3 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest opacity-60 mb-1">{t('contact.directChannels')}</h3>
                                     {directChannels.map(c => (
                                         <a
                                             key={c.href}

@@ -10,6 +10,7 @@ import { getFileIcon } from './data/fileSystem';
 
 // Context
 import { ThemeContext } from './context/ThemeContext';
+import { LanguageContext, type Language } from './context/LanguageContext';
 
 // Components
 import { CustomScrollbarStyles } from './components/Styles/CustomScrollbar';
@@ -129,6 +130,25 @@ const App = () => {
   }, [easyMode]);
 
   const easyModeRef = useRef(easyMode);
+
+  const [language, setLanguage] = useState<Language>(() => {
+    const saved = localStorage.getItem('portfolio_language');
+    return (saved === 'fr' || saved === 'en') ? saved : 'fr';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('portfolio_language', language);
+  }, [language]);
+
+  useEffect(() => {
+    const handler = () => {
+      setIsSidebarVisible(true);
+      window.dispatchEvent(new CustomEvent('show-settings'));
+    };
+    window.addEventListener('open-settings', handler);
+    return () => window.removeEventListener('open-settings', handler);
+  }, []);
+
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   // NAVBAR AUTO-HIDE STATE
@@ -709,6 +729,7 @@ const App = () => {
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
+    <LanguageContext.Provider value={{ language, setLanguage }}>
     <ThemeContext.Provider value={{
       theme: currentTheme,
       setTheme: setCurrentTheme,
@@ -1048,6 +1069,13 @@ const App = () => {
               <CheckCircle size={10} /> Prettier
             </span>
             <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
+              className="hover:opacity-80 cursor-pointer font-bold tracking-wide"
+              title={language === 'fr' ? 'Langue : Français' : 'Language: English'}
+            >
+              {language === 'fr' ? 'FR' : 'ENG'}
+            </button>
+            <button
               onClick={() => setToasts([])}
               className="hover:opacity-80 cursor-pointer flex items-center gap-1 relative"
             >
@@ -1126,6 +1154,7 @@ const App = () => {
         )}
       </div >
     </ThemeContext.Provider >
+    </LanguageContext.Provider>
   );
 };
 

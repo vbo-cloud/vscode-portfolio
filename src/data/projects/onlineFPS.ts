@@ -5,13 +5,22 @@ export const onlineFPS = {
     category: "technical",
     title: "Online FPS",
     subtitle: "Custom networked multiplayer FPS built with Enet, C++ and Unity",
-    description:
-        "An online multiplayer game built with a custom C++/Enet networking layer for the online components and Unity for local gameplay, reusing visual assets from Pescalera.",
-    longDescription: `
+    description: {
+        en: "An online multiplayer game built with a custom C++/Enet networking layer for the online components and Unity for local gameplay, reusing visual assets from Pescalera.",
+        fr: "Un jeu multijoueur en ligne construit avec une couche réseau C++/Enet personnalisée pour les composants online et Unity pour le gameplay local, en réutilisant les assets visuels de Pescalera."
+    },
+    longDescription: {
+        en: `
 A 3-week, 2-programmer project exploring low-level networked multiplayer: a full custom online architecture built with Enet and C++, driving Unity on the client side, reusing visual assets from our earlier game Pescalera.
 
 I set up the entire network architecture: Enet integration, binary packet serialization/deserialization, client-side prediction and server reconciliation for player movement, and prediction for shots. On the server, I extracted collider data from Unity and reconstructed it with PhysX to run authoritative physics server-side. I also used Avaturn to generate 3D avatars of our classmates and Mixamo to animate them, and added a text chat system.
 `,
+        fr: `
+Un projet de 3 semaines à 2 programmeurs explorant le multijoueur en réseau bas niveau : une architecture online entièrement personnalisée construite avec Enet et C++, pilotant Unity côté client, en réutilisant les assets visuels de notre précédent jeu Pescalera.
+
+J'ai mis en place toute l'architecture réseau : intégration d'Enet, sérialisation/désérialisation de paquets binaires, prédiction côté client et réconciliation serveur pour le déplacement du joueur, ainsi que la prédiction des tirs. Côté serveur, j'ai extrait les données de collider d'Unity et je les ai reconstruites avec PhysX pour faire tourner une physique faisant autorité côté serveur. J'ai aussi utilisé Avaturn pour générer des avatars 3D de nos camarades de classe et Mixamo pour les animer, et ajouté un système de chat texte.
+`
+    },
     type: "Networked Multiplayer FPS",
     showArchitectureTab: false,
     showWorkflowTab: false,
