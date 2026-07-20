@@ -40,7 +40,7 @@ const handler = async (request, context) => {
     return { status: 400, jsonBody: { error: "Invalid JSON body." } };
   }
 
-  const { name, email, message, website } = body ?? {};
+  const { name, email, subject, message, website } = body ?? {};
 
   // Honeypot: a hidden field a real visitor never fills in. Reject silently
   // with a normal-looking success response so bots don't learn their
@@ -50,8 +50,8 @@ const handler = async (request, context) => {
     return { status: 200, jsonBody: { ok: true } };
   }
 
-  if (!name || !email || !message) {
-    return { status: 400, jsonBody: { error: "name, email and message are all required." } };
+  if (!name || !email || !subject || !message) {
+    return { status: 400, jsonBody: { error: "name, email, subject and message are all required." } };
   }
   if (!EMAIL_RE.test(email)) {
     return { status: 400, jsonBody: { error: "email is not a valid address." } };
@@ -59,13 +59,16 @@ const handler = async (request, context) => {
 
   const cleanName = stripNewlines(name);
   const cleanEmail = stripNewlines(email);
+  // Caller (frontend) decides the actual subject line, including any of its
+  // own prefixing conventions — this Function stays a dumb relay.
+  const cleanSubject = stripNewlines(subject);
 
   try {
     await getTransporter().sendMail({
       from: "contact@vincentboutin.dev",
       to: "contact@vincentboutin.dev",
       replyTo: cleanEmail,
-      subject: `Portfolio contact from ${cleanName}`,
+      subject: cleanSubject,
       text: `${message}\n\n—\n${cleanName} (${cleanEmail})`,
     });
     return { status: 200, jsonBody: { ok: true } };

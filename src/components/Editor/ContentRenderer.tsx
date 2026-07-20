@@ -3,7 +3,7 @@ import {
     Zap, ExternalLink, Terminal, GitBranch, Filter, LayoutGrid, List,
     FileText, Github, Globe, FileCode, Linkedin, Code2, ArrowLeft,
     Bot, ShieldCheck, Users, GitPullRequest, Cloud, Building2, Gamepad2, Cpu,
-    Mail, Send, User as UserIcon, MessageSquare, CheckCircle2
+    Mail, Send, User as UserIcon, MessageSquare, CheckCircle2, Tag
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
 import { PROJECTS_DATA } from '../../data/projects';
@@ -1672,11 +1672,11 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
     }
 
     if (type === 'contact') {
-        const [form, setForm] = useState({ name: '', email: '', message: '', website: '' });
+        const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', website: '' });
         const [status, setStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>('idle');
         const [errorMsg, setErrorMsg] = useState('');
 
-        const updateField = (key: 'name' | 'email' | 'message' | 'website') => (
+        const updateField = (key: 'name' | 'email' | 'subject' | 'message' | 'website') => (
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         ) => setForm(prev => ({ ...prev, [key]: e.target.value }));
 
@@ -1687,7 +1687,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
             const result = await sendContactEmail(form);
             if (result.ok) {
                 setStatus('sent');
-                setForm({ name: '', email: '', message: '', website: '' });
+                setForm({ name: '', email: '', subject: '', message: '', website: '' });
             } else {
                 setStatus('error');
                 setErrorMsg(result.error);
@@ -1750,6 +1750,20 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 value={form.email}
                                                 onChange={updateField('email')}
                                                 placeholder="you@example.com"
+                                                className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Subject</label>
+                                        <div className="flex items-center gap-2 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm px-3 focus-within:border-[var(--accent)] transition-colors">
+                                            <Tag size={14} className="text-[var(--text-secondary)] shrink-0" />
+                                            <input
+                                                required
+                                                value={form.subject}
+                                                onChange={updateField('subject')}
+                                                placeholder="What's this about?"
                                                 className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] py-2.5 font-sans"
                                             />
                                         </div>
