@@ -1420,6 +1420,20 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                         )}
                                     </section>
                                 )}
+
+                                {data.showLogsAnalyticsTab && (
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">Logs Analytics</h2>
+                                        <div className="bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm p-16 flex items-center justify-center gap-2 text-[var(--text-secondary)]">
+                                            <span className="text-sm font-sans">Working on it</span>
+                                            <span className="flex gap-1 items-center">
+                                                <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                                <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                                <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce" />
+                                            </span>
+                                        </div>
+                                    </section>
+                                )}
                             </div>
 
                             <div className="space-y-12">
@@ -1558,6 +1572,14 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                     Workflow
                                 </button>
                             )}
+                            {data.showLogsAnalyticsTab && (
+                                <button
+                                    onClick={() => setActiveTab('logsAnalytics')}
+                                    className={`px-1 py-3 text-sm font-sans border-b-2 font-medium transition-colors ${activeTab === 'logsAnalytics' ? 'border-[var(--accent)] text-[var(--text-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+                                >
+                                    Logs Analytics
+                                </button>
+                            )}
                         </div>
 
                         <div className="mt-6">
@@ -1635,6 +1657,18 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 </div>
                                             </div>
                                         )}
+                                    </div>
+                                )}
+
+                                {/* LOGS ANALYTICS TAB */}
+                                {activeTab === 'logsAnalytics' && data.showLogsAnalyticsTab && (
+                                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex items-center justify-center gap-2 py-24 text-[var(--text-secondary)]">
+                                        <span className="text-sm font-sans">Working on it</span>
+                                        <span className="flex gap-1 items-center">
+                                            <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                            <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                            <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-bounce" />
+                                        </span>
                                     </div>
                                 )}
                             </div>

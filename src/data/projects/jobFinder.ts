@@ -21,6 +21,7 @@ Development itself leans on an AI-assisted workflow: up to 4 Claude Code agents 
     type: "Cloud / AI Engineering",
     showArchitectureTab: true,
     showWorkflowTab: true,
+    showLogsAnalyticsTab: true,
     tech: [
         "Azure",
         "Terraform",
