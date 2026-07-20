@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
     Terminal, FileCode, Lock, GitBranch, Box, FileText,
-    Palette, ToggleLeft, Info
+    Palette, ToggleLeft, Info, Mail
 } from 'lucide-react';
 import { PROJECTS_DATA } from '../../data/projects';
 import { THEMES } from '../../data/themes';
@@ -44,7 +44,7 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         // Pages
         items.push({ id: 'home', title: 'README.md', type: 'home', icon: Info, path: 'README.md' });
         items.push({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects', icon: FileCode, path: 'Portfolio/pages/all_projects.tsx' });
-        items.push({ id: 'contact.tsx', title: 'contact.tsx', type: 'contact', icon: FileCode, path: 'Portfolio/pages/contact.tsx' });
+        items.push({ id: 'contact.dev', title: 'contact.dev', type: 'contact', icon: Mail, path: 'Portfolio/pages/contact.dev' });
 
         // Projects
         PROJECTS_DATA.forEach(p => {
