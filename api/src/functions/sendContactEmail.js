@@ -16,7 +16,11 @@ let transporter;
 const getTransporter = () => {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      host: "smtp.zoho.com",
+      // EU datacenter host — confirmed via this domain's MX records
+      // (mx.zoho.eu). Zoho's regional SMTP hosts are auth-isolated: the
+      // global smtp.zoho.com endpoint rejects EU-provisioned mailboxes
+      // outright (535), regardless of how correct the password is.
+      host: "smtp.zoho.eu",
       port: 465,
       secure: true,
       auth: {
