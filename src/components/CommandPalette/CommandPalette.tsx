@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
-    Terminal, FileCode, Lock, GitBranch, Box, FileText,
-    Palette, ToggleLeft, Info
+    Terminal, FileCode, Lock, GitBranch, Box,
+    Palette, Info, Mail
 } from 'lucide-react';
 import { PROJECTS_DATA } from '../../data/projects';
 import { THEMES } from '../../data/themes';
@@ -44,7 +44,7 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
         // Pages
         items.push({ id: 'home', title: 'README.md', type: 'home', icon: Info, path: 'README.md' });
         items.push({ id: 'projects_tsx', title: 'all_projects.tsx', type: 'projects', icon: FileCode, path: 'Portfolio/pages/all_projects.tsx' });
-        items.push({ id: 'contact.tsx', title: 'contact.tsx', type: 'contact', icon: FileCode, path: 'Portfolio/pages/contact.tsx' });
+        items.push({ id: 'contact.dev', title: 'contact.dev', type: 'contact', icon: Mail, path: 'Portfolio/pages/contact.dev' });
 
         // Projects
         PROJECTS_DATA.forEach(p => {
@@ -62,33 +62,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
                     path: 'Preferences / Theme'
                 });
             }
-        });
-        // --- INSERT THIS BLOCK ---
-        items.push({
-            id: 'toggle_minimap',
-            title: 'View: Toggle Minimap',
-            type: 'command',
-            action: 'toggle_setting',
-            settingKey: 'minimap',
-            icon: ToggleLeft,
-            path: 'Preferences'
-        });
-        items.push({
-            id: 'toggle_wordwrap',
-            title: 'View: Toggle Word Wrap',
-            type: 'command',
-            action: 'toggle_setting',
-            settingKey: 'wordWrap',
-            icon: FileText,
-            path: 'Preferences'
-        });
-        items.push({
-            id: 'toggle_easy_mode',
-            title: 'View: Toggle Easy Mode',
-            type: 'command',
-            action: 'toggle_easy_mode',
-            icon: ToggleLeft,
-            path: 'Preferences'
         });
         // Config files
         items.push({ id: 'env', title: '.env', type: 'code', content: FILE_CONTENTS.env, lang: 'bash', icon: Lock, path: '.env' });
@@ -138,20 +111,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
                 if (item.action === 'set_theme') {
                     window.dispatchEvent(
                         new CustomEvent('set-theme', { detail: item.themeKey })
-                    );
-                    onClose();
-                    return;
-                }
-                if (item.action === 'toggle_setting') {
-                    window.dispatchEvent(
-                        new CustomEvent('toggle-setting', { detail: item.settingKey })
-                    );
-                    onClose();
-                    return;
-                }
-                if (item.action === 'toggle_easy_mode') {
-                    window.dispatchEvent(
-                        new CustomEvent('toggle-easy-mode')
                     );
                     onClose();
                     return;
@@ -213,20 +172,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
                                         if (item.action === 'set_theme') {
                                             window.dispatchEvent(
                                                 new CustomEvent('set-theme', { detail: item.themeKey })
-                                            );
-                                            onClose();
-                                            return;
-                                        }
-                                        if (item.action === 'toggle_setting') {
-                                            window.dispatchEvent(
-                                                new CustomEvent('toggle-setting', { detail: item.settingKey })
-                                            );
-                                            onClose();
-                                            return;
-                                        }
-                                        if (item.action === 'toggle_easy_mode') {
-                                            window.dispatchEvent(
-                                                new CustomEvent('toggle-easy-mode')
                                             );
                                             onClose();
                                             return;

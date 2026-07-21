@@ -1,5 +1,5 @@
 import {
-  Lock, GitBranch, FileText, Server, FileJson, Atom, FileCode2, Info
+  Lock, GitBranch, FileText, Server, FileJson, Atom, FileCode2, Info, Mail
 } from 'lucide-react';
 
 /* --- FILE CONTENT CONSTANTS --- */
@@ -92,6 +92,7 @@ export const FILE_SYSTEM_CONFIG = {
     "readme.md": { icon: Info, color: "text-blue-400" },
     "license": { icon: FileText, color: "text-yellow-600" },
     "dockerfile": { icon: Server, color: "text-blue-500" },
+    "contact.dev": { icon: Mail, color: "text-green-400" },
   },
   extensions: {
     tsx: { icon: Atom, color: "text-cyan-400" }, // React Blue

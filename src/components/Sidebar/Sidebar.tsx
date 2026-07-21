@@ -2,15 +2,17 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
     Files, Search, UserCircle, Settings2,
     MoreHorizontal as MoreHorizontalIcon, ChevronDown, Folder, FolderOpen,
-    RefreshCw, Plus, CheckCircle, ToggleRight, ToggleLeft, FileJson, Zap,
+    RefreshCw, Plus, CheckCircle, FileJson, Zap,
     Cloud, ShieldCheck, LogOut, User, ChevronRight, CaseSensitive, WholeWord, Regex, RotateCcw, Globe, Trophy, Award, LayoutGrid, Filter, ExternalLink, Palette, Trash2, Mail
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
+import { LanguageContext } from '../../context/LanguageContext';
 import { PROJECTS_DATA } from '../../data/projects';
 import { FILE_CONTENTS, getFileIcon } from '../../data/fileSystem';
 import { THEMES, THEME_CATEGORIES } from '../../data/themes';
 import { ThemeMarketplace } from '../ThemeMarketplace/ThemeMarketplace';
 import { FileTreeItem } from './FileTreeItem';
+import { useTranslation } from '../../i18n/useTranslation';
 
 const ThemeCollapsibleGroup = ({
     title,
@@ -103,8 +105,6 @@ interface SidebarProps {
     activeTabId: string;
     setActiveTabId: React.Dispatch<React.SetStateAction<string>>;
     setTabs: React.Dispatch<React.SetStateAction<any[]>>;
-    editorSettings: any;
-    setEditorSettings: React.Dispatch<React.SetStateAction<any>>;
     onContextMenu: (e: React.MouseEvent, type: string, id: string) => void;
     isDragging: boolean;
 }
@@ -117,13 +117,13 @@ export const Sidebar = ({
     activeTabId,
     setActiveTabId,
     setTabs,
-    editorSettings,
-    setEditorSettings,
     onContextMenu,
     isDragging
 }: SidebarProps) => {
 
-    const { theme, setTheme, homepageLayout, setHomepageLayout, installedThemes, uninstallTheme, easyMode } = useContext(ThemeContext);
+    const { theme, setTheme, installedThemes, uninstallTheme, easyMode } = useContext(ThemeContext);
+    const { language, setLanguage } = useContext(LanguageContext);
+    const { t } = useTranslation();
     const [activeView, setActiveView] = useState<'explorer' | 'search' | 'deployments' | 'certifications' | 'marketplace' | 'account' | 'settings'>('explorer');
 
 
@@ -136,6 +136,15 @@ export const Sidebar = ({
     useEffect(() => {
         localStorage.setItem('portfolio_sidebar_visible', JSON.stringify(isPanelVisible));
     }, [isPanelVisible]);
+
+    useEffect(() => {
+        const handler = () => {
+            setActiveView('settings');
+            setIsPanelVisible(true);
+        };
+        window.addEventListener('show-settings', handler);
+        return () => window.removeEventListener('show-settings', handler);
+    }, []);
     const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
         'src': true,
         'pages': true,
@@ -272,29 +281,6 @@ export const Sidebar = ({
             setIsPanelVisible(false);
         }
     }, []);
-
-
-    const toggleSetting = (key: string) => {
-        if (key === "Minimap") {
-            setEditorSettings((prev: any) => ({
-                ...prev,
-                minimap: !prev.minimap
-            }));
-            onToast(`Minimap ${editorSettings.minimap ? "disabled" : "enabled"}`, "info");
-            return;
-        }
-
-        if (key === "Word Wrap") {
-            setEditorSettings((prev: any) => ({
-                ...prev,
-                wordWrap: !prev.wordWrap
-            }));
-            onToast(`Word wrap ${editorSettings.wordWrap ? "disabled" : "enabled"}`, "info");
-            return;
-        }
-    };
-
-
 
 
     const handleDeploy = (name: string) => {
@@ -499,7 +485,7 @@ export const Sidebar = ({
                             {/* PORTFOLIO NAVIGATOR (Easy Mode only) */}
                             {easyMode && (
                                 <div className="flex flex-col py-3 px-3 space-y-1.5 border-b border-[var(--border)] mb-2">
-                                    <h3 className="px-2 text-[10px] font-bold text-[var(--accent)] uppercase opacity-60 mb-1 tracking-widest">Bookmarks</h3>
+                                    <h3 className="px-2 text-[10px] font-bold text-[var(--accent)] uppercase opacity-60 mb-1 tracking-widest">{t('nav.bookmarks')}</h3>
 
                                     <button
                                         onClick={() => onOpenFile({ id: 'home.tsx', title: 'README.md', type: 'home' })}
@@ -510,7 +496,7 @@ export const Sidebar = ({
                                         `}
                                     >
                                         <Folder className="w-3.5 h-3.5 opacity-70" />
-                                        <span>Home Overview</span>
+                                        <span>{t('nav.homeOverview')}</span>
                                     </button>
 
                                     <button
@@ -522,19 +508,19 @@ export const Sidebar = ({
                                         `}
                                     >
                                         <LayoutGrid className="w-3.5 h-3.5 opacity-70" />
-                                        <span>Featured Projects</span>
+                                        <span>{t('nav.featuredProjects')}</span>
                                     </button>
 
                                     <button
-                                        onClick={() => onOpenFile({ id: 'contact.tsx', title: 'contact.tsx', type: 'contact' })}
+                                        onClick={() => onOpenFile({ id: 'contact.dev', title: 'contact.dev', type: 'contact' })}
                                         className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-all text-xs font-medium border
-                                            ${activeTabId === 'contact.tsx'
+                                            ${activeTabId === 'contact.dev'
                                                 ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30 shadow-sm'
                                                 : 'text-[var(--text-primary)] hover:bg-[var(--bg-activity)] border-transparent'}
                                         `}
                                     >
                                         <Mail className="w-3.5 h-3.5 opacity-70" />
-                                        <span>Get in Touch</span>
+                                        <span>{t('nav.getInTouch')}</span>
                                     </button>
                                 </div>
                             )}
@@ -623,7 +609,8 @@ export const Sidebar = ({
                                                 <>
                                                     {[
                                                         { id: "projects.tsx", name: "all_projects.tsx", type: "projects" },
-                                                        { id: "contact.tsx", name: "contact.tsx", type: "contact" },
+                                                        { id: "contact.dev", name: "contact.dev", type: "contact" },
+                                                        { id: "resume.pdf", name: "resume.pdf", type: "pdf" },
                                                     ].map(f => {
                                                         const meta = getFileIcon(f.name);
                                                         return renderFileTreeItem({
@@ -701,7 +688,6 @@ export const Sidebar = ({
                                         { name: ".gitignore", type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash' },
                                         { name: "package.json", type: "code", content: FILE_CONTENTS.package_json, lang: "json" },
                                         { id: "home.tsx", name: "README.md", type: "home" },
-                                        { name: "resume.pdf", type: 'pdf' }
                                     ].map(f => {
                                         const fileMeta = getFileIcon(f.name);
                                         const fileId = f.id ?? f.name;
@@ -1053,7 +1039,7 @@ export const Sidebar = ({
                 {/* SETTINGS VIEW */}
                 {activeView === 'settings' && (
                     <div className="flex-1 flex flex-col min-h-0 min-w-0">
-                        <div className="px-4 py-2 text-xs font-bold text-[var(--text-secondary)] tracking-wider uppercase">Settings</div>
+                        <div className="px-4 py-2 text-xs font-bold text-[var(--text-secondary)] tracking-wider uppercase">{t('settings.title')}</div>
 
                         {/* Search Input */}
                         <div className="px-4 mb-4">
@@ -1061,7 +1047,7 @@ export const Sidebar = ({
                                 <Search size={12} className="text-[var(--text-secondary)]" />
                                 <input
                                     type="text"
-                                    placeholder="Search settings"
+                                    placeholder={t('settings.search')}
                                     value={settingsSearch}
                                     onChange={(e) => setSettingsSearch(e.target.value)}
                                     className="bg-transparent border-none outline-none text-[11px] text-[var(--text-primary)] w-full font-sans"
@@ -1070,42 +1056,6 @@ export const Sidebar = ({
                         </div>
 
                         <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-6 space-y-6">
-                            {/* EDITOR CATEGORY */}
-                            {("text editor".includes(settingsSearch.toLowerCase()) || "word wrap".includes(settingsSearch.toLowerCase()) || "minimap".includes(settingsSearch.toLowerCase())) && (
-                                <div>
-                                    <h3 className="text-[10px] font-bold text-[var(--accent)] uppercase mb-3 tracking-tighter">Text Editor</h3>
-                                    <div className="space-y-4">
-                                        {("word wrap".includes(settingsSearch.toLowerCase())) && (
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div className="min-w-0">
-                                                    <div className="text-xs text-[var(--text-primary)] font-medium">Word Wrap</div>
-                                                    <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">Controls how lines should wrap.</div>
-                                                </div>
-                                                <button onClick={() => toggleSetting("Word Wrap")} className="shrink-0">
-                                                    {editorSettings.wordWrap
-                                                        ? <ToggleRight size={22} className="text-[var(--accent)]" />
-                                                        : <ToggleLeft size={22} className="text-[var(--text-secondary)] opacity-50" />}
-                                                </button>
-                                            </div>
-                                        )}
-
-                                        {("minimap".includes(settingsSearch.toLowerCase())) && (
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div className="min-w-0">
-                                                    <div className="text-xs text-[var(--text-primary)] font-medium">Minimap</div>
-                                                    <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">Shows a high-level overview of the code.</div>
-                                                </div>
-                                                <button onClick={() => toggleSetting("Minimap")} className="shrink-0">
-                                                    {editorSettings.minimap
-                                                        ? <ToggleRight size={22} className="text-[var(--accent)]" />
-                                                        : <ToggleLeft size={22} className="text-[var(--text-secondary)] opacity-50" />}
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
                             {/* WORKBENCH CATEGORY */}
                             {(
                                 "workbench".includes(settingsSearch.toLowerCase()) ||
@@ -1113,9 +1063,9 @@ export const Sidebar = ({
                                 Object.values(THEMES).some(t => t.name.toLowerCase().includes(settingsSearch.toLowerCase()))
                             ) && (
                                     <div>
-                                        <h3 className="text-[10px] font-bold text-[var(--accent)] uppercase mb-3 tracking-tighter">Workbench</h3>
+                                        <h3 className="text-[10px] font-bold text-[var(--accent)] uppercase mb-3 tracking-tighter">{t('settings.workbench')}</h3>
                                         <div className="space-y-4">
-                                            <div className="text-xs text-[var(--text-primary)] font-medium mb-1">Color Theme</div>
+                                            <div className="text-xs text-[var(--text-primary)] font-medium mb-1">{t('settings.colorTheme')}</div>
 
                                             <div className="space-y-1">
                                                 {Object.entries(THEME_CATEGORIES).map(([catTitle, themeKeys]) => {
@@ -1141,7 +1091,7 @@ export const Sidebar = ({
                                                         onClick={() => setActiveView('marketplace')}
                                                         className="w-full mt-2 flex items-center gap-2 px-2 py-1.5 text-[11px] text-[var(--accent)] hover:bg-[var(--bg-activity)] transition-all text-left font-medium"
                                                     >
-                                                        <span>Install Additional Color Themes...</span>
+                                                        <span>{t('settings.installThemes')}</span>
                                                     </button>
                                                 )}
                                             </div>
@@ -1149,37 +1099,24 @@ export const Sidebar = ({
                                     </div>
                                 )}
 
-                            {/* PORTFOLIO CATEGORY */}
-                            {("portfolio".includes(settingsSearch.toLowerCase()) || "authentic vscode".includes(settingsSearch.toLowerCase()) || "stylish layout".includes(settingsSearch.toLowerCase())) && (
+                            {/* LANGUAGE CATEGORY */}
+                            {("language".includes(settingsSearch.toLowerCase()) || "langue".includes(settingsSearch.toLowerCase()) || "français".includes(settingsSearch.toLowerCase()) || "french".includes(settingsSearch.toLowerCase())) && (
                                 <div>
-                                    <h3 className="text-[10px] font-bold text-[var(--accent)] uppercase mb-3 tracking-tighter">Portfolio</h3>
+                                    <h3 className="text-[10px] font-bold text-[var(--accent)] uppercase mb-3 tracking-tighter">{t('settings.language')}</h3>
                                     <div className="space-y-4">
-                                        <div className={`flex items-start justify-between gap-4 ${easyMode ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}`}>
-                                            <div className="min-w-0">
-                                                <div className="text-xs text-[var(--text-primary)] font-medium">Authentic VS Code Layout</div>
-                                                <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">Toggle between high-fidelity VS Code and Stylish home layouts.</div>
-                                            </div>
-                                            <button
-                                                onClick={() => !easyMode && setHomepageLayout(homepageLayout === 'modern' ? 'vscode' : 'modern')}
-                                                className="shrink-0"
-                                                disabled={easyMode}
-                                            >
-                                                {homepageLayout === 'vscode'
-                                                    ? <ToggleRight size={22} className="text-[var(--accent)]" />
-                                                    : <ToggleLeft size={22} className="text-[var(--text-secondary)] opacity-50" />}
-                                            </button>
-                                        </div>
-
                                         <div className="flex items-start justify-between gap-4">
                                             <div className="min-w-0">
-                                                <div className="text-xs text-[var(--text-primary)] font-medium">Easy Mode</div>
-                                                <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">Simplifies the UI for non-developers by removing complex VS Code elements.</div>
+                                                <div className="text-xs text-[var(--text-primary)] font-medium">{t('settings.language')}</div>
+                                                <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">{t('settings.languageDesc')}</div>
                                             </div>
-                                            <button onClick={() => window.dispatchEvent(new CustomEvent('toggle-easy-mode'))} className="shrink-0">
-                                                {easyMode
-                                                    ? <ToggleRight size={22} className="text-[var(--accent)]" />
-                                                    : <ToggleLeft size={22} className="text-[var(--text-secondary)] opacity-50" />}
-                                            </button>
+                                            <select
+                                                value={language}
+                                                onChange={(e) => setLanguage(e.target.value as 'fr' | 'en')}
+                                                className="shrink-0 bg-[var(--bg-activity)] border border-[var(--border)] rounded-sm text-xs text-[var(--text-primary)] px-2 py-1 outline-none focus:border-[var(--accent)] cursor-pointer"
+                                            >
+                                                <option value="fr">Français</option>
+                                                <option value="en">English</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -1190,14 +1127,14 @@ export const Sidebar = ({
                                 <div className="pt-4 border-t border-[var(--border)] space-y-2">
                                     <button className="w-full flex items-center gap-2.5 px-2 py-1.5 rounded text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-activity)] transition-all text-left">
                                         <FileJson size={14} />
-                                        <span>Open settings.json</span>
+                                        <span>{t('settings.openSettingsJson')}</span>
                                     </button>
                                     <button
                                         onClick={() => setActiveView('marketplace')}
                                         className="w-full flex items-center gap-2.5 px-2 py-1.5 rounded text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-activity)] transition-all text-left"
                                     >
                                         <Palette size={14} />
-                                        <span>Configure Themes</span>
+                                        <span>{t('settings.configureThemes')}</span>
                                     </button>
                                 </div>
                             )}

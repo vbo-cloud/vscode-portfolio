@@ -10,6 +10,7 @@ import { getFileIcon } from './data/fileSystem';
 
 // Context
 import { ThemeContext } from './context/ThemeContext';
+import { LanguageContext, type Language } from './context/LanguageContext';
 
 // Components
 import { CustomScrollbarStyles } from './components/Styles/CustomScrollbar';
@@ -110,25 +111,28 @@ const App = () => {
 
 
 
-  const [homepageLayout, setHomepageLayout] = useState<'modern' | 'vscode'>(() => {
-    const saved = localStorage.getItem('portfolio_homepage_layout');
-    return (saved === 'modern' || saved === 'vscode') ? saved as any : 'modern';
+  const homepageLayout = 'modern';
+
+  const easyMode = false;
+
+  const [language, setLanguage] = useState<Language>(() => {
+    const saved = localStorage.getItem('portfolio_language');
+    return (saved === 'fr' || saved === 'en') ? saved : 'fr';
   });
 
   useEffect(() => {
-    localStorage.setItem('portfolio_homepage_layout', homepageLayout);
-  }, [homepageLayout]);
-
-  const [easyMode, setEasyMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('portfolio_easy_mode');
-    return saved === 'true';
-  });
+    localStorage.setItem('portfolio_language', language);
+  }, [language]);
 
   useEffect(() => {
-    localStorage.setItem('portfolio_easy_mode', easyMode.toString());
-  }, [easyMode]);
+    const handler = () => {
+      setIsSidebarVisible(true);
+      window.dispatchEvent(new CustomEvent('show-settings'));
+    };
+    window.addEventListener('open-settings', handler);
+    return () => window.removeEventListener('open-settings', handler);
+  }, []);
 
-  const easyModeRef = useRef(easyMode);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   // NAVBAR AUTO-HIDE STATE
@@ -142,23 +146,10 @@ const App = () => {
     }
   }, []);
 
-  useEffect(() => {
-    easyModeRef.current = easyMode;
-    // Always reset navbar visibility when entering/exiting easy mode
-    setIsNavBarVisible(true);
-  }, [easyMode]);
-
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number, type: string, id: string } | null>(null);
   const [toasts, setToasts] = useState<any[]>([]);
 
-  const [editorSettings, setEditorSettings] = useState(() => {
-    const saved = localStorage.getItem('portfolio_editor_settings');
-    return saved ? JSON.parse(saved) : { minimap: true, wordWrap: false };
-  });
-
-  useEffect(() => {
-    localStorage.setItem('portfolio_editor_settings', JSON.stringify(editorSettings));
-  }, [editorSettings]);
+  const editorSettings = { minimap: true, wordWrap: true };
 
   useEffect(() => {
     localStorage.setItem('portfolio_tabs', JSON.stringify(tabs));
@@ -198,42 +189,6 @@ const App = () => {
     };
     window.addEventListener('set-theme', handler);
     return () => window.removeEventListener('set-theme', handler);
-  }, []);
-
-  const settingsRef = useRef(editorSettings);
-  useEffect(() => {
-    settingsRef.current = editorSettings;
-  }, [editorSettings]);
-
-  useEffect(() => {
-    const handler = (e: any) => {
-      const key = e.detail;
-      const currentVal = settingsRef.current[key];
-      const newVal = !currentVal;
-      addToast(`Toggled ${key === 'wordWrap' ? 'Word Wrap' : 'Minimap'} ${newVal ? 'On' : 'Off'} `, 'info');
-      setEditorSettings((prev: any) => ({
-        ...prev,
-        [key]: newVal
-      }));
-    };
-    window.addEventListener('toggle-setting', handler);
-    return () => window.removeEventListener('toggle-setting', handler);
-  }, []);
-
-  useEffect(() => {
-    const handler = () => {
-      const next = !easyModeRef.current;
-      setEasyMode(next);
-
-      // Handle side effects once per event trigger
-      addToast(`Easy Mode ${next ? 'Enabled' : 'Disabled'}`, next ? 'success' : 'info');
-      if (next) {
-        setHomepageLayout('modern');
-        setEditorSettings((s: any) => ({ ...s, minimap: false }));
-      }
-    };
-    window.addEventListener('toggle-easy-mode', handler);
-    return () => window.removeEventListener('toggle-easy-mode', handler);
   }, []);
 
   useEffect(() => {
@@ -709,6 +664,7 @@ const App = () => {
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
+    <LanguageContext.Provider value={{ language, setLanguage }}>
     <ThemeContext.Provider value={{
       theme: currentTheme,
       setTheme: setCurrentTheme,
@@ -716,9 +672,7 @@ const App = () => {
       installTheme,
       uninstallTheme,
       homepageLayout,
-      setHomepageLayout,
-      easyMode,
-      setEasyMode
+      easyMode
     }}>
       <div className="h-screen w-full bg-[var(--bg-main)] text-[var(--text-primary)] font-sans overflow-hidden flex flex-col selection:bg-[var(--selection)] selection:text-white transition-colors duration-300">
         <div className="flex-1 flex min-h-0 relative">
@@ -763,8 +717,6 @@ const App = () => {
               activeTabId={activeTabId}
               setActiveTabId={setActiveTabId}
               setTabs={setTabs}
-              editorSettings={editorSettings}
-              setEditorSettings={setEditorSettings}
               onContextMenu={handleContextMenu}
               isDragging={isDragging}
             />
@@ -1048,6 +1000,13 @@ const App = () => {
               <CheckCircle size={10} /> Prettier
             </span>
             <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
+              className="hover:opacity-80 cursor-pointer font-bold tracking-wide"
+              title={language === 'fr' ? 'Langue : Français' : 'Language: English'}
+            >
+              {language === 'fr' ? 'FR' : 'ENG'}
+            </button>
+            <button
               onClick={() => setToasts([])}
               className="hover:opacity-80 cursor-pointer flex items-center gap-1 relative"
             >
@@ -1126,6 +1085,7 @@ const App = () => {
         )}
       </div >
     </ThemeContext.Provider >
+    </LanguageContext.Provider>
   );
 };
 
