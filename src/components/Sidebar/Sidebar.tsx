@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
     Files, Search, UserCircle, Settings2,
     MoreHorizontal as MoreHorizontalIcon, ChevronDown, Folder, FolderOpen,
-    RefreshCw, Plus, CheckCircle, ToggleRight, ToggleLeft, FileJson, Zap,
+    RefreshCw, Plus, CheckCircle, FileJson, Zap,
     Cloud, ShieldCheck, LogOut, User, ChevronRight, CaseSensitive, WholeWord, Regex, RotateCcw, Globe, Trophy, Award, LayoutGrid, Filter, ExternalLink, Palette, Trash2, Mail
 } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
@@ -121,7 +121,7 @@ export const Sidebar = ({
     isDragging
 }: SidebarProps) => {
 
-    const { theme, setTheme, homepageLayout, setHomepageLayout, installedThemes, uninstallTheme, easyMode } = useContext(ThemeContext);
+    const { theme, setTheme, installedThemes, uninstallTheme, easyMode } = useContext(ThemeContext);
     const { language, setLanguage } = useContext(LanguageContext);
     const { t } = useTranslation();
     const [activeView, setActiveView] = useState<'explorer' | 'search' | 'deployments' | 'certifications' | 'marketplace' | 'account' | 'settings'>('explorer');
@@ -1117,29 +1117,6 @@ export const Sidebar = ({
                                                 <option value="fr">Français</option>
                                                 <option value="en">English</option>
                                             </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* PORTFOLIO CATEGORY */}
-                            {("portfolio".includes(settingsSearch.toLowerCase()) || "authentic vscode".includes(settingsSearch.toLowerCase()) || "stylish layout".includes(settingsSearch.toLowerCase())) && (
-                                <div>
-                                    <h3 className="text-[10px] font-bold text-[var(--accent)] uppercase mb-3 tracking-tighter">{t('settings.portfolio')}</h3>
-                                    <div className="space-y-4">
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div className="min-w-0">
-                                                <div className="text-xs text-[var(--text-primary)] font-medium">{t('settings.authenticLayout')}</div>
-                                                <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">{t('settings.authenticLayoutDesc')}</div>
-                                            </div>
-                                            <button
-                                                onClick={() => setHomepageLayout(homepageLayout === 'modern' ? 'vscode' : 'modern')}
-                                                className="shrink-0"
-                                            >
-                                                {homepageLayout === 'vscode'
-                                                    ? <ToggleRight size={22} className="text-[var(--accent)]" />
-                                                    : <ToggleLeft size={22} className="text-[var(--text-secondary)] opacity-50" />}
-                                            </button>
                                         </div>
                                     </div>
                                 </div>

@@ -111,14 +111,7 @@ const App = () => {
 
 
 
-  const [homepageLayout, setHomepageLayout] = useState<'modern' | 'vscode'>(() => {
-    const saved = localStorage.getItem('portfolio_homepage_layout');
-    return (saved === 'modern' || saved === 'vscode') ? saved as any : 'modern';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('portfolio_homepage_layout', homepageLayout);
-  }, [homepageLayout]);
+  const homepageLayout = 'modern';
 
   const easyMode = false;
 
@@ -679,7 +672,6 @@ const App = () => {
       installTheme,
       uninstallTheme,
       homepageLayout,
-      setHomepageLayout,
       easyMode
     }}>
       <div className="h-screen w-full bg-[var(--bg-main)] text-[var(--text-primary)] font-sans overflow-hidden flex flex-col selection:bg-[var(--selection)] selection:text-white transition-colors duration-300">
