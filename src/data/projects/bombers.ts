@@ -5,11 +5,18 @@ export const bombers = {
     category: "games",
     title: "Bombers",
     subtitle: "Solo first-year project — stop a machine city's uncontrolled expansion",
-    description:
-        "In a machine city built by men and now run by deadly independent robots, your quest is to find humans and end the city's uncontrollable expansion.",
-    longDescription: `
+    description: {
+        en: "In a machine city built by men and now run by deadly independent robots, your quest is to find humans and end the city's uncontrollable expansion.",
+        fr: "Dans une cité mécanique construite par les hommes et désormais dirigée par des robots indépendants et meurtriers, votre quête est de retrouver des humains et de mettre fin à l'expansion incontrôlable de la ville."
+    },
+    longDescription: {
+        en: `
 Bombers is my first-year final project at IIM, developed entirely solo: every feature was built by me, using Mixamo for models and some animations, while I modeled the robots and the boss animations myself with 3DS Max.
 `,
+        fr: `
+Bombers est mon projet de fin de première année à l'IIM, développé entièrement en solo : chaque fonctionnalité a été réalisée par moi, en utilisant Mixamo pour les modèles et certaines animations, tandis que j'ai modélisé moi-même les robots et les animations du boss avec 3DS Max.
+`
+    },
     type: "Personal Project — Action",
     showArchitectureTab: false,
     showWorkflowTab: false,

@@ -5,13 +5,22 @@ export const pescalera = {
     category: "games",
     title: "Pescalera",
     subtitle: "Wacky FPS where a fisherman defends his town from invading seagulls",
-    description:
-        "Pescalera is a wacky FPS where you play a fisherman protecting his coastal town from invading seagulls, using a harpoon to capture fish that double as weapons and ammunition.",
-    longDescription: `
+    description: {
+        en: "Pescalera is a wacky FPS where you play a fisherman protecting his coastal town from invading seagulls, using a harpoon to capture fish that double as weapons and ammunition.",
+        fr: "Pescalera est un FPS déjanté où vous incarnez un pêcheur protégeant sa ville côtière de mouettes envahissantes, à l'aide d'un harpon capturant des poissons qui font office d'armes et de munitions."
+    },
+    longDescription: {
+        en: `
 Pescalera is a two-month student project built with a large team at IIM (5 programmers, 3 artists, 4 designers, 3 producers, 3 sound designers): a wacky first-person shooter where a fisherman defends his coastal town from waves of invading seagulls using a fish-launching harpoon.
 
 As Lead Programmer, I built player/camera movement, input handling, weapon and ammunition management, the boid-based enemy flocking and spawning, the wave system, gamefeel tuning, UI animations (dash-ready, next-wave), and VFX. I was also the team's Git referent and took an active role in game and level design and in shaping the overall architecture.
 `,
+        fr: `
+Pescalera est un projet étudiant de deux mois réalisé avec une grande équipe à l'IIM (5 programmeurs, 3 artistes, 4 designers, 3 producteurs, 3 sound designers) : un FPS déjanté où un pêcheur défend sa ville côtière contre des vagues de mouettes envahissantes à l'aide d'un harpon lance-poissons.
+
+En tant que Lead Programmer, j'ai développé le déplacement joueur/caméra, la gestion des inputs, la gestion des armes et munitions, le comportement de vol groupé (boids) et le spawn des ennemis, le système de vagues, le réglage du gamefeel, les animations d'UI (dash prêt, vague suivante), et les VFX. J'étais aussi le référent Git de l'équipe et j'ai pris un rôle actif dans le game design, le level design et la construction de l'architecture globale.
+`
+    },
     type: "First-Person Shooter",
     showArchitectureTab: false,
     showWorkflowTab: false,
