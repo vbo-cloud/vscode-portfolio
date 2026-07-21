@@ -8,6 +8,5 @@ export const ThemeContext = createContext({
     uninstallTheme: (_theme: string) => { },
     homepageLayout: 'modern' as 'modern' | 'vscode',
     setHomepageLayout: (_layout: 'modern' | 'vscode') => { },
-    easyMode: false,
-    setEasyMode: (_easy: boolean) => { }
+    easyMode: false
 });

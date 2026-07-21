@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
-    Terminal, FileCode, Lock, GitBranch, Box, FileText,
-    Palette, ToggleLeft, Info, Mail
+    Terminal, FileCode, Lock, GitBranch, Box,
+    Palette, Info, Mail
 } from 'lucide-react';
 import { PROJECTS_DATA } from '../../data/projects';
 import { THEMES } from '../../data/themes';
@@ -63,33 +63,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
                 });
             }
         });
-        // --- INSERT THIS BLOCK ---
-        items.push({
-            id: 'toggle_minimap',
-            title: 'View: Toggle Minimap',
-            type: 'command',
-            action: 'toggle_setting',
-            settingKey: 'minimap',
-            icon: ToggleLeft,
-            path: 'Preferences'
-        });
-        items.push({
-            id: 'toggle_wordwrap',
-            title: 'View: Toggle Word Wrap',
-            type: 'command',
-            action: 'toggle_setting',
-            settingKey: 'wordWrap',
-            icon: FileText,
-            path: 'Preferences'
-        });
-        items.push({
-            id: 'toggle_easy_mode',
-            title: 'View: Toggle Easy Mode',
-            type: 'command',
-            action: 'toggle_easy_mode',
-            icon: ToggleLeft,
-            path: 'Preferences'
-        });
         // Config files
         items.push({ id: 'env', title: '.env', type: 'code', content: FILE_CONTENTS.env, lang: 'bash', icon: Lock, path: '.env' });
         items.push({ id: 'gitignore', title: '.gitignore', type: 'code', content: FILE_CONTENTS.gitignore, lang: 'bash', icon: GitBranch, path: '.gitignore' });
@@ -138,20 +111,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
                 if (item.action === 'set_theme') {
                     window.dispatchEvent(
                         new CustomEvent('set-theme', { detail: item.themeKey })
-                    );
-                    onClose();
-                    return;
-                }
-                if (item.action === 'toggle_setting') {
-                    window.dispatchEvent(
-                        new CustomEvent('toggle-setting', { detail: item.settingKey })
-                    );
-                    onClose();
-                    return;
-                }
-                if (item.action === 'toggle_easy_mode') {
-                    window.dispatchEvent(
-                        new CustomEvent('toggle-easy-mode')
                     );
                     onClose();
                     return;
@@ -213,20 +172,6 @@ export const CommandPalette = ({ isOpen, onClose, onOpenFile }: CommandPalettePr
                                         if (item.action === 'set_theme') {
                                             window.dispatchEvent(
                                                 new CustomEvent('set-theme', { detail: item.themeKey })
-                                            );
-                                            onClose();
-                                            return;
-                                        }
-                                        if (item.action === 'toggle_setting') {
-                                            window.dispatchEvent(
-                                                new CustomEvent('toggle-setting', { detail: item.settingKey })
-                                            );
-                                            onClose();
-                                            return;
-                                        }
-                                        if (item.action === 'toggle_easy_mode') {
-                                            window.dispatchEvent(
-                                                new CustomEvent('toggle-easy-mode')
                                             );
                                             onClose();
                                             return;

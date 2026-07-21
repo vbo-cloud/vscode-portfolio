@@ -105,8 +105,6 @@ interface SidebarProps {
     activeTabId: string;
     setActiveTabId: React.Dispatch<React.SetStateAction<string>>;
     setTabs: React.Dispatch<React.SetStateAction<any[]>>;
-    editorSettings: any;
-    setEditorSettings: React.Dispatch<React.SetStateAction<any>>;
     onContextMenu: (e: React.MouseEvent, type: string, id: string) => void;
     isDragging: boolean;
 }
@@ -119,8 +117,6 @@ export const Sidebar = ({
     activeTabId,
     setActiveTabId,
     setTabs,
-    editorSettings,
-    setEditorSettings,
     onContextMenu,
     isDragging
 }: SidebarProps) => {
@@ -285,29 +281,6 @@ export const Sidebar = ({
             setIsPanelVisible(false);
         }
     }, []);
-
-
-    const toggleSetting = (key: string) => {
-        if (key === "Minimap") {
-            setEditorSettings((prev: any) => ({
-                ...prev,
-                minimap: !prev.minimap
-            }));
-            onToast(`Minimap ${editorSettings.minimap ? "disabled" : "enabled"}`, "info");
-            return;
-        }
-
-        if (key === "Word Wrap") {
-            setEditorSettings((prev: any) => ({
-                ...prev,
-                wordWrap: !prev.wordWrap
-            }));
-            onToast(`Word wrap ${editorSettings.wordWrap ? "disabled" : "enabled"}`, "info");
-            return;
-        }
-    };
-
-
 
 
     const handleDeploy = (name: string) => {
@@ -1083,42 +1056,6 @@ export const Sidebar = ({
                         </div>
 
                         <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-6 space-y-6">
-                            {/* EDITOR CATEGORY */}
-                            {("text editor".includes(settingsSearch.toLowerCase()) || "word wrap".includes(settingsSearch.toLowerCase()) || "minimap".includes(settingsSearch.toLowerCase())) && (
-                                <div>
-                                    <h3 className="text-[10px] font-bold text-[var(--accent)] uppercase mb-3 tracking-tighter">{t('settings.textEditor')}</h3>
-                                    <div className="space-y-4">
-                                        {("word wrap".includes(settingsSearch.toLowerCase())) && (
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div className="min-w-0">
-                                                    <div className="text-xs text-[var(--text-primary)] font-medium">{t('settings.wordWrap')}</div>
-                                                    <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">{t('settings.wordWrapDesc')}</div>
-                                                </div>
-                                                <button onClick={() => toggleSetting("Word Wrap")} className="shrink-0">
-                                                    {editorSettings.wordWrap
-                                                        ? <ToggleRight size={22} className="text-[var(--accent)]" />
-                                                        : <ToggleLeft size={22} className="text-[var(--text-secondary)] opacity-50" />}
-                                                </button>
-                                            </div>
-                                        )}
-
-                                        {("minimap".includes(settingsSearch.toLowerCase())) && (
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div className="min-w-0">
-                                                    <div className="text-xs text-[var(--text-primary)] font-medium">{t('settings.minimap')}</div>
-                                                    <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">{t('settings.minimapDesc')}</div>
-                                                </div>
-                                                <button onClick={() => toggleSetting("Minimap")} className="shrink-0">
-                                                    {editorSettings.minimap
-                                                        ? <ToggleRight size={22} className="text-[var(--accent)]" />
-                                                        : <ToggleLeft size={22} className="text-[var(--text-secondary)] opacity-50" />}
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
                             {/* WORKBENCH CATEGORY */}
                             {(
                                 "workbench".includes(settingsSearch.toLowerCase()) ||
@@ -1190,29 +1127,16 @@ export const Sidebar = ({
                                 <div>
                                     <h3 className="text-[10px] font-bold text-[var(--accent)] uppercase mb-3 tracking-tighter">{t('settings.portfolio')}</h3>
                                     <div className="space-y-4">
-                                        <div className={`flex items-start justify-between gap-4 ${easyMode ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}`}>
+                                        <div className="flex items-start justify-between gap-4">
                                             <div className="min-w-0">
                                                 <div className="text-xs text-[var(--text-primary)] font-medium">{t('settings.authenticLayout')}</div>
                                                 <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">{t('settings.authenticLayoutDesc')}</div>
                                             </div>
                                             <button
-                                                onClick={() => !easyMode && setHomepageLayout(homepageLayout === 'modern' ? 'vscode' : 'modern')}
+                                                onClick={() => setHomepageLayout(homepageLayout === 'modern' ? 'vscode' : 'modern')}
                                                 className="shrink-0"
-                                                disabled={easyMode}
                                             >
                                                 {homepageLayout === 'vscode'
-                                                    ? <ToggleRight size={22} className="text-[var(--accent)]" />
-                                                    : <ToggleLeft size={22} className="text-[var(--text-secondary)] opacity-50" />}
-                                            </button>
-                                        </div>
-
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div className="min-w-0">
-                                                <div className="text-xs text-[var(--text-primary)] font-medium">{t('settings.easyMode')}</div>
-                                                <div className="text-[10px] text-[var(--text-secondary)] mt-0.5 leading-tight opacity-70">{t('settings.easyModeDesc')}</div>
-                                            </div>
-                                            <button onClick={() => window.dispatchEvent(new CustomEvent('toggle-easy-mode'))} className="shrink-0">
-                                                {easyMode
                                                     ? <ToggleRight size={22} className="text-[var(--accent)]" />
                                                     : <ToggleLeft size={22} className="text-[var(--text-secondary)] opacity-50" />}
                                             </button>
