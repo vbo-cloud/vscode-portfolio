@@ -7,14 +7,14 @@ export const lsGroup = {
     subtitle: "VR industrial application developed in partnership with the CEA",
     description: {
         en: "Two-year VR/industrial software alternance at LS Group, in a small XR Twin team: rebuilt the navigation system from scratch, shipped the multiplayer front-end alongside a teammate, and helped cut project load times by up to 70%.",
-        fr: "Alternance de deux ans en logiciel VR/industriel chez LS Group, dans une petite équipe XR Twin : reconstruction du système de navigation depuis zéro, livraison du front-end multijoueur avec un coéquipier, et contribution à une réduction des temps de chargement allant jusqu'à 70%."
+        fr: "Alternance de deux ans en logiciel VR/industriel chez LS Group, au sein de l'équipe XR Twin : reconstruction du système de navigation depuis zéro, livraison du front-end multijoueur avec un coéquipier, et contribution à une réduction des temps de chargement allant jusqu'à 70%."
     },
     descriptionSections: [
         {
             title: { en: "XR Twin, in partnership with the CEA", fr: "XR Twin, en partenariat avec le CEA" },
             text: {
                 en: `Two-year work-study program (alternance) at LS Group (Suresnes), embedded in the small XR Twin team, on a VR/AR industrial visualization software built with the CEA (French Alternative Energies and Atomic Energy Commission) for clients including Airbus, Dassault Aviation, Renault, Stellantis, Saint-Gobain and ITER. XR Twin imports CAD models (.3ds, .fbx, .step), images, video and point clouds into editable, analyzable industrial simulations, navigable with a VR headset, full-body trackers and haptic controllers.`,
-                fr: `Alternance de deux ans chez LS Group (Suresnes), intégré à la petite équipe XR Twin, sur un logiciel de visualisation industrielle VR/AR développé avec le CEA (Commissariat à l'énergie atomique et aux énergies alternatives) pour des clients tels qu'Airbus, Dassault Aviation, Renault, Stellantis, Saint-Gobain et ITER. XR Twin importe des modèles CAO (.3ds, .fbx, .step), des images, des vidéos et des nuages de points dans des simulations industrielles éditables et analysables, navigables avec un casque VR, des trackers corps entier et des contrôleurs haptiques.`
+                fr: `Alternance de deux ans chez LS Group (Suresnes), au sein de l'équipe XR Twin, sur un logiciel de visualisation industrielle VR/AR développé avec le CEA (Commissariat à l'énergie atomique et aux énergies alternatives) pour des clients tels qu'Airbus, Dassault Aviation, Renault, Stellantis, Saint-Gobain et ITER. XR Twin importe des modèles CAO (.3ds, .fbx, .step), des images, des vidéos et des nuages de points dans des simulations industrielles éditables et analysables, navigables avec un casque VR, des trackers corps entier et des contrôleurs haptiques.`
             }
         },
         {
@@ -22,7 +22,7 @@ export const lsGroup = {
             heading: { en: "Year one, a sample of what has been done", fr: "Année 1, un aperçu du travail réalisé" },
             text: {
                 en: `A Copy/Paste bug in the AppearanceComponent, reviewed by the team's tech lead like every change that year, turned out to trace back to an architecture violation: the component was pulling color data through Unity-specific types instead of raw values. I decoupled it, then found the same underlying issue independently duplicated — and broken — in every other component's own Copy/Paste. I centralized all of it into a single ClipBoard system with two methods, copy a Behavior and paste it onto the matching component, fixing every component's Copy/Paste at once instead of patching each one separately.`,
-                fr: `Un bug de Copier/Coller dans l'AppearanceComponent, revu par le tech lead de l'équipe comme chaque changement cette année-là, s'est avéré remonter à une violation d'architecture : le composant récupérait les données de couleur via des types spécifiques à Unity plutôt que des valeurs brutes. Je l'ai découplé, puis j'ai trouvé le même problème sous-jacent dupliqué indépendamment — et cassé — dans le Copier/Coller de chaque autre composant. J'ai tout centralisé dans un système ClipBoard unique avec deux méthodes, copier un Behavior et le coller sur le composant correspondant, corrigeant le Copier/Coller de tous les composants d'un coup plutôt que de corriger chacun séparément.`
+                fr: `Un bug de Copier/Coller dans l'AppearanceComponent s'est avéré remonter à une violation d'architecture : le composant récupérait les données de couleur via des types spécifiques à Unity plutôt que des valeurs brutes. Je l'ai découplé, puis j'ai trouvé le même problème sous-jacent dupliqué indépendamment — et cassé — dans le Copier/Coller de chaque autre composant. J'ai tout centralisé dans un système ClipBoard unique avec deux méthodes, copier un Behavior et le coller sur le composant correspondant, corrigeant le Copier/Coller de tous les composants d'un coup plutôt que de corriger chacun séparément.`
             }
         },
         {
