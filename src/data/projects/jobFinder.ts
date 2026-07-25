@@ -13,7 +13,7 @@ export const jobFinder = {
         en: `
 Job Finder is a personal portfolio project built during my career transition from Unity/game development to Azure cloud and AI engineering. It automates the tedious parts of job hunting: fetching offers on a schedule, embedding CVs and offers into a shared vector space, matching them by semantic similarity, and reviewing CVs against the strongest matches.
 
-The infrastructure follows a two-layer landing zone pattern (platform + application) built with reusable Terraform modules for networking, compute, data, AI, messaging, and monitoring, each with remote state. CI/CD runs on GitHub Actions with OIDC federated credentials — no cloud credentials are ever stored, \`terraform plan\` runs on every PR and \`apply\` runs on merge.
+The infrastructure runs on a landing zone (networking, identity, governance) carrying a modular application layer, built with reusable Terraform modules for networking, compute, data, AI, messaging, and monitoring, each with remote state. CI/CD runs on GitHub Actions with OIDC federated credentials — no cloud credentials are ever stored, \`terraform plan\` runs on every PR and \`apply\` runs on merge.
 
 The AI pipeline itself is a set of Python agents (offer-fetching, CV analysis, matching, CV review, cleanup) orchestrated through Azure Service Bus queues and Container App Jobs, using pgvector for cosine-similarity search and Azure OpenAI (GPT-4o-mini + text-embedding-3-small) for semantic matching and scoring.
 
@@ -24,7 +24,7 @@ Development itself leans on an AI-assisted workflow: up to 4 Claude Code agents 
         fr: `
 Job Finder est un projet de portfolio personnel construit pendant ma transition de carrière du développement Unity/jeu vidéo vers le cloud Azure et l'ingénierie IA. Il automatise les tâches fastidieuses de la recherche d'emploi : récupération planifiée des offres, vectorisation des CV et des offres dans un espace vectoriel partagé, mise en correspondance par similarité sémantique, et évaluation des CV face aux meilleures correspondances.
 
-L'infrastructure suit un modèle de landing zone à deux couches (plateforme + application), construit avec des modules Terraform réutilisables pour le réseau, le compute, la donnée, l'IA, la messagerie et le monitoring, chacun avec son état distant. Le CI/CD tourne sur GitHub Actions avec des identifiants fédérés OIDC — aucun identifiant cloud n'est jamais stocké, \`terraform plan\` s'exécute à chaque PR et \`apply\` au merge.
+L'infrastructure repose sur une landing zone (réseau, identité, gouvernance) portant une couche applicative modulaire, construite avec des modules Terraform réutilisables pour le réseau, le compute, la donnée, l'IA, la messagerie et le monitoring, chacun avec son état distant. Le CI/CD tourne sur GitHub Actions avec des identifiants fédérés OIDC — aucun identifiant cloud n'est jamais stocké, \`terraform plan\` s'exécute à chaque PR et \`apply\` au merge.
 
 Le pipeline IA lui-même est un ensemble d'agents Python (récupération des offres, analyse de CV, matching, revue de CV, nettoyage) orchestrés via des files Azure Service Bus et des Container App Jobs, utilisant pgvector pour la recherche par similarité cosinus et Azure OpenAI (GPT-4o-mini + text-embedding-3-small) pour le matching sémantique et le scoring.
 
@@ -47,6 +47,8 @@ Le développement lui-même s'appuie sur un workflow assisté par IA : jusqu'à 
         "Claude",
         "Service Bus",
         "GitHub Actions",
+        "GitHub",
+        "CI/CD",
         "Docker"
     ],
     links: {
