@@ -11,6 +11,15 @@ resource "azurerm_storage_account" "function" {
   tags = local.common_tags
 }
 
+# Table storing per-IP submission counts for sendContactEmail's rate limiter
+# (fixed 1-hour windows, no cleanup — see prompt-10). Table names must be
+# alphanumeric only, hence no dashes/underscores here. Azure Table Storage
+# tables don't support tags, unlike the other resources in this file.
+resource "azurerm_storage_table" "rate_limits" {
+  name                 = "ratelimits"
+  storage_account_name = azurerm_storage_account.function.name
+}
+
 # Consumption plan (Y1): usage is a personal contact form, not sustained
 # traffic — pay-per-execution is the right shape here, and it's the simpler,
 # more battle-tested model over the newer Flex Consumption resource type.
@@ -61,6 +70,11 @@ resource "azurerm_linux_function_app" "contact" {
     # versionless_id (vs. .id) means secret rotations don't require a
     # Terraform change to pick up.
     ZOHO_PASS = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.zoho_smtp_password.versionless_id})"
+
+    # Plaintext in state, same pattern as storage_account_access_key above —
+    # this is the Function's own infra-internal storage account, not a
+    # third-party secret, so Key Vault indirection isn't warranted here.
+    RATE_LIMIT_TABLE_CONNECTION_STRING = azurerm_storage_account.function.primary_connection_string
   }
 
   tags = local.common_tags
