@@ -9,7 +9,7 @@ import { ThemeContext } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n/useTranslation';
 import type { LocalizedString } from '../../i18n/localize';
 import { PROJECTS_DATA } from '../../data/projects';
-import { getYouTubeEmbedId, getTechColor } from '../../utils/helpers';
+import { getYouTubeEmbedId, resolveTechTierStyle } from '../../utils/helpers';
 import { sendContactEmail } from '../../services/contact';
 // @ts-ignore
 import FONT_5x7 from '../../data/font5x7';
@@ -586,7 +586,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                                 <div className="absolute top-4 left-4 flex gap-1">
                                                     {p.tech?.slice(0, 2).map((t: string) => (
-                                                        <span key={t} className="px-2 py-0.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-sm text-[9px] font-bold uppercase tracking-wider" style={{ color: getTechColor(t) }}>
+                                                        <span key={t} className="px-2 py-0.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-sm text-[9px] font-bold uppercase tracking-wider" style={{ color: resolveTechTierStyle(t).fg }}>
                                                             {t}
                                                         </span>
                                                     ))}
@@ -1320,7 +1320,7 @@ export const ContentRenderer = ({ type, data, title, onOpenFile, content, editor
                                 <div className="max-w-5xl mx-auto">
                                     <div className="flex flex-wrap items-center gap-2 mb-6">
                                         {data.tech?.slice(0, 6).map((t: string) => (
-                                            <span key={t} className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-sm text-[10px] font-bold uppercase tracking-widest" style={{ color: getTechColor(t) }}>
+                                            <span key={t} className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-sm text-[10px] font-bold uppercase tracking-widest" style={{ color: resolveTechTierStyle(t).fg }}>
                                                 {t}
                                             </span>
                                         ))}
