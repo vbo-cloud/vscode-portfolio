@@ -59,6 +59,28 @@ const DEFAULT_TECH_COLOR = "#94a3b8";
 export const getTechColor = (tech: string) => TECH_COLORS[tech] || DEFAULT_TECH_COLOR;
 
 /**
+ * Git/CI tooling that the CV renders as a plain light "chip" (solid light
+ * background, dark text, border) instead of a tinted accent badge — these
+ * names don't have a single fitting brand color, so the CV deliberately
+ * makes them stand out as a neutral highlighted box rather than picking an
+ * arbitrary hue. TechTag mirrors that exact treatment for the same set.
+ */
+export const OUTLINE_TECHS = new Set([
+    "Git",
+    "GitHub",
+    "GitHub Actions",
+    "GitLab",
+    "CI/CD",
+    "Azure DevOps",
+]);
+
+export const OUTLINE_BADGE_STYLE = {
+    color: "#374151",
+    backgroundColor: "#e5e7eb",
+    borderColor: "rgba(0, 0, 0, 0.3)",
+};
+
+/**
  * Generates a lightweight inline SVG placeholder for projects that don't
  * (yet) have a real screenshot, keeping the visual grid consistent instead
  * of showing broken images.

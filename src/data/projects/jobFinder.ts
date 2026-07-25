@@ -47,6 +47,8 @@ Le développement lui-même s'appuie sur un workflow assisté par IA : jusqu'à 
         "Claude",
         "Service Bus",
         "GitHub Actions",
+        "GitHub",
+        "CI/CD",
         "Docker"
     ],
     links: {
